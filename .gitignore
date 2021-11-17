@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Added ignores
+*.log
+pid_file.txt
+.idea/
+cmake-build-debug/
