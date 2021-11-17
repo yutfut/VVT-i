@@ -28,8 +28,26 @@
 
 # Executables
 *.exe
-*.out
+*.ogitut
 *.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
 
 # Папки, создаваемые средой разработки
 .idea
@@ -42,3 +60,16 @@
 
 .vscode/
 *.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+.mypy_cache
+
+cmake-build-debug/
+
+test/test.txt
+
+.venv
+
+
