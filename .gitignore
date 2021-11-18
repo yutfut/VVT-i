@@ -73,5 +73,6 @@ test/test.txt
 .venv
 
 # Added ignores
+*.out
 *.log
 pid_file.txt

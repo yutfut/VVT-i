@@ -126,7 +126,6 @@ TEST(TEST_HTTP, HANDLE_INVALID_HTTP_REQUEST) {
     EXPECT_ANY_THROW({ request.add_line(str); });
 }
 
-
 // TEST(TEST_SERVER, HANDLE_SERVER_HARD_COMMANDS) {
 //     remove("pid_file.txt");
 //     remove("test_access.log");
