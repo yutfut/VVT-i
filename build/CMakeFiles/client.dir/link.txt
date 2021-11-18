@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libclient.a CMakeFiles/client.dir/source/client.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libclient.a
