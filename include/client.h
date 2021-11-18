@@ -6,33 +6,58 @@
 #define VVTI_CLIENT_CLIENT_H
 
 #include <iostream>
+#include <string>
+#include <vector>
 
-bool authorize = false;
+class Client {
+private:
+    bool authorize;
+    int id;
+    std::string jwt;
+    std::string email;
+    std::vector<std::string> *data;
+public:
+    Client();
 
-void print();
+    ~Client();
 
-int login_on_server();
+    int valid_email(const std::string& email);
 
-int send_on_server();
+    int valid_password(const std::string& password);
 
-int valid_email(const std::string& email);
+    int valid_chmod(const std::string& chmod);
 
-int valid_password(const std::string& password);
+    int valid_directory(const std::string& command);
 
-int login(const std::string& command);
+    int login_on_server();
 
-int logout();
+    int registration(const std::string& command);
 
-int search_file(const std::string& command);
+    int login(const std::string& command);
 
-int valid_chmod(const std::string& command);
+    int logout();
 
-int parse_chmod(const std::string& command);
+    void print();
 
-int role_command(const std::string& command);
+    void print_data();
 
-int validation_command(const std::string& command);
+    int get_from_server();
 
-void get_command();
+    int send_on_server();
+
+    int search_file(const std::string& file_name);
+
+    int work_with_file(const std::string& command);
+
+    int work_with_chmod(const std::string& command);
+
+    int work_with_directory(const std::string& command);
+
+    int role_command(const std::string& command);
+
+    int validation_command(const std::string& command);
+
+    void get_command();
+};
 
 #endif //VVTI_CLIENT_CLIENT_H

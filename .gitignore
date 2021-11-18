@@ -67,6 +67,7 @@ dkms.conf
 .mypy_cache
 
 cmake-build-debug/
+build
 
 test/test.txt
 

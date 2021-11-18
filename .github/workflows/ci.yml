@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  CI:
+    name: Run CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name : Check style code
+        run : |
+          sudo apt-get install -y cppcheck
+          cppcheck --enable=warning,style,performance,portability source/ include/
+      - name : Building
+        run : |
+          mkdir build
+          cd build
+          sudo apt-get install -y libgtest-dev
+          cmake ..
+          make
+          cd ..
+      - name: Coverage test
+        run: |
+          sudo apt-get install lcov
+          ./build/vvti_client_test
+          mkdir coverage && cd coverage
+          gcov ../build/CMakeFiles/vvti_client.dir/source/main.cpp.o
+          cp -r ../build/CMakeFiles/vvti_client.dir/ .
+          cd ..
+          lcov --capture --directory coverage/ --output-file vvti_client.info
+          genhtml vvti_client.info --output-directory coverage-report/
+      - name: Archive coverage test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Coverage test
+          path: coverage-report/
+
+      - name: Valgrind test
+        run: |
+          sudo apt-get install -y valgrind
+          mkdir valgrid-output
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/vvti_client_test.out
+      - name: Archive valgrind test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Valgrind test
+          path: valgrid-output/
