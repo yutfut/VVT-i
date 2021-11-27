@@ -8,169 +8,170 @@
 
 namespace fs = std::filesystem;
 
-class IFsSubWorker {
+class FsSubWorkerNotAuthUsr {
 public:
-    virtual bool MoveRoot(const fs::path &newRoot, int, std::error_code &ec) noexcept = 0;
+    explicit FsSubWorkerNotAuthUsr(const fs::path &not_auth_dir,
+                                   size_t file_expiration_date = file_expiration_date_default)
+            : not_auth_dir(not_auth_dir), file_expiration_date(file_expiration_date), sort_dirs{file_expiration_date} {}
 
-    virtual bool MoveFile(const fs::path &filePath, int, std::error_code &ec) const noexcept = 0;
+    explicit FsSubWorkerNotAuthUsr(fs::path &&not_auth_dir, size_t file_expiration_date = file_expiration_date_default)
+            : not_auth_dir(
+            std::move(not_auth_dir)), file_expiration_date(file_expiration_date), sort_dirs{file_expiration_date} {}
 
-    virtual std::ifstream GetFile(const fs::path &filePath, int) const noexcept = 0;
+    FsSubWorkerNotAuthUsr(const FsSubWorkerNotAuthUsr &src) : not_auth_dir(src.not_auth_dir),
+                                                              file_expiration_date(src.file_expiration_date),
+                                                              sort_dirs(src.sort_dirs) {}
 
-    virtual bool RemoveFile(const fs::path &path, int, std::error_code &ec) const noexcept = 0;
-
-    virtual bool CreateDir(const fs::path &dirPath, int, std::error_code &ec) const noexcept = 0;
-
-    virtual bool RemoveDir(const fs::path &dirPath, int, std::error_code &ec) const noexcept = 0;
-};
-
-class FsSubWorkerNotAuthUsr : public IFsSubWorker {
-public:
-    explicit FsSubWorkerNotAuthUsr(const fs::path &notAuthDir, size_t fileExpirationDate = fileExpirationDateDefault)
-            : notAuthDir(
-            notAuthDir), fileExpirationDate(fileExpirationDate), sortDirs{fileExpirationDate} {}
-
-    explicit FsSubWorkerNotAuthUsr(fs::path &&notAuthDir, size_t fileExpirationDate = fileExpirationDateDefault)
-            : notAuthDir(
-            std::move(notAuthDir)), fileExpirationDate(fileExpirationDate), sortDirs{fileExpirationDate} {}
-
-    FsSubWorkerNotAuthUsr(const FsSubWorkerNotAuthUsr &src) : notAuthDir(src.notAuthDir),
-                                                              fileExpirationDate(src.fileExpirationDate),
-                                                              sortDirs(src.sortDirs) {}
-
-    FsSubWorkerNotAuthUsr(FsSubWorkerNotAuthUsr &&src) : notAuthDir(std::move(src.notAuthDir)),
-                                                         fileExpirationDate(src.fileExpirationDate),
-                                                         sortDirs(std::move(src.sortDirs)) {}
-
-    FsSubWorkerNotAuthUsr &operator=(const FsSubWorkerNotAuthUsr &);
-
-    FsSubWorkerNotAuthUsr &operator=(FsSubWorkerNotAuthUsr &&);
+    FsSubWorkerNotAuthUsr(FsSubWorkerNotAuthUsr &&src) : not_auth_dir(std::move(src.not_auth_dir)),
+                                                         file_expiration_date(src.file_expiration_date),
+                                                         sort_dirs(std::move(src.sort_dirs)) {}
 
     ~FsSubWorkerNotAuthUsr() noexcept = default;
 
-    virtual bool MoveRoot(const fs::path &newNotAuthDir, int, std::error_code &ec) noexcept override;
+    bool move_root(const fs::path &new_not_auth_dir) noexcept;
 
-    bool MoveFile(const fs::path &filePath, int dateAdded, std::error_code &ec) const noexcept override;
+    bool move_file_to_fs(const fs::path &src_path, const std::string &dst_name, const std::string &date_added) const noexcept;
 
-    std::ifstream GetFile(const fs::path &filePath, int dateAdded) const noexcept override;
+    std::ifstream get_file(const fs::path &file_path, const std::string &date_added) const noexcept;
 
-    bool RemoveFile(const fs::path &path, int dateAdded, std::error_code &ec) const noexcept override;
+    bool create_day_dir(const std::string &date_added) const noexcept;
 
-    bool CreateDir(const fs::path &dirPath, int dateAdded, std::error_code &ec) const noexcept override;
+    bool remove_expired_dirs() const noexcept;
 
-    bool RemoveDir(const fs::path &dirPath, int dateAdded, std::error_code &ec) const noexcept override;
+    const fs::path &get_root_path() const noexcept;
 
-    const fs::path &GetNotAuthDir();
+    size_t get_file_expiration_date();
 
-    size_t GetFileExpirationDate();
+    const std::vector<fs::path> &get_sort_dirs();
 
-    const std::vector<fs::path> &GetSortDirs();
+    void reset_error_code() noexcept;
+
+    void set_expiration_date(size_t new_expiration_date);
+
+    bool operator==(const FsSubWorkerNotAuthUsr &rhs) const;
+
+    std::error_code err_code;
 
 private:
-    static const size_t fileExpirationDateDefault = 10u;
-    fs::path notAuthDir;
-    const size_t fileExpirationDate;
-    std::vector<fs::path> sortDirs;
+    static const size_t file_expiration_date_default = 10u;
+    fs::path not_auth_dir;
+    const size_t file_expiration_date;
+    std::vector<fs::path> sort_dirs;
 };
 
-class FsSubWorkerAuthUsr : public IFsSubWorker {
+class FsSubWorkerAuthUsr {
 public:
-    explicit FsSubWorkerAuthUsr(const fs::path &usrsDir) : usrsDir(usrsDir) {}
+    explicit FsSubWorkerAuthUsr(const fs::path &usrs_dir) : usrs_dir(usrs_dir) {}
 
-    explicit FsSubWorkerAuthUsr(fs::path &&usrsDir) : usrsDir(std::move(usrsDir)) {}
+    explicit FsSubWorkerAuthUsr(fs::path &&usrs_dir) : usrs_dir(std::move(usrs_dir)) {}
 
-    FsSubWorkerAuthUsr(const FsSubWorkerAuthUsr &src) : usrsDir(src.usrsDir) {}
+    FsSubWorkerAuthUsr(const FsSubWorkerAuthUsr &src) : usrs_dir(src.usrs_dir) {}
 
-    FsSubWorkerAuthUsr(FsSubWorkerAuthUsr &&src) : usrsDir(std::move(src.usrsDir)) {}
-
-    FsSubWorkerAuthUsr &operator=(const FsSubWorkerAuthUsr &);
-
-    FsSubWorkerAuthUsr &operator=(FsSubWorkerAuthUsr &&);
+    FsSubWorkerAuthUsr(FsSubWorkerAuthUsr &&src) : usrs_dir(std::move(src.usrs_dir)) {}
 
     ~FsSubWorkerAuthUsr() noexcept = default;
 
-    virtual bool MoveRoot(const fs::path &newUsrsDir, int, std::error_code &ec) noexcept override;
+    bool move_root(const fs::path &new_usrs_dir) noexcept;
 
-    bool MoveFile(const fs::path &filePath, int userId, std::error_code &ec) const noexcept override;
+    bool move(const fs::path &path_src, const fs::path &path_dst, int user_id) const noexcept;
 
-    std::ifstream GetFile(const fs::path &filePath, int userId) const noexcept override;
+    bool add_user(int user_id) const noexcept;
 
-    bool RemoveFile(const fs::path &path, int userId, std::error_code &ec) const noexcept override;
+    std::ifstream get_file(const fs::path &file_path, int user_id) const noexcept;
 
-    bool CreateDir(const fs::path &dirPath, int userId, std::error_code &ec) const noexcept override;
+    bool remove_file(const fs::path &file_path, int user_id) const noexcept;
 
-    bool RemoveDir(const fs::path &dirPath, int userId, std::error_code &ec) const noexcept override;
+    bool create_dir(const fs::path &dir_path, int user_id) const noexcept;
 
-    const fs::path &GetUsrsDir();
+    bool remove_dir(const fs::path &dir_path, int user_id) const noexcept;
+
+    const fs::path &get_root_path() const noexcept;
+
+    void reset_error_code() noexcept;
+
+    bool operator==(const FsSubWorkerAuthUsr &rhs) const;
+
+    std::error_code err_code;
 
 private:
-    fs::path usrsDir;
+    fs::path usrs_dir;
 };
 
-class FsSubWorkerGroup : public IFsSubWorker {
+class FsSubWorkerGroup {
 public:
-    explicit FsSubWorkerGroup(const fs::path &groupDir) : groupsDir(groupDir) {}
+    explicit FsSubWorkerGroup(const fs::path &groups_dir) : groups_dir(groups_dir) {}
 
-    explicit FsSubWorkerGroup(fs::path &&groupDir) : groupsDir(std::move(groupDir)) {}
+    explicit FsSubWorkerGroup(fs::path &&groups_dir) : groups_dir(std::move(groups_dir)) {}
 
-    FsSubWorkerGroup(const FsSubWorkerGroup &src) : groupsDir(src.groupsDir) {}
+    FsSubWorkerGroup(const FsSubWorkerGroup &src) : groups_dir(src.groups_dir) {}
 
-    FsSubWorkerGroup(FsSubWorkerGroup &&src) : groupsDir(std::move(src.groupsDir)) {}
-
-    FsSubWorkerGroup &operator=(const FsSubWorkerGroup &);
-
-    FsSubWorkerGroup &operator=(FsSubWorkerGroup &&);
+    FsSubWorkerGroup(FsSubWorkerGroup &&src) : groups_dir(std::move(src.groups_dir)) {}
 
     ~FsSubWorkerGroup() noexcept = default;
 
-    virtual bool MoveRoot(const fs::path &newGroupsDir, int, std::error_code &ec) noexcept override;
+    bool add_group(int group_id);
 
-    bool MoveFile(const fs::path &filePath, int groupId, std::error_code &ec) const noexcept override;
+    bool move_root(const fs::path &new_groups_dir) noexcept;
 
-    std::ifstream GetFile(const fs::path &filePath, int groupId) const noexcept override;
+    bool move(const fs::path &path_src, const fs::path &path_dst, int group_id) const noexcept;
 
-    bool RemoveFile(const fs::path &path, int groupId, std::error_code &ec) const noexcept override;
+    std::ifstream get_file(const fs::path &file_path, int group_id) const noexcept;
 
-    bool CreateDir(const fs::path &dirPath, int groupId, std::error_code &ec) const noexcept override;
+    bool remove_file(const fs::path &file_path, int group_id) const noexcept;
 
-    bool RemoveDir(const fs::path &dirPath, int groupId, std::error_code &ec) const noexcept override;
+    bool create_dir(const fs::path &dir_path, int group_id) const noexcept;
 
-    const fs::path &GetGroupsDir();
+    bool remove_dir(const fs::path &dir_path, int group_id) const noexcept;
+
+    const fs::path &get_root_path() const noexcept;
+
+    void reset_error_code() noexcept;
+
+    bool operator==(const FsSubWorkerGroup &rhs) const;
+
+    std::error_code err_code;
+
 
 private:
-    fs::path groupsDir;
+    fs::path groups_dir;
 };
 
 class FsWorker {
 private:
     fs::path root;
 public:
-    explicit FsWorker(const fs::path &_root) : root(_root), notAuthUsr(root / notAuthUsrsDirDefault),
-                                               authUsr(root / authUsrsDirDefault),
-                                               group(root / groupsDirDefault) {}
+    explicit FsWorker(const fs::path &_root) : root(_root), not_auth_usr(root / not_auth_usrs_dir_default),
+                                               auth_usr(root / auth_usrs_dir_default),
+                                               group(root / groups_dir_default) {}
 
-    explicit FsWorker(fs::path &&_root) : root(std::move(_root)), notAuthUsr(root / notAuthUsrsDirDefault),
-                                          authUsr(root / authUsrsDirDefault),
-                                          group(root / groupsDirDefault) {}
+    explicit FsWorker(fs::path &&_root) : root(std::move(_root)), not_auth_usr(root / not_auth_usrs_dir_default),
+                                          auth_usr(root / auth_usrs_dir_default),
+                                          group(root / groups_dir_default) {}
 
-    FsWorker(const FsWorker &src) : root(src.root), notAuthUsr(src.notAuthUsr),
-                                    authUsr(src.authUsr),
+    FsWorker(const FsWorker &src) : root(src.root), not_auth_usr(src.not_auth_usr),
+                                    auth_usr(src.auth_usr),
                                     group(src.group) {}
 
-    FsWorker(FsWorker &&src) : root(std::move(src.root)), notAuthUsr(std::move(src.notAuthUsr)),
-                               authUsr(std::move(src.authUsr)),
+    FsWorker(FsWorker &&src) : root(std::move(src.root)), not_auth_usr(std::move(src.not_auth_usr)),
+                               auth_usr(std::move(src.auth_usr)),
                                group(std::move(src.group)) {}
 
     FsWorker &operator=(const FsWorker &);
 
-    FsWorker &operator=(FsWorker &&);
+    bool operator==(const FsWorker &rhs) const;
 
     ~FsWorker() = default;
 
-    static const fs::path notAuthUsrsDirDefault;
-    static const fs::path authUsrsDirDefault;
-    static const fs::path groupsDirDefault;
-    FsSubWorkerNotAuthUsr notAuthUsr;
-    FsSubWorkerAuthUsr authUsr;
+    const fs::path &get_root_dir() const noexcept;
+
+    void reset_error_code() noexcept;
+
+    std::error_code errc;
+    static const fs::path not_auth_usrs_dir_default;
+    static const fs::path auth_usrs_dir_default;
+    static const fs::path groups_dir_default;
+    FsSubWorkerNotAuthUsr not_auth_usr;
+    FsSubWorkerAuthUsr auth_usr;
     FsSubWorkerGroup group;
 };
 
