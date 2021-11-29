@@ -12,6 +12,7 @@ set(WORKING_WITH_FS_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/project/src/working_with
 set(TEST_WORKING_WITH_FS_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/project/test/main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/project/test/test_FsSubWorkerNotAuth.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/project/test/test_FsSubWorkerAuthUsr.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/project/test/test_FsSubWorkerGroup.cpp
         )
 add_subdirectory(${WORKING_WITH_FS_LIB_DIR})
 

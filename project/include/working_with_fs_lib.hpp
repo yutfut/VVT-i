@@ -5,6 +5,7 @@
 
 #include <string>
 #include <filesystem>
+//TODO: IFsSubWorkerEntity
 
 namespace fs = std::filesystem;
 
@@ -55,9 +56,9 @@ private:
 
 class FsSubWorkerAuthUsr {
 public:
-    explicit FsSubWorkerAuthUsr(const fs::path &usrs_dir);
+    explicit FsSubWorkerAuthUsr(const fs::path &user_dir);
 
-    explicit FsSubWorkerAuthUsr(fs::path &&usrs_dir);
+    explicit FsSubWorkerAuthUsr(fs::path &&user_dir);
 
     FsSubWorkerAuthUsr(const FsSubWorkerAuthUsr &src);
 
@@ -65,7 +66,7 @@ public:
 
     ~FsSubWorkerAuthUsr() noexcept = default;
 
-    bool move_root(const fs::path &new_usrs_dir) noexcept;
+    bool move_root(const fs::path &new_user_dir) noexcept;
 
     bool move_file_to_user_dir(const fs::path &src_path, const fs::path &dst_path, int user_id) const noexcept;
 
@@ -93,31 +94,31 @@ private:
 
 class FsSubWorkerGroup {
 public:
-    explicit FsSubWorkerGroup(const fs::path &groups_dir) : groups_dir(groups_dir) {}
+    explicit FsSubWorkerGroup(const fs::path &groups_dir) ;
 
-    explicit FsSubWorkerGroup(fs::path &&groups_dir) : groups_dir(std::move(groups_dir)) {}
+    explicit FsSubWorkerGroup(fs::path &&groups_dir);
 
-    FsSubWorkerGroup(const FsSubWorkerGroup &src) : groups_dir(src.groups_dir) {}
+    FsSubWorkerGroup(const FsSubWorkerGroup &src);
 
-    FsSubWorkerGroup(FsSubWorkerGroup &&src) : groups_dir(std::move(src.groups_dir)) {}
+    FsSubWorkerGroup(FsSubWorkerGroup &&src) noexcept ;
 
     ~FsSubWorkerGroup() noexcept = default;
 
-    bool add_group(int group_id);
+    bool add_group(int group_id)const noexcept;
 
     bool move_root(const fs::path &new_groups_dir) noexcept;
 
-    bool move(const fs::path &path_src, const fs::path &path_dst, int group_id) const noexcept;
+    bool move_file_to_group_dir(const fs::path &src_path, const fs::path &dst_path, int group_id) const noexcept;
 
-    std::ifstream get_file(const fs::path &file_path, int group_id) const noexcept;
+    [[nodiscard]] std::ifstream get_group_file(const fs::path &file_path, int group_id) const noexcept;
 
-    bool remove_file(const fs::path &file_path, int group_id) const noexcept;
+    bool remove_group_file(const fs::path &file_path, int group_id) const noexcept;
 
-    bool create_dir(const fs::path &dir_path, int group_id) const noexcept;
+    bool make_group_subdir(const fs::path &dir_path, int group_id) const noexcept;
 
     bool remove_dir(const fs::path &dir_path, int group_id) const noexcept;
 
-    const fs::path &get_root_path() const noexcept;
+    [[nodiscard]] const fs::path &get_root_path() const noexcept;
 
     void reset_error_code() noexcept;
 
@@ -127,7 +128,7 @@ public:
 
 
 private:
-    fs::path groups_dir;
+    fs::path root_path;
 };
 
 class FsWorker {

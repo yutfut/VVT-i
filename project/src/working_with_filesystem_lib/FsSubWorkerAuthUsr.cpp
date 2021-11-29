@@ -1,18 +1,20 @@
+// Copyright 2021 nat-s.skv@mail.ru
+
 #include <string>
 #include <filesystem>
 #include <vector>
 #include <working_with_fs_lib.hpp>
 #include <fstream>
 
-FsSubWorkerAuthUsr::FsSubWorkerAuthUsr(const fs::path &usrs_dir) : root_path(usrs_dir) {}
+FsSubWorkerAuthUsr::FsSubWorkerAuthUsr(const fs::path &user_dir) : root_path(user_dir) {}
 
-FsSubWorkerAuthUsr::FsSubWorkerAuthUsr(fs::path &&usrs_dir) : root_path(std::move(usrs_dir)) {}
+FsSubWorkerAuthUsr::FsSubWorkerAuthUsr(fs::path &&user_dir) : root_path(std::move(user_dir)) {}
 
 FsSubWorkerAuthUsr::FsSubWorkerAuthUsr(const FsSubWorkerAuthUsr &src) : root_path(src.root_path) {}
 
 FsSubWorkerAuthUsr::FsSubWorkerAuthUsr(FsSubWorkerAuthUsr &&src) noexcept: root_path(std::move(src.root_path)) {}
 
-bool FsSubWorkerAuthUsr::move_root(const fs::path &new_usrs_dir) noexcept {
+bool FsSubWorkerAuthUsr::move_root(const fs::path &new_user_dir) noexcept {
     return false;
 }
 

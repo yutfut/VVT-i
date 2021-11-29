@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(WORKING_WITH_FILESYSTEM_LIB_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/FsSubWorkerNotAuth.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/FsSubWorkerAuthUsr.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/FsSubWorkerGroup.cpp
         )
 
 set(CMAKE_CXX_FLAGS "-g -O0 -Wall  -Wextra  -Wpedantic -fprofile-arcs -pthread")
