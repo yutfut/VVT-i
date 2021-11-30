@@ -1,99 +1,99 @@
 // Copyright 2021 nat-s.skv@mail.ru
 
 #include <gtest/gtest.h>
-#include <working_with_fs_lib.hpp>
+#include <filesystem_lib.hpp>
 #include <fstream>
 
-FsSubWorkerNotAuthUsr create_worker_not_auth_usr(const fs::path &root_path) {
-    FsSubWorkerNotAuthUsr fs_worker(root_path);
-    EXPECT_EQ(root_path, fs_worker.get_root_path());
+FsNotAuthUsr create_fs_not_auth_usr(const fs::path &root_path) {
+    FsNotAuthUsr fs_worker(root_path);
+    EXPECT_EQ(root_path, fs_worker.get_root());
     EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
     EXPECT_TRUE(fs_worker.get_sort_dirs().empty());
     return fs_worker;
 }
 
-class FixtureCreateFsSubWorkerNotAuthUsrInvalid : public ::testing::Test {
+class FixtureCreateFsNotAuthUsrInvalid : public ::testing::Test {
 protected:
     static void set_up(fs::path &&root_path, std::errc &&exp_errc) {
-        FsSubWorkerNotAuthUsr fs_worker1(root_path);
-        EXPECT_EQ(fs::path(""), fs_worker1.get_root_path());
+        FsNotAuthUsr fs_worker1(root_path);
+        EXPECT_EQ(fs::path(""), fs_worker1.get_root());
         EXPECT_EQ(fs_worker1.err_code, exp_errc);
         EXPECT_TRUE(fs_worker1.get_sort_dirs().empty());
 
         fs::remove_all(root_path);
-        FsSubWorkerNotAuthUsr fs_worker2(std::move(root_path));
+        FsNotAuthUsr fs_worker2(std::move(root_path));
         EXPECT_EQ(fs_worker1, fs_worker2);
     }
 };
 
-class FixtureFsSubWorkerNotAuthUsrMoveRootInvalid : public ::testing::Test {
+class FixtureFsNotAuthUsrMoveRootInvalid : public ::testing::Test {
 protected:
     static void set_up(fs::path &root_path, const fs::path &new_root_path, std::errc &&exp_errc) {
-        FsSubWorkerNotAuthUsr fs_worker(root_path);
-        EXPECT_EQ(root_path, fs_worker.get_root_path());
+        FsNotAuthUsr fs_worker(root_path);
+        EXPECT_EQ(root_path, fs_worker.get_root());
         EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
         EXPECT_TRUE(fs_worker.get_sort_dirs().empty());
 
         fs_worker.move_root(new_root_path);
         EXPECT_EQ(fs_worker.err_code, exp_errc);
-        EXPECT_EQ(fs_worker.get_root_path(), root_path);
+        EXPECT_EQ(fs_worker.get_root(), root_path);
         fs::remove_all(root_path);
     }
 };
 
-TEST(FsSubWorkerNotAuthUsr, CreateValid) {
+TEST(FsNotAuthUsr, CreateValid) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    FsSubWorkerNotAuthUsr fs_worker1(root_path);
-    EXPECT_EQ(root_path, fs_worker1.get_root_path());
+    FsNotAuthUsr fs_worker1(root_path);
+    EXPECT_EQ(root_path, fs_worker1.get_root());
     EXPECT_FALSE(static_cast<bool>(fs_worker1.err_code));
     EXPECT_TRUE(fs_worker1.get_sort_dirs().empty());
 
-    FsSubWorkerNotAuthUsr fs_worker2(fs_worker1);
+    FsNotAuthUsr fs_worker2(fs_worker1);
     EXPECT_EQ(fs_worker2, fs_worker1);
     EXPECT_EQ(fs_worker2.err_code, std::errc(EEXIST));
 
-    FsSubWorkerNotAuthUsr fs_worker3(std::move(fs_worker1));
+    FsNotAuthUsr fs_worker3(std::move(fs_worker1));
     EXPECT_EQ(fs_worker3, fs_worker2);
     EXPECT_EQ(fs_worker3.err_code, std::errc(EEXIST));
 
     fs::remove_all(root_path);
-    FsSubWorkerNotAuthUsr fs_worker4(std::move(root_path));
+    FsNotAuthUsr fs_worker4(std::move(root_path));
     EXPECT_EQ(fs_worker4, fs_worker2);
     EXPECT_FALSE(static_cast<bool>(fs_worker4.err_code));
 
-    fs::remove_all(fs_worker4.get_root_path());
+    fs::remove_all(fs_worker4.get_root());
 }
 
-TEST_F(FixtureCreateFsSubWorkerNotAuthUsrInvalid, ENOENT) {
+TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENOENT) {
     fs::path root_path = TEST_PATH / fs::path("input_output/not_existing_dir/fs_sub_worker_not_auth_usr/");
-    FixtureCreateFsSubWorkerNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENOENT));
+    FixtureCreateFsNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENOENT));
 }
 
-TEST_F(FixtureCreateFsSubWorkerNotAuthUsrInvalid, ENAMETOOLONG) {
+TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENAMETOOLONG) {
     fs::path root_path = TEST_PATH "/input_output" / fs::path(std::string{_PC_NAME_MAX, 'x'});
-    FixtureCreateFsSubWorkerNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENAMETOOLONG));
+    FixtureCreateFsNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENAMETOOLONG));
 }
 
-TEST_F(FixtureCreateFsSubWorkerNotAuthUsrInvalid, ENOTDIR) {
+TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENOTDIR) {
     fs::path file_path = TEST_PATH "/input_output/file";
     std::ofstream file(file_path);
     file.close();
     ASSERT_TRUE(fs::exists(file_path));
 
     fs::path root_path = file_path / fs::path("fs_sub_worker_not_auth_usr/");
-    FixtureCreateFsSubWorkerNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENOTDIR));
+    FixtureCreateFsNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENOTDIR));
 
     fs::remove(file_path);
 }
 
-TEST(FsSubWorkerNotAuthUsr, MoveRoot) {
+TEST(FsNotAuthUsr, MoveRoot) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    FsSubWorkerNotAuthUsr fs_worker((root_path));
+    FsNotAuthUsr fs_worker((root_path));
     fs::path new_root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr_new/");
     fs_worker.move_root(new_root_path);
 
     EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
-    EXPECT_EQ(fs_worker.get_root_path(), new_root_path);
+    EXPECT_EQ(fs_worker.get_root(), new_root_path);
     std::error_code ec;
     EXPECT_TRUE(fs::exists(new_root_path, ec));
     EXPECT_FALSE(fs::exists(root_path, ec));
@@ -101,19 +101,19 @@ TEST(FsSubWorkerNotAuthUsr, MoveRoot) {
     fs::remove_all(new_root_path);
 }
 
-TEST_F(FixtureFsSubWorkerNotAuthUsrMoveRootInvalid, ENAMETOOLONG) {
+TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENAMETOOLONG) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
     fs::path new_root_path = TEST_PATH "/input_output" / fs::path(std::string{_PC_NAME_MAX, 'x'});
-    FixtureFsSubWorkerNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENAMETOOLONG));
+    FixtureFsNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENAMETOOLONG));
 }
 
-TEST_F(FixtureFsSubWorkerNotAuthUsrMoveRootInvalid, ENOENT) {
+TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENOENT) {
     fs::path root_path = TEST_PATH/ fs::path("input_output/fs_sub_worker_not_auth_usr/");
     fs::path new_root_path = TEST_PATH / fs::path("input_output/not_existing_dir/fs_sub_worker_not_auth_usr/");
-    FixtureFsSubWorkerNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENOENT));
+    FixtureFsNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENOENT));
 }
 
-TEST_F(FixtureFsSubWorkerNotAuthUsrMoveRootInvalid, ENOTDIR) {
+TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENOTDIR) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
     fs::path file_path = TEST_PATH "/input_output/file";
     std::ofstream file(file_path);
@@ -121,13 +121,13 @@ TEST_F(FixtureFsSubWorkerNotAuthUsrMoveRootInvalid, ENOTDIR) {
     ASSERT_TRUE(fs::exists(file_path));
 
     fs::path new_root_path = file_path / fs::path("fs_sub_worker_not_auth_usr/");
-    FixtureFsSubWorkerNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENOTDIR));
+    FixtureFsNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENOTDIR));
     fs::remove(file_path);
 }
 
-TEST(FsSubWorkerNotAuthUsr, CreateDayDirAndRemoveExpired) {
+TEST(FsNotAuthUsr, CreateDayDirAndRemoveExpired) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    FsSubWorkerNotAuthUsr fs_worker((root_path));
+    FsNotAuthUsr fs_worker((root_path));
     EXPECT_TRUE(fs_worker.get_sort_dirs().empty());
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
     std::vector<fs::path> dates = {"10-10-2020", "11-10-2020", "12-10-2020"};
@@ -138,7 +138,7 @@ TEST(FsSubWorkerNotAuthUsr, CreateDayDirAndRemoveExpired) {
                       EXPECT_TRUE(fs_worker.create_day_dir(static_cast<std::string>(date)));
                       EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
                       std::error_code ec;
-                      EXPECT_TRUE(fs::exists(fs_worker.get_root_path() / date, ec));
+                      EXPECT_TRUE(fs::exists(fs_worker.get_root() / date, ec));
                   });
 
     auto sort_dirs = fs_worker.get_sort_dirs();
@@ -164,9 +164,9 @@ TEST(FsSubWorkerNotAuthUsr, CreateDayDirAndRemoveExpired) {
     fs::remove_all(root_path);
 }
 
-TEST(FsSubWorkerNotAuthUsr, MoveAndGetFile) {
+TEST(FsNotAuthUsr, MoveAndGetFile) {
     fs::path root_path = TEST_PATH/ fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    FsSubWorkerNotAuthUsr fs_worker((root_path));
+    FsNotAuthUsr fs_worker((root_path));
     EXPECT_TRUE(fs_worker.get_sort_dirs().empty());
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
 
@@ -178,7 +178,7 @@ TEST(FsSubWorkerNotAuthUsr, MoveAndGetFile) {
                       EXPECT_TRUE(fs_worker.create_day_dir(static_cast<std::string>(date)));
                       EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
                       std::error_code ec;
-                      EXPECT_TRUE(fs::exists(fs_worker.get_root_path() / date, ec));
+                      EXPECT_TRUE(fs::exists(fs_worker.get_root() / date, ec));
                   });
 
     auto sort_dirs = fs_worker.get_sort_dirs();
@@ -187,7 +187,7 @@ TEST(FsSubWorkerNotAuthUsr, MoveAndGetFile) {
     fs::path file_path = root_path / fs::path("test_move");
     std::ofstream file(file_path);
     ASSERT_TRUE(file.is_open());
-    file << "This is test of FsSubWorkerNotAuthUsr::move_file()";
+    file << "This is test of FsNotAuthUsr::move_file()";
     file.close();
 
     fs::path file_hlink_path = root_path / fs::path("test_move_hlink");
