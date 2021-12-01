@@ -41,6 +41,7 @@ private:
         S_KEY,
         S_VALUE,
         S_SERVER_START,
+        S_DATABASE_START,
         S_COUNT,
         S_ERR,
         S_END
@@ -54,6 +55,8 @@ private:
         L_KEY,
         L_VALUE,
         L_SERVER_START,
+        L_DATABASE_START,
+        L_DATABASE_END,
         L_SERVER_END,
         L_COUNT,
         L_ERR

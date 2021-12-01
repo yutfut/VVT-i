@@ -9,5 +9,5 @@ add_subdirectory(project)
 add_subdirectory(test)
 
 # Make executable sever program
-# add_executable(server.out main.cpp)
-# target_link_libraries(server.out server_lib)
+add_executable(server.out main.cpp)
+target_link_libraries(server.out server_lib)

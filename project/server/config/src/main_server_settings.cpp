@@ -121,6 +121,10 @@ int MainServerSettings::get_lexeme(const std::string& config, int& pos, const st
             {
                 return L_SERVER_START;
             }
+            if (*iter == "database")
+            {
+                return L_DATABASE_START;
+            }
             return L_KEY;
         }
     }
@@ -156,16 +160,16 @@ void MainServerSettings::parse_config()
 {
     std::string config_text;
 
-    config_text = get_string_from_file(this->config_filename);
+    config_text = this->get_string_from_file(this->config_filename);
     int pos = 0;
 
     state_t stages[S_COUNT][L_COUNT] = {
-        /*L_PROTOCOL     L_BRACE_OPEN L_BRACE_CLOSE L_NEW_LINE L_KEY L_VALUE L_SERVER_START L_SERVER_END*/
-        /*S_START*/ {S_BRACE_OPEN, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
-        /*S_BRACE_OPEN*/ {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
-        /*S_KEY*/ {S_ERR, S_ERR, S_END, S_KEY, S_VALUE, S_ERR, S_SERVER_START, S_KEY},
-        /*S_VALUE*/ {S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_KEY, S_ERR, S_ERR},
-        /*S_SERVER_START*/ {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
+        {S_BRACE_OPEN, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
+        {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
+        {S_ERR, S_ERR, S_END, S_KEY, S_VALUE, S_ERR, S_SERVER_START, S_DATABASE_START, S_KEY, S_KEY},
+        {S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR},
+        {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
+        {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
     };
 
     state_t state = S_START;
@@ -174,13 +178,21 @@ void MainServerSettings::parse_config()
     int property_number;
 
     bool is_server_adding = false, has_server_added = false;
+    bool is_database_adding = false, has_database_added = false;
 
     while (state != S_END && state != S_ERR)
     {
         pos_before = pos;
         if (is_server_adding)
         {
-            lexeme = static_cast<lexeme_t>(get_lexeme(config_text, pos, this->server.valid_properties));
+            if (is_database_adding)
+            {
+                lexeme = static_cast<lexeme_t>(get_lexeme(config_text, pos, this->server.database_valid_properties));
+            }
+            else
+            {
+                lexeme = static_cast<lexeme_t>(get_lexeme(config_text, pos, this->server.valid_properties));
+            }
         }
         else
         {
@@ -202,8 +214,16 @@ void MainServerSettings::parse_config()
         {
             if (is_server_adding)
             {
-                property_number = this->server.get_number_of_property(
-                    config_text.substr(pos_before, pos - pos_before));
+                if (is_database_adding)
+                {
+                    property_number = this->server.get_number_of_database_property(
+                        config_text.substr(pos_before, pos - pos_before));
+                }
+                else
+                {
+                    property_number = this->server.get_number_of_property(
+                        config_text.substr(pos_before, pos - pos_before));
+                }
                 if (property_number == -1)
                 {
                     state = S_ERR;
@@ -227,8 +247,17 @@ void MainServerSettings::parse_config()
             {
                 try
                 {
-                    this->server.set_property(property_number,
-                        config_text.substr(pos_before, pos - pos_before));
+                    if (is_database_adding)
+                    {
+                        this->server.set_database_property(property_number,
+                            config_text.substr(pos_before, pos - pos_before));
+
+                    }
+                    else
+                    {
+                        this->server.set_property(property_number,
+                            config_text.substr(pos_before, pos - pos_before));
+                    }
                 }
                 catch (std::exception& e)
                 {
@@ -258,6 +287,21 @@ void MainServerSettings::parse_config()
             }
             is_server_adding = true;
             has_server_added = true;
+        }
+        else if (lexeme == L_DATABASE_START && stages[state][lexeme] == S_DATABASE_START)
+        {
+            if (!is_server_adding || is_database_adding || has_database_added)
+            {
+                state = S_ERR;
+                continue;
+            }
+            is_database_adding = true;
+            has_database_added = true;
+        }
+        else if (lexeme == L_BRACE_CLOSE && is_database_adding)
+        {
+            is_database_adding = false;
+            lexeme = L_DATABASE_END;
         }
         else if (lexeme == L_BRACE_CLOSE && is_server_adding)
         {
