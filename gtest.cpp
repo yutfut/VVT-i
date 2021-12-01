@@ -1,7 +1,7 @@
 // Copyright 2021 Diakonov Andrey
 
 #include <gtest/gtest.h>
-
+#include <ctime>
 #include "data_base.h"
 
 
@@ -9,9 +9,38 @@
 
 
 TEST(DATA_BASE_TEST, DATA_BASE) {
-    DataBase db;
-    EXPECT_EQ(db.init(), 0);
-    EXPECT_EQ(db.init(), 1);
+    DataBase db_1("", "", "", "", "");
+    EXPECT_EQ(db_1.init(), 0);
+    DataBase db_2("postgres", "postgres", "5432", "localhost", "vvti");
+    EXPECT_EQ(db_2.init(), 0);
+    DataBase db_3("postgres", "postgres", "5432", "localhost", "vvti1");
+    EXPECT_EQ(db_3.init(), -1);
+}
+
+
+///---Work in tmp mode---///
+
+
+TEST(DATA_BASE_TEST, WORK_WITH_TMP_FILES) {
+    DataBase db("", "", "", "", "");
+    auto unauth_user_file_1 = db.add_unauth_user_file("first_file", "password_1");
+    auto unauth_user_file_2 = db.add_unauth_user_file("second_file", "password_2");
+    auto unauth_user_file_3 = db.add_unauth_user_file("third_file", "password_3");
+
+    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_1.filename, "qwertyui"), 0);
+    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_1.filename, ""), 1);
+    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_2.filename, "type1"), 0);
+    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_2.filename, "type1234"), 1);
+    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_3.filename, "type1234"), 1);
+
+    std::time_t t = std::time(0);   // get time now
+    std::tm* now = std::localtime(&t);
+    std::string curr_date;
+    curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
+            + "-" + std::to_string(now->tm_mday);
+
+    db.delete_unauth_user_files(curr_date);
+    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_1.filename, ""), 0);
 }
 
 
@@ -19,34 +48,34 @@ TEST(DATA_BASE_TEST, DATA_BASE) {
 
 
 TEST(DATA_BASE_TEST, CHECK_EMAIL_FREE) {
-    DataBase db;
+    DataBase db("", "", "", "", "");
     db.try_register("Andrey", "fart@gmail.com", "1234");
     EXPECT_EQ(db.is_email_free("fart@gmail.co"), 1);
     EXPECT_EQ(db.is_email_free("fart@gmail.com"), 0);
 }
 
 TEST(DATA_BASE_TEST, SAME_EMAILS) {
-    DataBase db;
+    DataBase db("", "", "", "", "");
     db.try_register("Andrey", "fart@gmail.com", "1234");
     EXPECT_EQ(db.try_register("Andrey", "fart@gmail.com", "1234"), -1);
 }
 
 TEST(DATA_BASE_TEST, NOT_VALID_DATA_TO_AUTH) {
-    DataBase db;
+    DataBase db("", "", "", "", "");
     db.try_register("Andrey", "fart@gmail.com", "1234");
     EXPECT_EQ(db.try_auth("fart@gmail.com", "123"), -1);
     EXPECT_EQ(db.try_auth("fart@gmail.co", "1234"), -1);
 }
 
 TEST(DATA_BASE_TEST, VALID_DATA_TO_AUTH) {
-    DataBase db;
+    DataBase db("", "", "", "", "");
     db.try_register("Andrey", "fart@gmail.com", "1234");
     EXPECT_EQ(db.try_auth("fart@gmail.com", "1234"), 1);
 }
 
 TEST(DATA_BASE_TEST, GET_EMAIL) {
-    DataBase db;
-    db.get_id_auth_user();
+    DataBase db("", "", "", "", "");
+    db.get_id_auth_user("fart@gmail.com");
     db.try_register("Andrey", "fart@gmail.com", "1234");
     EXPECT_EQ(db.get_email(1), "fart@gmail.com");
 }
@@ -56,11 +85,11 @@ TEST(DATA_BASE_TEST, GET_EMAIL) {
 
 
 TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
-    DataBase db;
-    db.push_regular_file(1, "first_dir", "1.txt");
-    db.push_regular_file(1, "first_dir", "2.txt");
-    db.push_regular_file(1, "first_dir/second_dir", "2.txt");
-    db.delete_regular_file(1, "first_dir", "1.txt");
+    DataBase db("", "", "", "", "");
+    db.add_auth_user_file(1, "first_dir", "1.txt");
+    db.add_auth_user_file(1, "first_dir", "2.txt");
+    db.add_auth_user_file(1, "first_dir/second_dir", "2.txt");
+    db.add_auth_user_file(1, "first_dir", "1.txt");
     db.change_file_name(1, "first_dir", "2.txt", "3.txt");
 
     std::vector<std::string> test_files = {"3.txt"};
@@ -71,30 +100,11 @@ TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
 }
 
 
-///---Work in tmp mode---///
-
-
-TEST(DATA_BASE_TEST, WORK_WITH_TMP_FILES) {
-    DataBase db;
-    auto unauth_user_file_1 = db.add_unauth_user_file(1, "06.06.06", "");
-    auto unauth_user_file_2 = db.add_unauth_user_file(1, "05.05.05", "type1234");
-    auto unauth_user_file_3 = db.add_unauth_user_file(1, "04.04.04", "type1234");
-
-    db.delete_unauth_user_file("23.09.09");
-
-    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_1.filename, "qwertyui"), 0);
-    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_1.filename, ""), 1);
-    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_2.filename, "type1"), 0);
-    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_2.filename, "type1234"), 1);
-    EXPECT_EQ(db.has_access_on_unauth_user_file(unauth_user_file_3.filename, "type1234"), 1);
-}
-
-
 ///---Access in group mode---///
 
 
 TEST(DATA_BASE_TEST, GROUP_MODE) {
-    DataBase db;
+    DataBase db("", "", "", "", "");
     db.try_register("Andrey", "fart@gmail.com", "1234");
     db.try_register("Ivan", "ivan@mail.ru", "IVAN");
     db.try_register("Sergey", "sergey@mail.ru", "SERGEY");
