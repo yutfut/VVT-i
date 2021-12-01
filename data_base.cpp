@@ -14,35 +14,28 @@ DataBase::~DataBase() {
     delete transaction;
 }
 
-void DataBase::exec_command(const std::string &command) {
-        transaction->exec(command);
-}
-
 int DataBase::init() {
     try {
-        std::string str_query;
-        pqxx::result res;
-
-        exec_command("CREATE TABLE IF NOT EXISTS Users(id SERIAL PRIMARY KEY, username TEXT NOT NULL, "
+        transaction->exec("CREATE TABLE IF NOT EXISTS Users(id SERIAL PRIMARY KEY, username TEXT NOT NULL, "
                      "email TEXT NOT NULL, password TEXT NOT NULL);");
 
-        exec_command("CREATE TABLE IF NOT EXISTS Person_dir(user_id SERIAL REFERENCES Users(id), "
+        transaction->exec("CREATE TABLE IF NOT EXISTS Person_dir(user_id SERIAL REFERENCES Users(id), "
                      "dir_storage_path TEXT NOT NULL);");
 
-        exec_command("CREATE TABLE IF NOT EXISTS Groups(id SERIAL PRIMARY KEY, dir_storage_path TEXT UNIQUE);");
+        transaction->exec("CREATE TABLE IF NOT EXISTS Groups(id SERIAL PRIMARY KEY, dir_storage_path TEXT UNIQUE);");
 
-        exec_command("CREATE TABLE IF NOT EXISTS Group_dir("
+        transaction->exec("CREATE TABLE IF NOT EXISTS Group_dir("
                         "user_id SERIAL REFERENCES Users(id), group_id SERIAL REFERENCES Groups(id), group_name TEXT, modifiers TEXT);");
 
 
-        exec_command("CREATE TABLE IF NOT EXISTS Auth_user_files("
+        transaction->exec("CREATE TABLE IF NOT EXISTS Auth_user_files("
                                         "user_id SERIAL REFERENCES Users(id), "
                                         "dir_path TEXT REFERENCES Groups(dir_storage_path));");
         // ADD reference to
 
-        exec_command("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
+        transaction->exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
 
-        exec_command("CREATE TABLE IF NOT EXISTS Unauth_user_files("
+        transaction->exec("CREATE TABLE IF NOT EXISTS Unauth_user_files("
                                           "uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(), user_filename TEXT, password TEXT, "
                                           "upload_date DATE DEFAULT CURRENT_DATE);");
 

@@ -51,7 +51,6 @@ public:
 ///---DataBase/Tables---///
 
     int init();
-    void exec_command(const std::string &command);
 
 ///---Work in tmp mode---///
 
