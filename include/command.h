@@ -7,6 +7,11 @@
 
 #include <iostream>
 #include <string>
+
+#include <curses.h>
+#include <stdio.h>
+#include <regex>
+
 #include "validation.h"
 #include "http_request.h"
 
@@ -16,6 +21,8 @@ public:
     static int search_file(const std::string& file_name);
 
     static int work_with_file(const std::string& command);
+
+    static int download(const std::string& command);
 
     static int work_with_chmod(const std::string& command);
 

@@ -17,25 +17,58 @@ int Client::role_command(const std::string& command) {
     std::string first_part_command = command.substr(0, pos);
     std::string rest_part_command = command.substr(pos + 1);
     if (first_part_command == "upload") {
-        return Command::work_with_file(rest_part_command);
+        if(first_part_command != rest_part_command) {
+            return Command::work_with_file(rest_part_command);
+        } else {
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
+    }
+    if (first_part_command == "download") {
+        if(first_part_command != rest_part_command) {
+            return Command::download(rest_part_command);
+        } else {
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
     }
     if (first_part_command == "chmod") {
-        return Command::work_with_chmod(rest_part_command);
+        if(first_part_command != rest_part_command) {
+            return Command::work_with_chmod(rest_part_command);
+        } else {
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
     }
     if (first_part_command == "mkdir") {
-        return Command::work_with_directory(rest_part_command);
+        if(first_part_command != rest_part_command) {
+            return Command::work_with_directory(rest_part_command);
+        } else {
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
     }
     if (first_part_command == "exit") {
         return 1;
     }
     if (first_part_command == "login") {
-        return user.login(rest_part_command);
+        if(first_part_command != rest_part_command) {
+            return user.login(rest_part_command);
+        } else {
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
     }
     if (first_part_command == "logout") {
         return user.logout();
     }
     if (first_part_command == "registration") {
-        return user.register_user(rest_part_command);
+        if(first_part_command != rest_part_command) {
+            return user.register_user(rest_part_command);
+        } else {
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
     }
     std::cout << "Команды не существует" << std::endl;
     return -1;
@@ -43,8 +76,7 @@ int Client::role_command(const std::string& command) {
 
 int Client::validation_command(const std::string& command) {
     if (command.empty()) {
-        std::cout << "Ошибка ввода команды" << std::endl;
-        return -1;
+        return 2;
     }
     return role_command(command);
 }
@@ -58,6 +90,9 @@ void Client::get_command() {
         int role = validation_command(command);
         if (role == 1) {
             break;
+        }
+        if (role == 2) {
+            continue;
         }
         if (role == 0) {
             std::cout << "SUCСESS" << std::endl;

@@ -5,6 +5,13 @@
 #ifndef VVT_I_HTTP_REQEST_H
 #define VVT_I_HTTP_REQEST_H
 
+#include <errno.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netdb.h>       // gethostbyname
+#include <netinet/in.h>  // struct sockaddr_in
+#include <string>
+
 class HTTPRequest {
 public:
     static int send();

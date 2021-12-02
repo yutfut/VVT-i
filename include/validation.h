@@ -7,12 +7,15 @@
 
 #include <iostream>
 #include <string>
+#include <regex>
 
 class Validator {
 public:
     static int validate_email(const std::string& email);
 
     static int validate_password(const std::string& password);
+
+    static int validate_key(const std::string& key);
 
     static int validate_chmod(const std::string& chmod);
 
