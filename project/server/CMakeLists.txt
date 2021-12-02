@@ -10,11 +10,11 @@ if(Boost_FOUND)
   aux_source_directory(config/src CONFIG_SRC)
   aux_source_directory(http/src HTTP_SRC)
   aux_source_directory(logs/src LOG_SRC)
-  # aux_source_directory(main/src MAIN_SRC)
-  # aux_source_directory(workers/src WORKERS_SRC)
+  aux_source_directory(main/src MAIN_SRC)
+  aux_source_directory(workers/src WORKERS_SRC)
 
   # Create server library
-  add_library(server_lib STATIC ${CONFIG_SRC} ${HTTP_SRC} ${LOG_SRC})
+  add_library(server_lib STATIC ${CONFIG_SRC} ${HTTP_SRC} ${LOG_SRC} ${MAIN_SRC} ${WORKERS_SRC})
   target_include_directories(
     server_lib
     PUBLIC config/include http/include logs/include main/include workers/include

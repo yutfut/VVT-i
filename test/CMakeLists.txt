@@ -6,8 +6,10 @@ project(test)
 find_package(GTest REQUIRED)
 
 if(GTest_FOUND)
-  add_executable(test.out src/main.cpp)
-  target_include_directories(test.out PRIVATE include)
+  # Find all source files
+  aux_source_directory(server/src SERVER_SRC)
+
+  add_executable(test.out main.cpp ${SERVER_SRC})
   target_link_libraries(test.out server_lib ${GTEST_LIBRARIES} Threads::Threads)
 else()
   message(FATAL_ERROR "GTest has not been installed!")
