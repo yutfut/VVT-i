@@ -86,6 +86,9 @@ bool ClientConnection::get_request() {
 }
 
 bool ClientConnection::handle_request() {
+    std::stringstream command(request.get_headers()["command"]);
+    response = HttpResponse();
+    //
     return true;
 }
 
