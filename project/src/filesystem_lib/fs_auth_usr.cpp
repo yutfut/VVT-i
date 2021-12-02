@@ -3,8 +3,9 @@
 #include <string>
 #include <filesystem>
 #include <vector>
-#include <filesystem_lib.hpp>
+#include <fs_worker.hpp>
 #include <fstream>
+#include "fs_auth_usr.h"
 
 FsAuthUsr::FsAuthUsr(const fs::path &user_dir) : root_path(user_dir) {}
 

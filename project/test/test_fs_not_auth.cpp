@@ -1,8 +1,8 @@
 // Copyright 2021 nat-s.skv@mail.ru
 
 #include <gtest/gtest.h>
-#include <filesystem_lib.hpp>
 #include <fstream>
+#include <fs_not_auth_usr.h>
 
 FsNotAuthUsr create_fs_not_auth_usr(const fs::path &root_path) {
     FsNotAuthUsr fs_worker(root_path);
@@ -20,7 +20,6 @@ protected:
         EXPECT_EQ(fs_worker1.err_code, exp_errc);
         EXPECT_TRUE(fs_worker1.get_sort_dirs().empty());
 
-        fs::remove_all(root_path);
         FsNotAuthUsr fs_worker2(std::move(root_path));
         EXPECT_EQ(fs_worker1, fs_worker2);
     }
@@ -50,15 +49,16 @@ TEST(FsNotAuthUsr, CreateValid) {
 
     FsNotAuthUsr fs_worker2(fs_worker1);
     EXPECT_EQ(fs_worker2, fs_worker1);
-    EXPECT_EQ(fs_worker2.err_code, std::errc(EEXIST));
 
     FsNotAuthUsr fs_worker3(std::move(fs_worker1));
     EXPECT_EQ(fs_worker3, fs_worker2);
-    EXPECT_EQ(fs_worker3.err_code, std::errc(EEXIST));
 
-    fs::remove_all(root_path);
+    std::error_code ec;
+    fs::remove_all(root_path, ec);
+    ASSERT_FALSE(static_cast<bool>(ec));
     FsNotAuthUsr fs_worker4(std::move(root_path));
     EXPECT_EQ(fs_worker4, fs_worker2);
+    //std::cout<<fs_worker4.err_code.category().name();
     EXPECT_FALSE(static_cast<bool>(fs_worker4.err_code));
 
     fs::remove_all(fs_worker4.get_root());
@@ -70,7 +70,7 @@ TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENOENT) {
 }
 
 TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENAMETOOLONG) {
-    fs::path root_path = TEST_PATH "/input_output" / fs::path(std::string{_PC_NAME_MAX, 'x'});
+    fs::path root_path = TEST_PATH "/input_output" / fs::path(std::string(static_cast<int>(fpathconf(0,_PC_NAME_MAX)) + 1, 'x'));
     FixtureCreateFsNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENAMETOOLONG));
 }
 
@@ -103,7 +103,7 @@ TEST(FsNotAuthUsr, MoveRoot) {
 
 TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENAMETOOLONG) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    fs::path new_root_path = TEST_PATH "/input_output" / fs::path(std::string{_PC_NAME_MAX, 'x'});
+    fs::path new_root_path = TEST_PATH "/input_output" / fs::path(std::string(static_cast<int>(fpathconf(0,_PC_NAME_MAX)) + 1, 'x'));
     FixtureFsNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENAMETOOLONG));
 }
 
@@ -134,7 +134,7 @@ TEST(FsNotAuthUsr, CreateDayDirAndRemoveExpired) {
 
     std::for_each(dates.begin(), dates.end(),
                   [&fs_worker](const auto &date) {
-                      fs_worker.reset_error_code();
+                      fs_worker.err_code.clear();
                       EXPECT_TRUE(fs_worker.create_day_dir(static_cast<std::string>(date)));
                       EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
                       std::error_code ec;
@@ -145,7 +145,7 @@ TEST(FsNotAuthUsr, CreateDayDirAndRemoveExpired) {
     EXPECT_EQ(dates, sort_dirs);
 
     for (size_t i = sort_dirs.size(); i > 0ul; --i) {
-        fs_worker.reset_error_code();
+        fs_worker.err_code.clear();
         fs_worker.set_file_expiration_date(i);
         EXPECT_TRUE(fs_worker.remove_expired_dirs());
 
@@ -174,7 +174,7 @@ TEST(FsNotAuthUsr, MoveAndGetFile) {
 
     std::for_each(dates.begin(), dates.end(),
                   [&fs_worker](const auto &date) {
-                      fs_worker.reset_error_code();
+                      fs_worker.err_code.clear();
                       EXPECT_TRUE(fs_worker.create_day_dir(static_cast<std::string>(date)));
                       EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
                       std::error_code ec;
@@ -198,7 +198,7 @@ TEST(FsNotAuthUsr, MoveAndGetFile) {
             EXPECT_FALSE("creation of hard link failed. Part of the test skipped.\n");
             continue;
         }
-        fs_worker.reset_error_code();
+        fs_worker.err_code.clear();
         fs::path fname_moved("moved_file");
         EXPECT_TRUE(fs_worker.move_file_to_fs(file_hlink_path, fname_moved, date_dir));
 
