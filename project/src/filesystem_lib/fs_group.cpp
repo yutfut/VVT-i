@@ -1,8 +1,9 @@
 // Copyright 2021 nat-s.skv@mail.ru
 
 #include <vector>
-#include <filesystem_lib.hpp>
+#include <fs_worker.hpp>
 #include <fstream>
+#include "fs_group.h"
 
 FsGroup::FsGroup(const fs::path &groups_dir): root_path(groups_dir) {}
 

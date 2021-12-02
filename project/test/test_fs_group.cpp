@@ -1,9 +1,9 @@
 // Copyright 2021 nat-s.skv@mail.ru
 
 #include <gtest/gtest.h>
-#include <filesystem_lib.hpp>
+#include <fs_worker.hpp>
 #include <fstream>
-
+/*
 FsGroup create_fs_group(const fs::path &root_path) {
     FsGroup fs_worker(root_path);
     EXPECT_EQ(root_path, fs_worker.get_root());
@@ -293,3 +293,4 @@ TEST(FsGroup, WorkWithUsersDirsInvalidArgs) {
 
     fs::remove_all(root_path);
 }
+*/
