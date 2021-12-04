@@ -11,7 +11,9 @@ set(PQXX /usr/local/include/pqxx)
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 
-add_executable(main.out main.cpp data_base.cpp database_connection.cpp)
+aux_source_directory(src SOURCE)
+
+add_executable(main.out main.cpp ${SOURCE})
 target_link_libraries(main.out ${PQXX_LIB} ${PQ_LIB})
-add_executable(gtest.out gtest.cpp data_base.cpp database_connection.cpp)
+add_executable(gtest.out gtest.cpp ${SOURCE})
 target_link_libraries(gtest.out ${GTEST_LIBRARIES} ${PQXX_LIB} ${PQ_LIB} Threads::Threads)

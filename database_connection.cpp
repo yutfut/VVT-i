@@ -52,6 +52,7 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
 
 DataBaseConnection::~DataBaseConnection() {
     conn->disconnect();
+    delete conn;
 }
 
 pqxx::connection *DataBaseConnection::get_connection() {
