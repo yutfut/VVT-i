@@ -1,24 +1,23 @@
 #include "database_connection.h"
 
 DataBaseConnection::DataBaseConnection(const std::string &user, const std::string &password,
-          const std::string &port, const std::string &host, const std::string &dbname) :
-          user(user), password(password), port(port), host(host), dbname(dbname) {
+                                       const std::string &port, const std::string &host, const std::string &dbname) :
+        user(user), password(password), port(port), host(host), dbname(dbname) {
     std::string str_query;
-    if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty()) {
+    if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty() || dbname == "vvti") {
 
         str_query = "postgresql://postgres:postgres@localhost:5432/postgres";
 
         try {
             conn = new pqxx::connection(str_query.c_str());
-        } catch (const pqxx::sql_error& e) {
-            // throw(e.what());
-            std::cout << e.what() << "\n";
-            return;
+        } catch (const pqxx::sql_error &e) {
+            throw std::string(e.what());
         }
 
         auto transaction = new pqxx::work(*conn, "transaction");
 
-        bool db_already_exist = transaction->exec("SELECT COUNT(*) FROM pg_database WHERE datname ='vvti'")[0][0].as<bool>();
+        bool db_already_exist = transaction->exec(
+                "SELECT COUNT(*) FROM pg_database WHERE datname ='vvti'")[0][0].as<bool>();
         transaction->commit();
 
         if (!db_already_exist) {
@@ -32,10 +31,8 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
         try {
             delete conn;
             conn = new pqxx::connection(str_query);
-        } catch (const pqxx::sql_error& e) {
-            // throw(e.what());
-            std::cout << e.what() << "\n";
-            return;
+        } catch (const pqxx::sql_error &e) {
+            throw std::string(e.what());
         }
 
         delete transaction;
@@ -45,10 +42,8 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
 
         try {
             conn = new pqxx::connection(str_query);
-        } catch (const pqxx::sql_error& e) {
-            // throw(e.what());
-            std::cout << e.what() << "\n";
-            return;
+        } catch (const pqxx::sql_error &e) {
+            throw std::string(e.what());
         }
     }
 }

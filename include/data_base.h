@@ -9,12 +9,17 @@
 
 
 class DataBase {
+
+private:
+    DataBaseConnection connection;
+    pqxx::nontransaction *transaction;
 public:
 
     DataBase();
+
     DataBase(const std::string &user, const std::string &password,
              const std::string &port, const std::string &host, const std::string &dbname);
-             
+
     ~DataBase() = default;
 
     int init();
@@ -24,8 +29,5 @@ public:
     AuthMode auth_mode;
     GroupMode group_mode;
 
-private:
 
-    DataBaseConnection connection;
-    pqxx::nontransaction *transaction;
 };
