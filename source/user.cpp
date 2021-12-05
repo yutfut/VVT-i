@@ -20,7 +20,7 @@ int User::register_user(const std::string& command) {
     if (Validator::validate_password(password)) {
         return -1;
     }
-    return HTTPRequest::send();
+    return HTTPRequest::send("");
 }
 
 int User::login(const std::string& command) {
@@ -35,7 +35,7 @@ int User::login(const std::string& command) {
             return -1;
         }
         authorize = true;
-        return HTTPRequest::send();
+        return HTTPRequest::send("");
     } else {
         std::cout << "Вы уже вошли в систему" << std::endl;
         return 0;
@@ -49,5 +49,5 @@ int User::logout() {
         std::cout << "Вы еще не вошли в систему" << std::endl;
     }
 
-    return HTTPRequest::send();
+    return HTTPRequest::send("");
 }

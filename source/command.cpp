@@ -3,50 +3,64 @@
 //
 
 #include "command.h"
+#include <cstring>
 
-
-int Command::search_file(const std::string& file_name) {
-    if (file_name.empty()) {
-        return -1;
+std::string input_password() {
+    std::string password, password_1;
+    while (true) {
+        password = getpass("Введите пароль: ");
+        password_1 = getpass("Введите пароль повторно: ");
+        if (password != password_1 || Validator::validate_password(password)) {
+            std::cout << "Пароли не совпадают попробуйте еще раз\n";
+        } else {
+            return password;
+        }
     }
-    return 0;
 }
+
+std::string check_password() {
+    std::string y_or_n;
+    std::cout << "Хотите задать пароль для файла? y/n:\t";
+    std::getline (std::cin, y_or_n);
+
+    if (y_or_n.empty() || y_or_n == "y") {
+        return input_password();
+    }
+    return "";
+}
+
+//FILE Command::search_file(const std::string& file_name) {
+//    if (file_name.empty()) {
+//        return -1;
+//    }
+//    return 0;
+//}
 
 int Command::work_with_file(const std::string& command) {
     size_t pos = command.find_first_of(' ');
-    std::string first_part_command = command.substr(0, pos);
-    if (Validator::validate_email(first_part_command)) {
+    std::string email = command.substr(0, pos);
+    if (Validator::validate_email(email)) {
         return -1;
     }
-    std::string rest_part_command = command.substr(pos + 1);
-    if (first_part_command != rest_part_command) {
-        if (search_file(rest_part_command)) {
-            return -1;
-        }
+
+    FILE *fp;
+    std::string file_name = command.substr(pos + 1);
+    if (email != file_name) {
+//        if (search_file(file_name)) {
+//            return -1;
+//        }
+//        if((fp=fopen(file_name.c_str(), "rb+")) == NULL) {
+//        if((fp=fopen(std::basic_string<char *>(file_name), "r")) == NULL) {
+//            std::cout << "Cannot open file.\n";
+//            return -1;
+//        }
     } else {
         std::cout << "Ошибка ввода команды" << std::endl;
         return -1;
     }
 
-    std::string password, password_1, y_or_n;
-
-    std::cout << "Хотите задать пароль для файла? y/n:\t";
-    std::getline (std::cin, y_or_n);
-    if (y_or_n.empty() || y_or_n == "y") {
-        while (true) {
-            std::cout << "Введите пароль: ";
-            std::getline (std::cin, password);
-            std::cout << "Введите пароль повторно: ";
-            std::getline (std::cin, password_1);
-            if (password != password_1 || Validator::validate_password(password)) {
-                std::cout << "Пароли не совпадают попробуйте еще раз\n";
-            } else {
-                break;
-            }
-        }
-
-    }
-    return HTTPRequest::send();
+    std::string password = check_password();
+    return HTTPRequest::send(file_name);
 }
 
 int Command::download(const std::string& command) {
@@ -64,7 +78,7 @@ int Command::download(const std::string& command) {
             std::cout << "Попробуйте еще раз: ";
         }
     }
-    return HTTPRequest::send();
+    return HTTPRequest::send("");
 }
 
 int Command::work_with_chmod(const std::string& command) {
@@ -72,7 +86,7 @@ int Command::work_with_chmod(const std::string& command) {
         std::cout << "Ошибка ввода команды" << std::endl;
         return -1;
     }
-    return HTTPRequest::send();
+    return HTTPRequest::send("");
 }
 
 int Command::work_with_directory(const std::string& command) {
@@ -80,5 +94,5 @@ int Command::work_with_directory(const std::string& command) {
         std::cout << "Ошибка ввода команды" << std::endl;
         return -1;
     }
-    return HTTPRequest::send();
+    return HTTPRequest::send("");
 }

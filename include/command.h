@@ -18,7 +18,7 @@
 class Command {
 public:
 
-    static int search_file(const std::string& file_name);
+//    static FILE search_file(const std::string& file_name);
 
     static int work_with_file(const std::string& command);
 
