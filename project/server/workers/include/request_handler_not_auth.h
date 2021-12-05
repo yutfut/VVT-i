@@ -2,6 +2,7 @@
 #include <http_request.h>
 #include <http_response.h>
 
+
 class RequestHandlerNotAuth{
 public:
     bool handle_request( HttpRequest& request, HttpResponse& response);
