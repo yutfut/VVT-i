@@ -1,21 +1,16 @@
 #include "data_base.h"
 
 
-DataBase::DataBase(const std::string &user, const std::string &password,
-                   const std::string &port, const std::string &host, const std::string &dbname) {
-    connection = new DataBaseConnection(user, password, port, host, dbname);
-    not_auth_mode = new NotAuthMode();
-    reg_auth = new RegAuth();
-    auth_mode = new AuthMode();
-    transaction = new pqxx::nontransaction(*connection->get_connection(), "transaction");
-}
+DataBase::DataBase(const std::string &user, 
+                    const std::string &password,
+                    const std::string &port, 
+                    const std::string &host, 
+                    const std::string &dbname) : 
+    connection(DataBaseConnection(user, password, port, host, dbname)),
+    transaction(new pqxx::nontransaction(*connection.get_connection(), "transaction")),
+    not_auth_mode(NotAuthMode(transaction)), reg_auth(RegAuth(transaction)),
+    auth_mode(AuthMode(transaction)), group_mode(GroupMode(transaction)) {}
 
-DataBase::~DataBase() {
-    delete not_auth_mode;
-    delete reg_auth;
-    delete auth_mode;
-    delete transaction;
-}
 
 int DataBase::init() {
     try {
@@ -43,7 +38,8 @@ int DataBase::init() {
                                           "upload_date DATE DEFAULT CURRENT_DATE);");
 
     } catch(const pqxx::sql_error& e) {
-        std::cout << "problem: "<< e.what() << std::endl;
+        // throw(e.what());
+        std::cout << e.what() << "\n";
         return -1;
     }
 

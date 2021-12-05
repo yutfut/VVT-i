@@ -1,19 +1,10 @@
-#ifndef VVT_I_DATABASE_CONNECTION_H
-#define VVT_I_DATABASE_CONNECTION_H
+#pragma once
 
-#include <iostream>
-#include <string>
-#include <pqxx/pqxx>
-#include <pqxx/transaction>
-#include <pqxx/connection>
-
-#include <pqxx/result.hxx>
-#include <pqxx/transaction.hxx>
-#include <pqxx/transaction_base>
-#include <pqxx/transaction_base.hxx>
+#include "library_list.h"
 
 class DataBaseConnection {
 public:
+
     DataBaseConnection(const std::string &user, const std::string &password,
                                 const std::string &port, const std::string &host, const std::string &dbname);
     ~DataBaseConnection();
@@ -26,9 +17,7 @@ public:
     std::string get_host();
 
 private:
+
     pqxx::connection *conn;
     std::string user, password, port, dbname, host;
 };
-
-
-#endif //VVT_I_DATABASE_CONNECTION_H

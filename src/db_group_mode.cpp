@@ -1,6 +1,9 @@
 #include "db_group_mode.h"
 
 
+GroupMode::GroupMode(pqxx::nontransaction *transaction) :
+                    transaction(transaction) {}
+
 int GroupMode::create_group(int user_id, const std::string &group_name) {
     return 0;
 }

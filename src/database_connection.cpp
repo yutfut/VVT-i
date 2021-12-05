@@ -11,7 +11,8 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
         try {
             conn = new pqxx::connection(str_query.c_str());
         } catch (const pqxx::sql_error& e) {
-            std::cout << "problem: " << e.what() << std::endl;
+            // throw(e.what());
+            std::cout << e.what() << "\n";
             return;
         }
 
@@ -32,7 +33,8 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
             delete conn;
             conn = new pqxx::connection(str_query);
         } catch (const pqxx::sql_error& e) {
-            std::cout << "problem: " << e.what() << std::endl;
+            // throw(e.what());
+            std::cout << e.what() << "\n";
             return;
         }
 
@@ -44,7 +46,8 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
         try {
             conn = new pqxx::connection(str_query);
         } catch (const pqxx::sql_error& e) {
-            std::cout << "problem: " << e.what() << std::endl;
+            // throw(e.what());
+            std::cout << e.what() << "\n";
             return;
         }
     }

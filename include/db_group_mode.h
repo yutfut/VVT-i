@@ -1,9 +1,12 @@
-#include <string>
+#pragma once
 
-#include "structures.h"
+#include "library_list.h"
 
 class GroupMode {
 public:
+
+    GroupMode(pqxx::nontransaction *transaction);
+
     int create_group(int user_id, const std::string &group_name);                 // return group uuid if success or -1 if already exists
     bool has_access_on_action(int user_id, int group_id, action_t action);        // return bool (true/false)
     int delete_group(int user_id, int group_id);                                  // return path to group directory
@@ -18,4 +21,8 @@ public:
     int set_chmod(modifiers_t modes);                                             // return success (0) or not (1)
     modifiers_t get_access_modifiers(
             int group_id);                               // return modifiers or null if directory is not group
+
+private:
+
+    pqxx::nontransaction *transaction;
 };

@@ -1,6 +1,9 @@
 #include "db_reg_auth.h"
 
 
+RegAuth::RegAuth(pqxx::nontransaction* transaction) :
+                                    transaction(transaction) {}
+
 bool RegAuth::is_email_free(const std::string &email) {
     std::string str_query;
     str_query = "SELECT email FROM User WHERE email = " + email + ";";

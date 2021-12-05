@@ -3,17 +3,18 @@ project(VVT_i)
 
 find_library(PQXX_LIB pqxx)
 find_library(PQ_LIB pq)
+find_package(GTest REQUIRED)
+find_package(Threads REQUIRED)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
 set(PQXX /usr/local/include/pqxx)
 
-find_package(GTest REQUIRED)
-find_package(Threads REQUIRED)
-
-aux_source_directory(src SOURCE)
-
-add_executable(main.out main.cpp ${SOURCE})
+add_executable(main.out main.cpp src/data_base.cpp src/database_connection.cpp 
+src/db_auth_mode.cpp src/db_group_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp)
 target_link_libraries(main.out ${PQXX_LIB} ${PQ_LIB})
-add_executable(gtest.out gtest.cpp ${SOURCE})
-target_link_libraries(gtest.out ${GTEST_LIBRARIES} ${PQXX_LIB} ${PQ_LIB} Threads::Threads)
+target_include_directories(main.out PUBLIC ./include)
+
+# add_executable(gtest.out gtest.cpp ${SOURCE_DIRECTORY})
+# target_link_libraries(gtest.out ${GTEST_LIBRARIES} ${PQXX_LIB} ${PQ_LIB} Threads::Threads)
+# target_include_directories(gtest.out PUBLIC ./include)

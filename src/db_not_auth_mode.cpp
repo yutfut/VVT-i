@@ -1,5 +1,8 @@
-#include "db_not_autn_mode.h"
+#include "db_not_auth_mode.h"
 
+
+NotAuthMode::NotAuthMode(pqxx::nontransaction *transaction) :
+                                        transaction(transaction) {}
 
 unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_filename,
                                                   const std::string &option_password) {
@@ -8,7 +11,7 @@ unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_fil
     str_query = "INSERT INTO Unauth_user_files(user_filename, password) VALUES('"
                      + user_filename + "', '" + option_password + "') RETURNING uuid, upload_date;";
 
-    pqxx::result res = transaction->exec(str_query);
+    pqxx::result res = transaction->exec(str_query  );
     unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
                                        .filename = user_filename,
                                        .upload_data = res[0][1].as<std::string>()};
