@@ -13,7 +13,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_RESPONSE_WITH_BODY) {
         "\tHELLO WORLD!\n"
         "</div>\n";
 
-    std::unordered_map<std::string, std::string> headers;
+    std::map<std::string, std::string> headers;
     headers[CONTENT_TYPE_HDR] = "text/html";
     headers[CONTENT_LENGTH_HDR] = "26";
     headers[SERVER_HDR] = SERVER_VL;
@@ -29,7 +29,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_RESPONSE_WITHOUT_BODY) {
         "Server: VVT-i\n"
         "\n";
 
-    std::unordered_map<std::string, std::string> headers;
+    std::map<std::string, std::string> headers;
     headers[SERVER_HDR] = SERVER_VL;
 
     HttpResponse response(headers, "", 1, 1, 200, "OK");

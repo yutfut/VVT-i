@@ -6,11 +6,19 @@ class HttpResponse : public HttpBase {
 public:
     HttpResponse() = default;
 
-    HttpResponse(std::unordered_map<std::string, std::string> headers, std::string body,
+    HttpResponse(const std::map<std::string, std::string> &headers, const std::string &body,
                     int major,
                     int minor,
                     int status,
                     const std::string &message);
+
+    HttpResponse(std::map<std::string, std::string> &&headers, std::string &&body,
+                 int major,
+                 int minor,
+                 int status,
+                 std::string &&message);
+
+    HttpResponse &operator=(HttpResponse &&src)  noexcept = default;
 
     ~HttpResponse() = default;
 

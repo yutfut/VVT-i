@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <unistd.h>
 
 #include "http_defines.h"
@@ -10,8 +10,11 @@ class HttpBase {
 public:
     HttpBase() = default;
 
-     HttpBase(const std::unordered_map<std::string, std::string>& headers, std::string body = "",
-            int major = -1, int minor = -1);
+    HttpBase(const std::map<std::string, std::string> &headers, const std::string &body,
+             int major = -1, int minor = -1);
+
+    HttpBase(std::map<std::string, std::string> &&headers, std::string &&body,
+             int major = -1, int minor = -1);
 
     ~HttpBase() = default;
 
@@ -19,7 +22,7 @@ public:
 
     int get_major() const;
 
-    std::unordered_map<std::string, std::string>& get_headers();
+    std::map<std::string, std::string> &get_headers();
 
     std::string get_body() const;
 
@@ -28,7 +31,7 @@ protected:
 
     int version_minor;
 
-    std::unordered_map<std::string, std::string> headers;
+    std::map<std::string, std::string> headers;
 
     std::string body;
 };
