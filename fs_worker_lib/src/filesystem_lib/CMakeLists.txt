@@ -11,7 +11,7 @@ set(FILESYSTEM_LIB_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/fs_not_auth.cpp
 set(CMAKE_CXX_FLAGS "-g -O0 -Wall  -Wextra  -Wpedantic -fprofile-arcs -pthread")
 #set(CMAKE_CXX_FLAGS "-g -O0 -Wall -Werror -Wextra -Wno-unused-variable -Wpedantic -fprofile-arcs -ftest-coverage -pthread")
 
-set(INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/project/include)
+set(INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 
 add_library(filesystem_lib STATIC ${FILESYSTEM_LIB_SRCS})
 target_include_directories(filesystem_lib PRIVATE ${INCLUDE_DIRS})
