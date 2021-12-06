@@ -13,11 +13,12 @@ if(Boost_FOUND)
   aux_source_directory(main/src MAIN_SRC)
   aux_source_directory(workers/src WORKERS_SRC)
 
+
   # Create server library
   add_library(server_lib STATIC ${CONFIG_SRC} ${HTTP_SRC} ${LOG_SRC} ${MAIN_SRC} ${WORKERS_SRC})
   target_include_directories(
     server_lib
-    PUBLIC config/include http/include logs/include main/include workers/include
+    PUBLIC config/include http/include logs/include main/include workers/include ../database_lib/include
   )
   target_link_libraries(server_lib Boost::log Boost::log_setup)
 else()
