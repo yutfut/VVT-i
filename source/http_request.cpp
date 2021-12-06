@@ -4,6 +4,73 @@
 
 #include "http_request.h"
 
+void HTTPRequest::init_sockaddr(struct sockaddr_in* name) {
+    name->sin_family = AF_INET;
+    name->sin_port = htons(8000);
+    inet_pton(AF_INET, "127.0.0.1", &(name->sin_addr));
+
+//    struct hostent* hostinfo = gethostbyname("vk.com");
+//    if (hostinfo == NULL) {
+//        fprintf(stderr, "Unknown host %s.\n", "vk.com");
+//        exit(EXIT_FAILURE);
+//    }
+//    name->sin_addr = *(struct in_addr*)hostinfo->h_addr;
+}
+
+void HTTPRequest::crate_message(std::string &file_name, std::string &message) {
+    std::string buff;
+    std::ifstream in(file_name);
+
+    if (in.is_open())
+    {
+        while (getline(in, buff))
+        {
+            message.append(buff.append("\n"));
+
+        }
+    }
+
+    in.close();
+}
+
+void HTTPRequest::write_to_server(int filedes, std::string msg) {
+    size_t left = msg.size();
+    ssize_t sent = 0;
+
+    int flags = 0;
+    while (left > 0) {
+        sent = ::send(filedes, msg.data() + sent, msg.size() - sent, flags);
+        if (-1 == sent)
+            throw std::runtime_error("write failed: " + std::string(strerror(errno)));
+
+        left -= sent;
+    }
+
+    std::cout << msg << std::endl;
+}
+
+void HTTPRequest::read_from_server(int filedes) {
+    char buf[1024];
+#ifdef __APPLE__
+    int n = ::recv(filedes, buf, sizeof(buf), 0);
+#else
+    int n = ::recv(filedes, buf, sizeof(buf), MSG_NOSIGNAL);
+#endif
+
+    if (-1 == n && errno != EAGAIN)
+        throw std::runtime_error("read failed: " + std::string(strerror(errno)));
+    if (0 == n)
+        throw std::runtime_error("client: " + std::to_string(filedes) +
+                                 " disconnected");
+    if (-1 == n)
+        throw std::runtime_error("client: " + std::to_string(filedes) +
+                                 " timeouted");
+
+    std::string ret(buf, buf + n);
+    std::cerr << "client: " << filedes << ", recv: \n"
+              << ret << " [" << n << " bytes]" << std::endl;
+}
+
 
 int HTTPRequest::send(std::string file_name) {
 
@@ -14,9 +81,7 @@ int HTTPRequest::send(std::string file_name) {
     }
 
     struct sockaddr_in server;
-    server.sin_family = AF_INET;
-    server.sin_port = htons(8000);
-    inet_pton(AF_INET, "127.0.0.1", &(server.sin_addr));
+    init_sockaddr(&server);
 
     if (connect(fd, (struct sockaddr*)&server, sizeof(server)) != 0) {
         close(fd);
@@ -24,63 +89,20 @@ int HTTPRequest::send(std::string file_name) {
         std::cout << "ошибка соединения\n";
     }
 
-    std::string msg = "Server: VVT-i\n", buff, message="";
-//    FILE *fp;
-
-//    if((fp=fopen(file_name.c_str(), "rb+")) == NULL) {
-//            std::cout << "Cannot open file.\n";
-//    }
-//
-//    while(fscanf(fp, "%d\n", &buff) != EOF) {
-//        std::cout << buff << std::endl;
-//        msg += buff;
-//    }
-//    fclose(fp);
-
-    std::ifstream in(file_name);
-
-    if (in.is_open())
-    {
-        while (getline(in, buff))
-        {
-            std::cout << buff << std::endl;
-            message.append(buff.append("\n"));
-
-        }
-    }
-    std::cout << message << std::endl;
-
+    std::string msg, buff, message="";
+    msg = "email: …\n"
+          "password: …\n"
+          "status: “status”/“error”\n"
+          "message: …\n"
+          "command: upload/download\n"
+          "filename: \n\n";
+    crate_message(file_name, message);
     msg.append(message);
 
-    in.close();
+    write_to_server(fd, msg);
+    read_from_server(fd);
 
-
-
-    std::cout << msg << std::endl;
-
-
-
-    size_t left = msg.size();
-    ssize_t sent = 0;
-    int flags = 0;
-    while (left > 0) {
-        sent = ::send(fd, msg.data() + sent, msg.size() - sent, flags);
-        if (-1 == sent) {
-            throw std::runtime_error(std::string(strerror(errno)));
-        }
-        left -= sent;
-    }
-//
-//    char buf[128];
-//
-//    int n = ::recv(fd, buf, sizeof(buf), /*flags*/0);
-//    if (-1 == n) {
-//        throw std::runtime_error(std::string(strerror(errno)));
-//    }
-//
-//    std::string ret(buf, buf + n);
-
-    int a = close(fd);
+    close(fd);
 
     return 0;
 }
