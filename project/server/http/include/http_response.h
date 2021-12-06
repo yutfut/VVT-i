@@ -6,7 +6,7 @@ class HttpResponse : public HttpBase {
 public:
     HttpResponse() = default;
 
-    HttpResponse(std::unordered_map<std::string, std::string> headers, std::string body,
+    HttpResponse(std::map<std::string, std::string> headers, std::string body,
                     int major,
                     int minor,
                     int status,

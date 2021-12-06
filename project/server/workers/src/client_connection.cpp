@@ -91,6 +91,14 @@ bool ClientConnection::handle_request() {
 
 bool ClientConnection::send_response() {
     bool has_written_data = false;
+
+    std::map<std::string, std::string> headers;
+    headers[CONTENT_TYPE_HDR] = "text/html";
+    headers[CONTENT_LENGTH_HDR] = "26";
+    headers[SERVER_HDR] = SERVER_VL;
+
+    this->response = HttpResponse(headers, "<div>\r\n\tHELLO WORLD!\r\n</div>\r\n", 1, 1, 200, "OK");
+
     std::string response_str = this->response.get_string();
 
     while (write(this->sock, response_str.c_str() + res_pos, sizeof(char)) == sizeof(char)) {
