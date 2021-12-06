@@ -6,7 +6,7 @@
 
 void HTTPRequest::init_sockaddr(struct sockaddr_in* name) {
     name->sin_family = AF_INET;
-    name->sin_port = htons(8000);
+    name->sin_port = htons(3000);
     inet_pton(AF_INET, "127.0.0.1", &(name->sin_addr));
 
 //    struct hostent* hostinfo = gethostbyname("vk.com");
