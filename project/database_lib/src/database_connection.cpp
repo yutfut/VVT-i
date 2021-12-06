@@ -1,28 +1,56 @@
 #include "database_connection.h"
 
-DataBaseConnection::DataBaseConnection(const database_configuration_t &config) :
-        user(config.user), password(config.password), port(config.port),
-        host(config.host), dbname(config.dbname), conn(nullptr) {
+DataBaseConnection::DataBaseConnection(const std::string &user, const std::string &password,
+                                       const std::string &port, const std::string &host, const std::string &dbname) :
+        user(user), password(password), port(port), host(host), dbname(dbname) {
+    std::string str_query;
+    if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty() || dbname == "vvti") {
 
-    if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty()) {
-        throw std::string("Error :  Check database configuration, not all settings filled\n");
+        str_query = "postgresql://postgres:postgres@localhost:5432/postgres";
+
+        try {
+            conn = new pqxx::connection(str_query.c_str());
+        } catch (const pqxx::sql_error &e) {
+            throw std::string(e.what());
+        }
+
+        auto transaction = new pqxx::work(*conn, "transaction");
+
+        bool db_already_exist = transaction->exec(
+                "SELECT COUNT(*) FROM pg_database WHERE datname ='vvti'")[0][0].as<bool>();
+        transaction->commit();
+
+        if (!db_already_exist) {
+            pqxx::nontransaction query(*conn);
+            query.exec("CREATE DATABASE vvti;");
+            query.commit();
+        }
+
+        str_query = "postgresql://postgres:postgres@localhost:5432/vvti";
+
+        try {
+            delete conn;
+            conn = new pqxx::connection(str_query);
+        } catch (const pqxx::sql_error &e) {
+            throw std::string(e.what());
+        }
+
+        delete transaction;
+    } else {
+        str_query = "user='" + user + "' password='" + password + "' host='" + host +
+                    "' port='" + port + "' dbname='" + dbname + "'";
+
+        try {
+            conn = new pqxx::connection(str_query);
+        } catch (const pqxx::sql_error &e) {
+            throw std::string(e.what());
+        }
     }
-
-    std::string str_query = fmt::format("postgresql://{0}:{1}@{2}:{3}/{4}", user, password, host, port, dbname);
-
-    try {
-        conn = new pqxx::connection(str_query);
-    } catch (const pqxx::sql_error &e) {
-        throw std::string(e.what());
-    }
-
 }
 
 DataBaseConnection::~DataBaseConnection() {
-    if (conn != nullptr && conn->is_open()) {
-        conn->disconnect();
-        delete conn;
-    }
+    conn->disconnect();
+    delete conn;
 }
 
 pqxx::connection *DataBaseConnection::get_connection() {

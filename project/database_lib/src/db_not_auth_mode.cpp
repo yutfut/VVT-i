@@ -1,67 +1,41 @@
 #include "db_not_auth_mode.h"
 
 
-NotAuthMode::NotAuthMode(pqxx::connection *conn) : connection(conn) {}
+NotAuthMode::NotAuthMode(pqxx::nontransaction *transaction) :
+                                        transaction(transaction) {}
 
+unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_filename,
+                                                  const std::string &option_password) {
+    unauth_file_data_t c;
+    std::string str_query;
+    str_query = "INSERT INTO Unauth_user_files(user_filename, password) VALUES('"
+                     + user_filename + "', '" + option_password + "') RETURNING uuid, upload_date;";
 
-unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
-                                         const std::string &option_password) {
-    pqxx::work transaction(*connection);
+    pqxx::result res = transaction->exec(str_query  );
+    unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
+                                       .filename = user_filename,
+                                       .upload_data = res[0][1].as<std::string>()};
 
-    try {
-        pqxx::result res = transaction.exec(fmt::format(ADD_UNAUTH_USER_FILE, user_filename, option_password));
+    return add_file_result;
+}
 
-        if (res.empty()) {
-            unauth_file_data_t empty_struct{};
-            return empty_struct;
-        }
+int NotAuthMode::delete_unauth_user_files(const std::string &upload_date) {
+    std::string str_query;
+    str_query = "DELETE FROM Unauth_user_files WHERE upload_date = '" + upload_date + "';";
+    pqxx::result res = transaction->exec(str_query);
 
-        unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
-                .filename = user_filename,
-                .upload_date = res[0][1].as<std::string>()};
+    return 0;
+}
 
-        transaction.commit();
+bool NotAuthMode::has_access_on_unauth_user_file(const std::string &file_uuid,
+                                              const std::string &option_password) {
+    std::string str_query;
+    str_query = "SELECT * FROM Unauth_user_files WHERE uuid::text = '" + file_uuid + "' AND password = '" + option_password + "';";
+    pqxx::result res = transaction->exec(str_query);
 
-        return add_file_result;
-    } catch (const pqxx::sql_error &e) {
-        transaction.abort();
-        std::cout << e.what() << "\n";
-        throw std::string(e.what());
+    if (res.empty()) {
+        return false;
     }
-}
 
-
-void NotAuthMode::delete_file(const std::string &uuid) {
-
-    simple_transaction_exec(fmt::format(DELETE_UNAUTH_USER_FILE, uuid), connection);
-}
-
-
-void NotAuthMode::delete_files_by_date(const std::string &upload_date) {
-
-    simple_transaction_exec(fmt::format(DELETE_FILES_BY_DATE, upload_date), connection);
-}
-
-
-unauth_file_data_t NotAuthMode::get_upload_file_date(const std::string &file_uuid,
-                                                     const std::string &option_password) {
-    pqxx::work transaction(*connection);
-
-    try {
-        pqxx::result res = transaction.exec(fmt::format(GET_UPLOAD_DATE, file_uuid, option_password));
-        transaction.commit();
-
-        if (res.empty()) {
-            return {};
-        }
-
-        unauth_file_data_t res_struct = {.uuid = file_uuid, .filename = res[0][0].as<std::string>(),
-                .upload_date = res[0][1].as<std::string>()};
-
-
-        return res_struct;
-    } catch (const pqxx::sql_error &e) {
-        transaction.abort();
-        throw std::string(e.what());
-    }
+    return true;
 }
