@@ -45,7 +45,7 @@ int HTTPRequest::response(const int &socket) {
 #ifdef __APPLE__
     int n = ::recv(socket, buf, sizeof(buf), 0);
 #else
-    int n = ::recv(client_socket, buf, sizeof(buf), MSG_NOSIGNAL);
+    int n = ::recv(socket, buf, sizeof(buf), MSG_NOSIGNAL);
 #endif
 
     if (-1 == n && errno != EAGAIN) {
