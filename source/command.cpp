@@ -29,38 +29,39 @@ std::string check_password() {
     return "";
 }
 
-//FILE Command::search_file(const std::string& file_name) {
-//    if (file_name.empty()) {
-//        return -1;
-//    }
-//    return 0;
-//}
+int Command::search_file(const std::string& file_name) {
+    if (file_name.empty()) {
+        return -1;
+    }
+    FILE *fp = fopen(file_name.c_str(), "r");
+    if (fp == NULL) {
+        std::cout << "файл не найден\n";
+        return -1;
+    }
+    fclose(fp);
+    return 0;
+}
 
-int Command::work_with_file(const std::string& command) {
+int Command::upload(const std::string& command) {
     size_t pos = command.find_first_of(' ');
     std::string email = command.substr(0, pos);
     if (Validator::validate_email(email)) {
         return -1;
     }
 
-    FILE *fp;
     std::string file_name = command.substr(pos + 1);
     if (email != file_name) {
-//        if (search_file(file_name)) {
-//            return -1;
-//        }
-//        if((fp=fopen(file_name.c_str(), "rb+")) == NULL) {
-//        if((fp=fopen(std::basic_string<char *>(file_name), "r")) == NULL) {
-//            std::cout << "Cannot open file.\n";
-//            return -1;
-//        }
+        if (search_file(file_name)) {
+            return -1;
+        }
     } else {
         std::cout << "Ошибка ввода команды" << std::endl;
         return -1;
     }
 
     std::string password = check_password();
-    return HTTPRequest::send(file_name);
+    std::string command_type = "upload";
+    return HTTPRequest::send(email, password, file_name, command_type);
 }
 
 int Command::download(const std::string& command) {
@@ -78,21 +79,24 @@ int Command::download(const std::string& command) {
             std::cout << "Попробуйте еще раз: ";
         }
     }
-    return HTTPRequest::send("");
+    std::string email = "";
+    std::string file_name = "";
+    std::string command_type = "download";
+    return HTTPRequest::send(email, password, file_name, command_type);
 }
 
-int Command::work_with_chmod(const std::string& command) {
-    if (Validator::validate_chmod(command)) {
-        std::cout << "Ошибка ввода команды" << std::endl;
-        return -1;
-    }
-    return HTTPRequest::send("");
-}
-
-int Command::work_with_directory(const std::string& command) {
-    if (Validator::validate_directory(command)) {
-        std::cout << "Ошибка ввода команды" << std::endl;
-        return -1;
-    }
-    return HTTPRequest::send("");
-}
+//int Command::work_with_chmod(const std::string& command) {
+//    if (Validator::validate_chmod(command)) {
+//        std::cout << "Ошибка ввода команды" << std::endl;
+//        return -1;
+//    }
+//    return HTTPRequest::send("", "", "", "");
+//}
+//
+//int Command::work_with_directory(const std::string& command) {
+//    if (Validator::validate_directory(command)) {
+//        std::cout << "Ошибка ввода команды" << std::endl;
+//        return -1;
+//    }
+//    return HTTPRequest::send("", "", "", "");
+//}

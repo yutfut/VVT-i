@@ -12,13 +12,20 @@ void Client::print() {
     std::cout << ">>>\t";
 }
 
+enum Commands
+{
+    UPLOAD,
+    DOWNLOAD,
+};
+
 int Client::role_command(const std::string& command) {
     size_t pos = command.find_first_of(' ');
     std::string first_part_command = command.substr(0, pos);
     std::string rest_part_command = command.substr(pos + 1);
+
     if (first_part_command == "upload") {
         if(first_part_command != rest_part_command) {
-            return Command::work_with_file(rest_part_command);
+            return Command::upload(rest_part_command);
         } else {
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
@@ -32,44 +39,44 @@ int Client::role_command(const std::string& command) {
             return -1;
         }
     }
-    if (first_part_command == "chmod") {
-        if(first_part_command != rest_part_command) {
-            return Command::work_with_chmod(rest_part_command);
-        } else {
-            std::cout << "Ошибка ввода команды" << std::endl;
-            return -1;
-        }
-    }
-    if (first_part_command == "mkdir") {
-        if(first_part_command != rest_part_command) {
-            return Command::work_with_directory(rest_part_command);
-        } else {
-            std::cout << "Ошибка ввода команды" << std::endl;
-            return -1;
-        }
-    }
-    if (first_part_command == "exit") {
-        return 1;
-    }
-    if (first_part_command == "login") {
-        if(first_part_command != rest_part_command) {
-            return user.login(rest_part_command);
-        } else {
-            std::cout << "Ошибка ввода команды" << std::endl;
-            return -1;
-        }
-    }
-    if (first_part_command == "logout") {
-        return user.logout();
-    }
-    if (first_part_command == "registration") {
-        if(first_part_command != rest_part_command) {
-            return user.register_user(rest_part_command);
-        } else {
-            std::cout << "Ошибка ввода команды" << std::endl;
-            return -1;
-        }
-    }
+//    if (first_part_command == "chmod") {
+//        if(first_part_command != rest_part_command) {
+//            return Command::work_with_chmod(rest_part_command);
+//        } else {
+//            std::cout << "Ошибка ввода команды" << std::endl;
+//            return -1;
+//        }
+//    }
+//    if (first_part_command == "mkdir") {
+//        if(first_part_command != rest_part_command) {
+//            return Command::work_with_directory(rest_part_command);
+//        } else {
+//            std::cout << "Ошибка ввода команды" << std::endl;
+//            return -1;
+//        }
+//    }
+//    if (first_part_command == "exit") {
+//        return 1;
+//    }
+//    if (first_part_command == "login") {
+//        if(first_part_command != rest_part_command) {
+//            return user.login(rest_part_command);
+//        } else {
+//            std::cout << "Ошибка ввода команды" << std::endl;
+//            return -1;
+//        }
+//    }
+//    if (first_part_command == "logout") {
+//        return user.logout();
+//    }
+//    if (first_part_command == "registration") {
+//        if(first_part_command != rest_part_command) {
+//            return user.register_user(rest_part_command);
+//        } else {
+//            std::cout << "Ошибка ввода команды" << std::endl;
+//            return -1;
+//        }
+//    }
     std::cout << "Команды не существует" << std::endl;
     return -1;
 }
@@ -82,7 +89,6 @@ int Client::validation_command(const std::string& command) {
 }
 
 void Client::get_command() {
-
     std::string command;
     while (true) {
         print();

@@ -24,15 +24,22 @@
 class HTTPRequest {
 public:
 
-    static void init_sockaddr(struct sockaddr_in* name);
+    static void init_socket_address(struct sockaddr_in &name);
 
     static void crate_message(std::string &file_name, std::string &message);
 
-    static void write_to_server(int filedes, std::string msg);
 
-    static void read_from_server(int filedes);
+    static void create_file(std::string &file_name, std::string &message);
 
-    static int send(std::string file_name);
+
+    static int request(int &socket, std::string msg);
+
+    static int response(int &socket);
+
+    static int send(std::string &email,
+                    std::string &password,
+                    std::string &file_name,
+                    std::string &command);
 };
 
 #endif //VVT_I_HTTP_REQEST_H

@@ -17,7 +17,6 @@ private:
     int id;
     std::string jwt;
     std::string email;
-    std::vector<std::string> *data;
 public:
     User();
 

@@ -8,7 +8,6 @@
 #include <iostream>
 #include <string>
 
-#include <curses.h>
 #include <stdio.h>
 #include <regex>
 
@@ -18,15 +17,15 @@
 class Command {
 public:
 
-//    static FILE search_file(const std::string& file_name);
+    static int search_file(const std::string& file_name);
 
-    static int work_with_file(const std::string& command);
+    static int upload(const std::string& command);
 
     static int download(const std::string& command);
 
-    static int work_with_chmod(const std::string& command);
-
-    static int work_with_directory(const std::string& command);
+//    static int work_with_chmod(const std::string& command);
+//
+//    static int work_with_directory(const std::string& command);
 };
 
 #endif //VVT_I_COMMAND_H
