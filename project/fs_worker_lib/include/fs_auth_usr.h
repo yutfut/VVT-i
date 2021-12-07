@@ -10,17 +10,17 @@
 
 namespace fs = std::filesystem;
 
-class FsAuthUsr : public IFsEntity {
+class FsWorkerAuthUsr : public IFsWorkerEntity {
 public:
-    explicit FsAuthUsr(const fs::path &user_dir);
+    explicit FsWorkerAuthUsr(const fs::path &user_dir);
 
-    explicit FsAuthUsr(fs::path &&user_dir);
+    explicit FsWorkerAuthUsr(fs::path &&user_dir);
 
-    FsAuthUsr(const FsAuthUsr &src);
+    FsWorkerAuthUsr(const FsWorkerAuthUsr &src);
 
-    FsAuthUsr(FsAuthUsr &&src) noexcept;
+    FsWorkerAuthUsr(FsWorkerAuthUsr &&src) noexcept;
 
-    ~FsAuthUsr() noexcept = default;
+    ~FsWorkerAuthUsr() noexcept = default;
 
     bool move_root(const fs::path &new_user_dir) noexcept override;
 
@@ -38,7 +38,7 @@ public:
 
     void reset_error_code() noexcept override;
 
-    bool operator==(const FsAuthUsr &rhs) const;
+    bool operator==(const FsWorkerAuthUsr &rhs) const;
 
     std::error_code err_code;
 

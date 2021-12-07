@@ -15,13 +15,13 @@ class FsWorker {
 private:
     fs::path root;
 public:
-    explicit FsWorker(const fs::path &_root);
+    explicit FsWorker(const fs::path &_root = root_path_default);
 
     explicit FsWorker(fs::path &&_root);
 
     FsWorker(const FsWorker &src);
 
-    FsWorker(FsWorker &&src) ;
+    FsWorker(FsWorker &&src) noexcept ;
 
     FsWorker &operator=(const FsWorker &);
 
@@ -31,15 +31,15 @@ public:
 
     const fs::path &get_root_dir() const noexcept;
 
-    void reset_error_code() noexcept;
-
-    std::error_code errc;
+    std::error_code err_code;
     static const fs::path not_auth_usrs_dir_default;
-    static const fs::path auth_usrs_dir_default;
-    static const fs::path groups_dir_default;
-    FsNotAuthUsr not_auth_usr;
-    //FsAuthUsr auth_usr;
-    //FsGroup group;
+    static const fs::path root_path_default;
+    FsWorkerNotAuthUsr not_auth_usr;
+
+//    static const fs::path auth_usrs_dir_default;
+//    static const fs::path groups_dir_default;
+    //FsWorkerAuthUsr auth_usr;
+    //FsWorkerGroup group;
 };
 
 #endif //VVTI_WORKING_WITH_FILESYSTEM_H

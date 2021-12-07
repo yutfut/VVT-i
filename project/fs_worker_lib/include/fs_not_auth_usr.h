@@ -9,18 +9,18 @@
 
 namespace fs = std::filesystem;
 
-class FsNotAuthUsr {
+class FsWorkerNotAuthUsr {
 public:
-    explicit FsNotAuthUsr(const fs::path &root_path,
-                          size_t file_expiration_date = file_expiration_date_default);
+    explicit FsWorkerNotAuthUsr(const fs::path &root_path,
+                                size_t file_expiration_date = file_expiration_date_default);
 
-    explicit FsNotAuthUsr(fs::path &&root_path, size_t file_expiration_date = file_expiration_date_default);
+    explicit FsWorkerNotAuthUsr(fs::path &&root_path, size_t file_expiration_date = file_expiration_date_default);
 
-    FsNotAuthUsr(const FsNotAuthUsr &src);
+    FsWorkerNotAuthUsr(const FsWorkerNotAuthUsr &src);
 
-    FsNotAuthUsr(FsNotAuthUsr &&src) noexcept;
+    FsWorkerNotAuthUsr(FsWorkerNotAuthUsr &&src) noexcept;
 
-    ~FsNotAuthUsr() noexcept = default;
+    ~FsWorkerNotAuthUsr() noexcept = default;
 
     bool move_root(const fs::path &new_root_path) noexcept;
 
@@ -41,7 +41,7 @@ public:
 
     void set_file_expiration_date(size_t new_expiration_date) noexcept;
 
-    bool operator==(const FsNotAuthUsr &rhs) const;
+    bool operator==(const FsWorkerNotAuthUsr &rhs) const;
 
     std::error_code err_code;
 

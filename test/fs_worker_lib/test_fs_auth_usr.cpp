@@ -1,11 +1,11 @@
 // Copyright 2021 nat-s.skv@mail.ru
 
 #include <gtest/gtest.h>
-#include <fs_worker.hpp>
+#include "fs_worker.h"
 #include <fstream>
 /*
-FsAuthUsr create_fs_auth_user(const fs::path &root_path) {
-    FsAuthUsr fs_worker(root_path);
+FsWorkerAuthUsr create_fs_auth_user(const fs::path &root_path) {
+    FsWorkerAuthUsr fs_worker(root_path);
     EXPECT_EQ(root_path, fs_worker.get_root());
     EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
     return fs_worker;
@@ -14,11 +14,11 @@ FsAuthUsr create_fs_auth_user(const fs::path &root_path) {
 class FixtureCreateFsAuthUserInvalid : public ::testing::Test {
 protected:
     static void set_up(fs::path &&root_path, std::errc &&exp_errc) {
-        FsAuthUsr fs_worker1(root_path);
+        FsWorkerAuthUsr fs_worker1(root_path);
         EXPECT_EQ(fs::path(""), fs_worker1.get_root());
         EXPECT_EQ(fs_worker1.err_code, exp_errc);
 
-        FsAuthUsr fs_worker2(std::move(root_path));
+        FsWorkerAuthUsr fs_worker2(std::move(root_path));
         EXPECT_EQ(fs_worker1, fs_worker2);
         EXPECT_EQ(fs_worker2.err_code, exp_errc);
     }
@@ -27,7 +27,7 @@ protected:
 class FixtureFsAuthUserMoveRootInvalid : public ::testing::Test {
 protected:
     static void set_up(fs::path &root_path, const fs::path &new_root_path, std::errc &&exp_errc) {
-        FsAuthUsr fs_worker(root_path);
+        FsWorkerAuthUsr fs_worker(root_path);
         EXPECT_EQ(root_path, fs_worker.get_root());
         EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
 
@@ -40,20 +40,20 @@ protected:
 
 TEST(FsAuthUser, CreateValid) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr/");
-    FsAuthUsr fs_worker1(root_path);
+    FsWorkerAuthUsr fs_worker1(root_path);
     EXPECT_EQ(root_path, fs_worker1.get_root());
     EXPECT_FALSE(static_cast<bool>(fs_worker1.err_code));
 
-    FsAuthUsr fs_worker2(fs_worker1);
+    FsWorkerAuthUsr fs_worker2(fs_worker1);
     EXPECT_EQ(fs_worker2, fs_worker1);
     EXPECT_EQ(fs_worker2.err_code, std::errc(EEXIST));
 
-    FsAuthUsr fs_worker3(std::move(fs_worker1));
+    FsWorkerAuthUsr fs_worker3(std::move(fs_worker1));
     EXPECT_EQ(fs_worker3, fs_worker2);
     EXPECT_EQ(fs_worker3.err_code, std::errc(EEXIST));
 
     fs::remove_all(root_path);
-    FsAuthUsr fs_worker4(std::move(root_path));
+    FsWorkerAuthUsr fs_worker4(std::move(root_path));
     EXPECT_EQ(fs_worker4, fs_worker2);
     EXPECT_FALSE(static_cast<bool>(fs_worker4.err_code));
 
@@ -84,7 +84,7 @@ TEST_F(FixtureCreateFsAuthUserInvalid, ENOTDIR) {
 
 TEST(FsAuthUser, MoveRoot) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr/");
-    FsAuthUsr fs_worker(create_fs_auth_user(root_path));
+    FsWorkerAuthUsr fs_worker(create_fs_auth_user(root_path));
     fs::path new_root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr_new/");
     fs_worker.move_root(new_root_path);
 
@@ -123,7 +123,7 @@ TEST_F(FixtureFsAuthUserMoveRootInvalid, ENOTDIR) {
 
 TEST(FsAuthUser, WorkWithUsersFiles) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr/");
-    FsAuthUsr fs_worker = create_fs_auth_user(root_path);
+    FsWorkerAuthUsr fs_worker = create_fs_auth_user(root_path);
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
 
     std::vector<std::string> users{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -136,7 +136,7 @@ TEST(FsAuthUser, WorkWithUsersFiles) {
     fs::path file_path = root_path / fs::path("test_move");
     std::ofstream file(file_path);
     ASSERT_TRUE(file.is_open());
-    file << "This is test of FsAuthUsr::move_file_to_user_dir()";
+    file << "This is fs_worker_lib of FsWorkerAuthUsr::move_file_to_user_dir()";
     file.close();
 
     fs::path file_hlink_path = root_path / fs::path("test_move_hlink");
@@ -144,7 +144,7 @@ TEST(FsAuthUser, WorkWithUsersFiles) {
         std::error_code ec;
         fs::create_hard_link(file_path, file_hlink_path, ec);
         if (static_cast<bool>(ec)) {
-            EXPECT_FALSE("creation of hard link failed. Part of the test skipped.\n");
+            EXPECT_FALSE("creation of hard link failed. Part of the fs_worker_lib skipped.\n");
             continue;
         }
         fs_worker.reset_error_code();
@@ -164,7 +164,7 @@ TEST(FsAuthUser, WorkWithUsersFiles) {
 
 TEST(FsAuthUser, WorkWithUsersFilesInvalidArgs) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr/");
-    FsAuthUsr fs_worker = create_fs_auth_user(root_path);
+    FsWorkerAuthUsr fs_worker = create_fs_auth_user(root_path);
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
 
     std::string user("0");
@@ -175,7 +175,7 @@ TEST(FsAuthUser, WorkWithUsersFilesInvalidArgs) {
     fs::path file_path = root_path / fs::path("test_move");
     std::ofstream file(file_path);
     ASSERT_TRUE(file.is_open());
-    file << "This is test of FsAuthUsr::move_file_to_user_dir()";
+    file << "This is fs_worker_lib of FsWorkerAuthUsr::move_file_to_user_dir()";
     file.close();
 
     fs::path file_hlink_path = root_path / fs::path("test_move_hlink");
@@ -219,7 +219,7 @@ TEST(FsAuthUser, WorkWithUsersFilesInvalidArgs) {
 
 TEST(FsAuthUser, WorkWithUsersDirs) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr/");
-    FsAuthUsr fs_worker = create_fs_auth_user(root_path);
+    FsWorkerAuthUsr fs_worker = create_fs_auth_user(root_path);
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
 
     std::string user("0");
@@ -234,7 +234,7 @@ TEST(FsAuthUser, WorkWithUsersDirs) {
     fs::path file_path = root_path / fs::path("test_move");
     std::ofstream file(file_path);
     ASSERT_TRUE(file.is_open());
-    file << "This is test of FsAuthUsr::move_file_to_user_dir()";
+    file << "This is fs_worker_lib of FsWorkerAuthUsr::move_file_to_user_dir()";
     file.close();
 
     fs::path file_hlink_path = root_path / fs::path("test_move_hlink");
@@ -242,7 +242,7 @@ TEST(FsAuthUser, WorkWithUsersDirs) {
 
     if (static_cast<bool>(ec)) {
         fs::remove_all(root_path);
-        ASSERT_FALSE("creation of hard link failed. Part of the test skipped.\n");
+        ASSERT_FALSE("creation of hard link failed. Part of the fs_worker_lib skipped.\n");
     }
 
     fs::path fname_moved("moved_file");
@@ -261,7 +261,7 @@ TEST(FsAuthUser, WorkWithUsersDirs) {
 
 TEST(FsAuthUser, WorkWithUsersDirsInvalidArgs) {
     fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_auth_usr/");
-    FsAuthUsr fs_worker = create_fs_auth_user(root_path);
+    FsWorkerAuthUsr fs_worker = create_fs_auth_user(root_path);
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
 
     std::string user("0");

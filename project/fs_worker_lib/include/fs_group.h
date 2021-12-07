@@ -10,17 +10,17 @@
 
 namespace fs = std::filesystem;
 
-class FsGroup : public IFsEntity {
+class FsWorkerGroup : public IFsWorkerEntity {
 public:
-    explicit FsGroup(const fs::path &groups_dir);
+    explicit FsWorkerGroup(const fs::path &groups_dir);
 
-    explicit FsGroup(fs::path &&groups_dir);
+    explicit FsWorkerGroup(fs::path &&groups_dir);
 
-    FsGroup(const FsGroup &src);
+    FsWorkerGroup(const FsWorkerGroup &src);
 
-    FsGroup(FsGroup &&src) noexcept;
+    FsWorkerGroup(FsWorkerGroup &&src) noexcept;
 
-    ~FsGroup() noexcept = default;
+    ~FsWorkerGroup() noexcept = default;
 
     bool add(std::string group_id) const noexcept override;
 
@@ -38,7 +38,7 @@ public:
 
     void reset_error_code() noexcept override;
 
-    bool operator==(const FsGroup &rhs) const;
+    bool operator==(const FsWorkerGroup &rhs) const;
 
     std::error_code err_code;
 
