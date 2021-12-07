@@ -45,4 +45,7 @@ private:
     void message_to_log(log_messages_t log_type);
 
     std::vector<Log*> vector_logs;
+    // бд
+    // фс
+
 };

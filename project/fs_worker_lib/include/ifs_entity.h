@@ -9,7 +9,7 @@
 
 namespace fs = std::filesystem;
 
-class IFsEntity {
+class IFsWorkerEntity {
 
 public:
     virtual bool move_root(const fs::path &new_user_dir) noexcept = 0;

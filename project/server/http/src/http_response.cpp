@@ -1,6 +1,6 @@
 #include "http_response.h"
 
-HttpResponse::HttpResponse(std::unordered_map<std::string, std::string> &&headers, std::string &&body,
+HttpResponse::HttpResponse(std::map<std::string, std::string> &&headers, std::string &&body,
                            int major,
                            int minor,
                            int status,
@@ -9,7 +9,7 @@ HttpResponse::HttpResponse(std::unordered_map<std::string, std::string> &&header
           status(status),
           message(std::move(message)) {}
 
-HttpResponse::HttpResponse(const std::unordered_map<std::string, std::string> &headers, const std::string &body,
+HttpResponse::HttpResponse(const std::map<std::string, std::string> &headers, const std::string &body,
                            int major,
                            int minor,
                            int status,

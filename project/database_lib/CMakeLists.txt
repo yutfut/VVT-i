@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.16.3)
 project(VVT_i)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
+
 find_library(PQXX_LIB pqxx)
 find_library(PQ_LIB pq)
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
 
 add_executable(main.out main.cpp src/data_base.cpp src/database_connection.cpp
         src/db_auth_mode.cpp src/db_group_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp)
