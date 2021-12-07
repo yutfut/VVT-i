@@ -6,7 +6,7 @@ RegAuth::RegAuth(pqxx::nontransaction* transaction) :
 
 bool RegAuth::is_email_free(const std::string &email) {
     std::string str_query;
-    str_query = "SELECT email FROM User WHERE email = " + email + ";";
+    str_query = "SELECT email FROM Users WHERE email = '" + email + "';";
     pqxx::result res = transaction->exec(str_query);
     if (res.empty()) {
         return true;
@@ -18,7 +18,8 @@ int RegAuth::try_register(const std::string &name, const std::string &email,
                  const std::string &password) {
     if (is_email_free(email)) {
         std::string str_query;
-        str_query = "INSERT INTO User (username, email, password) VALUES (" + name + ", " + email + ", " + password + ");";
+        str_query = "INSERT INTO Users (username, email, password) "
+            "VALUES ('" + name + "', '" + email + "', '" + password + "');";
         pqxx::result res = transaction->exec(str_query);
         return 0;
     }
@@ -27,40 +28,39 @@ int RegAuth::try_register(const std::string &name, const std::string &email,
 
 int RegAuth::try_auth(const std::string &email, const std::string &password) {
     std::string str_query;
-    str_query = "SELECT * FROM User WHERE email = "+ email + " AND password = " + password + ";";
+
+    str_query = "SELECT id FROM Users WHERE email = '" + email + "' AND password = '" + password + "';";
     pqxx::result res = transaction->exec(str_query);
+    
     if (res.empty()) {
         return -1;
     }
 
-    int id = 0;
-
-    return int(id);
+    return res[0][0].as<int>();
 }
 
 int RegAuth::get_id_auth_user(const std::string &email) {
     std::string str_query;
-    str_query = "SELECT * FROM User WHERE email = " + email + ";";
+
+    str_query = "SELECT id FROM Users WHERE email = '" + email + "';";
     pqxx::result res = transaction->exec(str_query);
 
     if (res.empty()) {
         return -1;
     }
 
-    int id = 0;
-
-    return id;
+    return res[0][0].as<int>();
 }
 
 std::string RegAuth::get_email(int user_id) {
     std::string str_query;
-    str_query = "SELECT * FROM User WHERE user_id = " + std::to_string(user_id) + ";";
+
+    str_query = "SELECT email FROM Users WHERE user_id = '" + std::to_string(user_id) + "';";
     pqxx::result res = transaction->exec(str_query);
+    
     if (res.empty()) {
         return "";
     }
 
-    std::string res_str = res[0][0].as<std::string>();
-
-    return res_str;
+    return res[0][0].as<std::string>();
 }

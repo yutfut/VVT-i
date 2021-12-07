@@ -20,7 +20,7 @@ TEST(DATA_BASE_TEST, DATA_BASE) {
     DataBase db_2("postgres", "postgres", "5432", "localhost", "vvti");
     EXPECT_EQ(db_2.init(), 0);
     DataBase db_3("postgres", "postgres", "5432", "localhost", "vvti1");
-    EXPECT_EQ(db_3.init(), -1);
+    EXPECT_ANY_THROW(db_3.init());
 }
 
 
@@ -29,15 +29,6 @@ TEST(DATA_BASE_TEST, DATA_BASE) {
 
 TEST(DATA_BASE_TEST, WORK_WITH_TMP_FILES) {
     DataBase db("", "", "", "", "");
-    auto unauth_user_file_1 = db.not_auth_mode.add_unauth_user_file("first_file", "password_1");
-    auto unauth_user_file_2 = db.not_auth_mode.add_unauth_user_file("second_file", "password_2");
-    auto unauth_user_file_3 = db.not_auth_mode.add_unauth_user_file("third_file", "password_3");
-
-    EXPECT_EQ(db.not_auth_mode.has_access_on_unauth_user_file(unauth_user_file_1.filename, "qwertyui"), 0);
-    EXPECT_EQ(db.not_auth_mode.has_access_on_unauth_user_file(unauth_user_file_1.filename, ""), 1);
-    EXPECT_EQ(db.not_auth_mode.has_access_on_unauth_user_file(unauth_user_file_2.filename, "type1"), 0);
-    EXPECT_EQ(db.not_auth_mode.has_access_on_unauth_user_file(unauth_user_file_2.filename, "type1234"), 1);
-    EXPECT_EQ(db.not_auth_mode.has_access_on_unauth_user_file(unauth_user_file_3.filename, "type1234"), 1);
 
     std::time_t t = std::time(0);   // get time now
     std::tm* now = std::localtime(&t);
@@ -45,8 +36,18 @@ TEST(DATA_BASE_TEST, WORK_WITH_TMP_FILES) {
     curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
             + "-" + std::to_string(now->tm_mday);
 
+    auto unauth_user_file_1 = db.not_auth_mode.add_unauth_user_file("first_file", "password_1");
+    auto unauth_user_file_2 = db.not_auth_mode.add_unauth_user_file("second_file", "password_2");
+    auto unauth_user_file_3 = db.not_auth_mode.add_unauth_user_file("third_file", "password_3");
+
+    EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_1.filename, "qwertyui"), "");
+    EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_1.filename, ""), curr_date);
+    EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_2.filename, "type1"), "");
+    EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_2.filename, "type1234"), curr_date);
+    EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_3.filename, "type1234"), curr_date);
+
     db.not_auth_mode.delete_unauth_user_files(curr_date);
-    EXPECT_EQ(db.not_auth_mode.has_access_on_unauth_user_file(unauth_user_file_1.filename, ""), 0);
+    EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_1.filename, ""), "");
 }
 
 
