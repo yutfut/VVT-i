@@ -26,20 +26,11 @@ public:
 
     static void init_socket_address(struct sockaddr_in &name);
 
-    static void crate_message(std::string &file_name, std::string &message);
+    static int request(const int &socket, const std::string msg);
 
+    static int response(const int &socket);
 
-    static void create_file(std::string &file_name, std::string &message);
-
-
-    static int request(int &socket, std::string msg);
-
-    static int response(int &socket);
-
-    static int send(std::string &email,
-                    std::string &password,
-                    std::string &file_name,
-                    std::string &command);
+    static int send(const std::string &message);
 };
 
 #endif //VVT_I_HTTP_REQEST_H

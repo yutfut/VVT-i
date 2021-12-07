@@ -39,6 +39,9 @@ int Client::role_command(const std::string& command) {
             return -1;
         }
     }
+    if (first_part_command == "exit") {
+        return 1;
+    }
 //    if (first_part_command == "chmod") {
 //        if(first_part_command != rest_part_command) {
 //            return Command::work_with_chmod(rest_part_command);
@@ -54,9 +57,6 @@ int Client::role_command(const std::string& command) {
 //            std::cout << "Ошибка ввода команды" << std::endl;
 //            return -1;
 //        }
-//    }
-//    if (first_part_command == "exit") {
-//        return 1;
 //    }
 //    if (first_part_command == "login") {
 //        if(first_part_command != rest_part_command) {
@@ -88,7 +88,7 @@ int Client::validation_command(const std::string& command) {
     return role_command(command);
 }
 
-void Client::get_command() {
+void Client::run() {
     std::string command;
     while (true) {
         print();

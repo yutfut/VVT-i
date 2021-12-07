@@ -3,6 +3,6 @@
 int main() {
     std::cout << "Welcome to VVTi!" << std::endl;
     Client client;
-    client.get_command();
+    client.run();
     return 0;
 }

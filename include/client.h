@@ -24,7 +24,7 @@ public:
 
     int validation_command(const std::string& command);
 
-    void get_command();
+    void run();
 };
 
 #endif //VVTI_CLIENT_CLIENT_H

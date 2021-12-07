@@ -17,8 +17,6 @@
 class Command {
 public:
 
-    static int search_file(const std::string& file_name);
-
     static int upload(const std::string& command);
 
     static int download(const std::string& command);
