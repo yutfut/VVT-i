@@ -24,7 +24,7 @@ TEST(TEST_CONFIG, HANDLE_INVALID_CONFIG) {
 }
 
 TEST(TEST_CONFIG, HandleConfig) {
-    auto settings = MainServerSettings("test_settings/test.conf");
+    auto settings = MainServerSettings("test_settings/fs_worker_lib.conf");
 
     EXPECT_EQ(settings.get_count_workflows(), 2);
     EXPECT_EQ(settings.get_access_log_filename(), "test_access.log");

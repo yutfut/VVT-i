@@ -8,7 +8,8 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <csignal>
-
+#include <fs_worker.h>
+#include <data_base.h>
 #include "main_server_settings.h"
 #include "worker_process.h"
 
@@ -97,4 +98,8 @@ private:
     int listen_sock = 0;
 
     MainServerSettings settings;
+
+    FsWorker fs_worker;
+
+    DataBase db_worker;
 };

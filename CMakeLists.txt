@@ -5,7 +5,7 @@ project(VVT-i)
 # Make libraries
 add_subdirectory(project)
 
-# Make executable test
+# Make executable fs_worker_lib
 add_subdirectory(test)
 
 # Make executable sever program

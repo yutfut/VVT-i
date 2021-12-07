@@ -56,12 +56,12 @@ test() {
     return
   fi
 
-  if [ -f test.out ]; then
-    rm test.out
+  if [ -f fs_worker_lib.out ]; then
+    rm fs_worker_lib.out
   fi
 
-  cp ./cmake-build-debug/test/test.out test.out
-  ./test.out
+  cp ./cmake-build-debug/fs_worker_lib/fs_worker_lib.out fs_worker_lib.out
+  ./fs_worker_lib.out
 }
 
 
@@ -174,7 +174,7 @@ case $1 in
     start
   ;;
 
-  test)
+  fs_worker_lib)
     test
   ;;
 
