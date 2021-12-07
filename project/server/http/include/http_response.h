@@ -7,6 +7,7 @@ public:
     HttpResponse() = default;
 
     HttpResponse(const std::map<std::string, std::string> &headers, const std::string &body,
+
                     int major,
                     int minor,
                     int status,

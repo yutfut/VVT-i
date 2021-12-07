@@ -36,8 +36,6 @@ private:
 
     bool headers_added = false;
 
-    bool body_added = false;
-
     int curr_len = -1;
 
     bool request_ended = false;
