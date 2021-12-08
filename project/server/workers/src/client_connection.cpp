@@ -8,11 +8,11 @@
 
 
 ClientConnection::ClientConnection(class ServerSettings *server_settings,
-                                   std::vector<Log *> &vector_logs,  FsWorker &fs_worker,
-                                    DataBase &db_worker) : server_settings(server_settings),
-                                                                vector_logs(vector_logs),
-                                                                start_connection(clock()), fs_worker(fs_worker),
-                                                                db_worker(db_worker) {
+                                   std::vector<Log *> &vector_logs, FsWorker &fs_worker,
+                                   DataBase &db_worker) : server_settings(server_settings),
+                                                          vector_logs(vector_logs),
+                                                          start_connection(clock()), fs_worker(fs_worker),
+                                                          db_worker(db_worker) {
 }
 
 void ClientConnection::set_socket(int socket) {
@@ -91,6 +91,10 @@ bool ClientConnection::get_request() {
 
 bool ClientConnection::handle_request() {
     write_to_logs("Я зашел в handle_request", ERROR);
+    write_to_logs(request.get_body(), ERROR);
+    write_to_logs(request.get_body(), ERROR);
+    std::for_each(request.get_headers().begin(), request.get_headers().end(),
+                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
 //    response = HttpResponse({{"content-length", "0"}}, {}, 1, 1, HttpStatusCode::OK,
 //                            get_message(HttpStatusCode::OK));
 //    return true;
