@@ -8,8 +8,8 @@
 
 
 ClientConnection::ClientConnection(class ServerSettings *server_settings,
-                                   std::vector<Log *> &vector_logs, const FsWorker &fs_worker,
-                                   const DataBase &db_worker) : server_settings(server_settings),
+                                   std::vector<Log *> &vector_logs,  FsWorker &fs_worker,
+                                    DataBase &db_worker) : server_settings(server_settings),
                                                                 vector_logs(vector_logs),
                                                                 start_connection(clock()), fs_worker(fs_worker),
                                                                 db_worker(db_worker) {
@@ -42,6 +42,7 @@ connection_status_t ClientConnection::connection_processing() {
         }
     }
 
+    write_to_logs(__FILE__, ERROR);
     if (this->stage == HANDLE_REQUEST) {
         if (this->handle_request()) {
             this->stage = SEND_RESPONSE;
@@ -89,19 +90,23 @@ bool ClientConnection::get_request() {
 }
 
 bool ClientConnection::handle_request() {
+    write_to_logs("Я зашел в handle_request", ERROR);
+//    response = HttpResponse({{"content-length", "0"}}, {}, 1, 1, HttpStatusCode::OK,
+//                            get_message(HttpStatusCode::OK));
+//    return true;
     RequestHandlerNotAuth handler;
-    return handler.handle_request(request, response);
+    return handler.handle_request(request, response, fs_worker, db_worker);
 }
 
 bool ClientConnection::send_response() {
     bool has_written_data = false;
 
-    std::map<std::string, std::string> headers;
-    headers[CONTENT_TYPE_HDR] = "text/html";
-    headers[CONTENT_LENGTH_HDR] = "26";
-    headers[SERVER_HDR] = SERVER_VL;
-
-    this->response = HttpResponse(headers, "<div>\r\n\tHELLO WORLD!\r\n</div>\r\n", 1, 1, 200, "OK");
+//    std::map<std::string, std::string> headers;
+//    headers[CONTENT_TYPE_HDR] = "text/html";
+//    headers[CONTENT_LENGTH_HDR] = "26";
+//    headers[SERVER_HDR] = SERVER_VL;
+//
+//    this->response = HttpResponse(headers, "<div>\r\n\tHELLO WORLD!\r\n</div>\r\n", 1, 1, 200, "OK");
 
     std::string response_str = this->response.get_string();
 

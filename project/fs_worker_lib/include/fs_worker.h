@@ -15,8 +15,9 @@ class FsWorker {
 private:
     fs::path root;
 public:
-    explicit FsWorker(const fs::path &_root = root_path_default);
+//    explicit FsWorker(const fs::path &_root = root_path_default);
 
+    explicit FsWorker(const fs::path &_root = root_path_default);
     explicit FsWorker(fs::path &&_root);
 
     FsWorker(const FsWorker &src);

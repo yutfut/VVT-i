@@ -19,6 +19,21 @@ HttpResponse::HttpResponse(const std::map<std::string, std::string> &headers, co
           message(message) {}
 
 
+HttpResponse &HttpResponse::operator=(HttpResponse &&src) noexcept {
+    headers = std::move(src.headers);
+    version_major = src.version_major;
+    version_minor = src.version_minor;
+    body = std::move(src.body);
+    status = src.status;
+    message = std::move(src.message);
+    return *this;
+}
+
+//HTTP/1.1 200 OK\r\n
+//content-lengh: 2\r\n
+//filename: fname.txt\r\n
+//\r\n
+//body
 
 std::string HttpResponse::get_string() {
     std::string str = "HTTP/" + std::to_string(this->get_major()) + "." + std::to_string(this->get_minor()) + " " +

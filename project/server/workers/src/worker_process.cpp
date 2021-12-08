@@ -7,7 +7,7 @@ bool is_hard_stop = false;
 bool is_soft_stop = false;
 
 WorkerProcess::WorkerProcess(int listen_sock, class ServerSettings *server_settings,
-                             std::vector<Log *> &vector_logs, const FsWorker &fs_worker, const DataBase &db_worker)
+                             std::vector<Log *> &vector_logs,  FsWorker &fs_worker,  DataBase &db_worker)
         : listen_sock(listen_sock), server_settings(server_settings), vector_logs(vector_logs), fs_worker(fs_worker),
           db_worker(db_worker) {
     signal(SIGPIPE, SIG_IGN);

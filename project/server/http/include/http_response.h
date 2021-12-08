@@ -19,7 +19,7 @@ public:
                  int status,
                  std::string &&message);
 
-    HttpResponse &operator=(HttpResponse &&src)  noexcept = default;
+    HttpResponse &operator=(HttpResponse &&src)  noexcept;
 
     ~HttpResponse() = default;
 

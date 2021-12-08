@@ -10,6 +10,14 @@ HttpBase::HttpBase(std::map<std::string, std::string>&& headers,std::string &&bo
                    int major, int minor)
         : headers(std::move(headers)), body(std::move(body)), version_major(major), version_minor(minor) {}
 
+HttpBase& HttpBase::operator=(HttpBase&& src) noexcept {
+    headers = std::move(src.headers);
+    version_major = src.version_major;
+    version_minor = src.version_minor;
+    body = std::move(src.body);
+    return *this;
+}
+
 int HttpBase::get_minor() const {
     return this->version_minor;
 }

@@ -31,8 +31,8 @@ class ClientConnection {
 public:
     ClientConnection() = default;
 
-    ClientConnection(class ServerSettings *server_settings, std::vector<Log *> &vector_logs, const FsWorker &fs_worker,
-                     const DataBase &db_worker);
+    ClientConnection(class ServerSettings *server_settings, std::vector<Log *> &vector_logs,  FsWorker &fs_worker,
+                      DataBase &db_worker);
 
     connection_status_t connection_processing();
 
@@ -85,7 +85,7 @@ private:
 
     bool is_timeout();
 
-    const FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+     FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
 
-    const DataBase &db_worker; // TODO: нужна обработка файла конфигурации
+     DataBase &db_worker; // TODO: нужна обработка файла конфигурации
 };

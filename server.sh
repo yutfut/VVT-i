@@ -157,13 +157,13 @@ build() {
 
   if [ -d cmake-build-debug ]; then
     cd cmake-build-debug
-    make clean && make
+    make
     cd ..
   else
     mkdir cmake-build-debug
     cd cmake-build-debug
     cmake ..
-    make clean && make
+    make
     cd ..
   fi
 }

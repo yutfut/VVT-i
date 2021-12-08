@@ -1,19 +1,23 @@
 cmake_minimum_required(VERSION 3.16.3)
-project(VVT_i)
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
 
 find_library(PQXX_LIB pqxx)
 find_library(PQ_LIB pq)
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 
-add_executable(main.out main.cpp src/data_base.cpp src/database_connection.cpp
-        src/db_auth_mode.cpp src/db_group_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp)
-target_link_libraries(main.out ${PQXX_LIB} ${PQ_LIB})
-target_include_directories(main.out PUBLIC include)
+#set(CMAKE_CXX_STANDARD 14)
 
-# add_executable(gtest.out gtest.cpp ${SOURCE_DIRECTORY})
-# target_link_libraries(gtest.out ${GTEST_LIBRARIES} ${PQXX_LIB} ${PQ_LIB} Threads::Threads)
-# target_include_directories(gtest.out PUBLIC ./include)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
+set(DATABASE_LIB_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+message(${DATABASE_LIB_INCLUDES})
+#set(DATABASE_LIB_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/data_base.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/database_connection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/db_not_auth_mode.cpp
+#        )
+aux_source_directory( ${CMAKE_CURRENT_SOURCE_DIR}/src/ DATABASE_LIB_SRCS)
+
+add_library(database_lib ${DATABASE_LIB_SRCS})
+target_include_directories(database_lib PUBLIC ${DATABASE_LIB_INCLUDES})
+target_link_libraries(database_lib ${PQXX_LIB} ${PQ_LIB})

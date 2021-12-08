@@ -2,8 +2,8 @@
 #include "fs_worker.h"
 
 
-static const fs::path not_auth_usrs_dir_default = "not_auth";
-static const fs::path root_path_default = "/home";
+ const fs::path FsWorker::not_auth_usrs_dir_default = FS_NOT_AUTH_DIR_NAME;
+ const fs::path FsWorker::root_path_default = FS_ROOT_PATH;
 //static const fs::path auth_usrs_dir_default;
 //static const fs::path groups_dir_default;
 
