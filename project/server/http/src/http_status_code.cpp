@@ -5,16 +5,16 @@
 std::string get_message(HttpStatusCode status){
     switch (status) {
         case HttpStatusCode::OK:
-            return {"Standard response for successful HTTP requests. "};
+            return {"OK"};
         case HttpStatusCode::BadRequest:
-            return {"The server cannot or will not process the request due to an apparent client error"};
+            return {"BadRequest"};
         case HttpStatusCode::Forbidden:
-            return {"The request contained valid data and was understood by the server, but the server is refusing action."};
+            return {"Forbidden"};
         case HttpStatusCode::RequestTimeout:
-            return {"The server timed out waiting for the request. "};
+            return {"RequestTimeout"};
 
         case HttpStatusCode::InternalServerError:
-            return {"A generic error message, given when an unexpected condition was encountered and no more specific message is suitable."};
+            return {"InternalServerError"};
         default:
             return {""};
     }

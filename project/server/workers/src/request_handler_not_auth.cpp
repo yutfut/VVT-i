@@ -17,6 +17,12 @@ std::string file_to_string(std::ifstream &&file) {
     return str;
 }
 
+HttpResponse create_response(HttpStatusCode status, std::string &&body) {
+    return {{{"content-length", std::to_string(body.size())}, {"status", std::to_string(status)},
+             {"message", get_message(status)}}, std::move(body), 1, 1,
+            HttpStatusCode::Forbidden,get_message(HttpStatusCode::Forbidden)};
+}
+
 bool RequestHandlerNotAuth::handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker,
                                            DataBase &db_worker) {
     auto &headers = request.get_headers();
@@ -30,9 +36,7 @@ bool RequestHandlerNotAuth::handle_request(HttpRequest &request, HttpResponse &r
                                                             headers["password"], request.get_body(),
                                                             response, fs_worker, db_worker);
     }
-    response = HttpResponse({{"content-length", "0"}}, {}, request.get_major(), request.get_minor(),
-                            HttpStatusCode::BadRequest,
-                            get_message(HttpStatusCode::BadRequest));
+    response = create_response(HttpStatusCode::BadRequest, {});
     return true;
 }
 
@@ -44,8 +48,7 @@ RequestHandlerNotAuth::download_file_from_server(const std::string &file_id, con
     try {
         upload_date = db_worker.not_auth_mode.get_upload_file_date(file_id, opt_pswd);
         if (upload_date.empty()) {
-            response = HttpResponse({{"content-length", "0"}}, {}, 0, 0, HttpStatusCode::Forbidden,
-                                    get_message(HttpStatusCode::Forbidden));
+            response = create_response(HttpStatusCode::Forbidden, {});
             return true;
         }
     } catch (const std::string &error_msg) {
@@ -59,16 +62,13 @@ RequestHandlerNotAuth::download_file_from_server(const std::string &file_id, con
     std::string file{file_to_string(fs_worker.not_auth_usr.get_file(fs::path(file_id), fs::path(upload_date)))};
 
     if (fs_worker.not_auth_usr.err_code) {
-        response = HttpResponse({{"content-length", "0"}}, {}, 0, 0, HttpStatusCode::InternalServerError,
-                                get_message(HttpStatusCode::InternalServerError));
+        response = create_response(HttpStatusCode::InternalServerError, {});
         //TODO: вывод в лог error_msg
         return true;
     }
     //TODO: заголовок filename
 
-    response = HttpResponse({{"content-length", std::to_string(file.size())}}, std::move(file), 1, 1,
-                            HttpStatusCode::OK,
-                            get_message(HttpStatusCode::OK));
+    response = create_response(HttpStatusCode::OK, std::move(file));
     return true;
 }
 
@@ -79,14 +79,12 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
     try {
         file_data = db_worker.not_auth_mode.add_unauth_user_file(filename, opt_pswd);
         if (file_data.uuid.empty()) {
-            response = HttpResponse({{"content-length", "0"}}, {}, 0, 0, HttpStatusCode::Forbidden,
-                                    get_message(HttpStatusCode::Forbidden));
+            response = create_response(HttpStatusCode::Forbidden, {});
             return true;
         }
     } catch (const std::string &error_msg) {
         //TODO: вывод в лог error_msg
-        response = HttpResponse({{"content-length", "0"}}, {}, 1, 1, HttpStatusCode::InternalServerError,
-                                get_message(HttpStatusCode::InternalServerError));
+        response = create_response(HttpStatusCode::InternalServerError, {});
         //TODO: а в каких случаях кидается исключение? какой ответ правильно отдавать?
         return true;
     }
@@ -97,12 +95,10 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
     if (!fs_worker.not_auth_usr.move_file_to_fs(tmpfile_path, file_data.uuid, file_data.upload_data)) {
         // TODO: db_worker.not_auth_mode.delete_certain_file()
         // TODO: вывод в лог err_code.message()
-        response = HttpResponse({{"content-length", "0"}}, {}, 0, 0, HttpStatusCode::InternalServerError,
-                                get_message(HttpStatusCode::InternalServerError));
+        response = create_response(HttpStatusCode::InternalServerError, {});
         return true;
     }
-    response = HttpResponse({{"content-length", "0"}}, {}, 1, 1, HttpStatusCode::OK,
-                            get_message(HttpStatusCode::OK));
+    response = create_response(HttpStatusCode::OK, {});
     return true;
 }
 
