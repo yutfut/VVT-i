@@ -27,15 +27,16 @@ int NotAuthMode::delete_unauth_user_files(const std::string &upload_date) const 
     return 0;
 }
 
-bool NotAuthMode::has_access_on_unauth_user_file(const std::string &file_uuid,
-                                              const std::string &option_password) const{
+std::string NotAuthMode::get_upload_file_date(const std::string &file_uuid,
+                                              const std::string &option_password) const {
     std::string str_query;
-    str_query = "SELECT * FROM Unauth_user_files WHERE uuid::text = '" + file_uuid + "' AND password = '" + option_password + "';";
+    str_query = "SELECT upload_date FROM Unauth_user_files WHERE uuid::text = '"
+            + file_uuid + "' AND password = '" + option_password + "';";
     pqxx::result res = transaction->exec(str_query);
 
     if (res.empty()) {
-        return false;
+        return "";
     }
 
-    return true;
+    return res[0][0].as<std::string>();
 }

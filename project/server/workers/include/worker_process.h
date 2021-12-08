@@ -20,7 +20,7 @@ public:
     // WorkerProcess() = default;
 
     explicit WorkerProcess(int listen_sock, class ServerSettings *server_settings, std::vector<Log *> &vector_logs,
-                           const FsWorker &fs_worker, const DataBase &db_worker);
+                            FsWorker &fs_worker,  DataBase &db_worker);
 
     ~WorkerProcess() = default;
 
@@ -32,7 +32,7 @@ public:
 
     static void sigint_handler(int sig); // Handler for hard stop
 
-    void write_to_logs(const std::string& message, bl::trivial::severity_level lvl);
+    void write_to_logs(const std::string &message, bl::trivial::severity_level lvl);
 
 private:
     typedef enum {
@@ -49,8 +49,8 @@ private:
 
     std::vector<Log *> vector_logs;
 
-    const FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+    FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
 
-    const DataBase &db_worker; // TODO: нужна обработка файла конфигурации
+    DataBase &db_worker; // TODO: нужна обработка файла конфигурации
 
 };

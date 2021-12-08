@@ -13,6 +13,8 @@ public:
      HttpBase(const std::map<std::string, std::string>& headers, std::string body = "",
             int major = -1, int minor = -1);
 
+    HttpBase& operator=(HttpBase&& src) noexcept;
+
     ~HttpBase() = default;
 
     int get_minor() const;

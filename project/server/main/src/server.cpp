@@ -9,21 +9,32 @@ int process_hard_reload = EMPTY_MASTER;
 int has_old_master_stopped = 0;
 
 pid_t new_master_pid = 0;
-
-Server::Server(const std::string& config_filename) {
+// TODO: delete cout
+Server::Server(FsWorker& fs_worker, DataBase& db_worker,const std::string& config_filename): fs_worker(fs_worker), db_worker(db_worker) {
+    std::cout<<__FILE__<< __LINE__;
     this->config_filename = config_filename;
+    std::cout<<__FILE__<< __LINE__;
     this->settings = MainServerSettings(this->config_filename);
+    std::cout<<__FILE__<< __LINE__;
     this->count_workflows = this->settings.get_count_workflows();
+    std::cout<<__FILE__<< __LINE__;
     this->server = this->settings.get_server();
+    std::cout<<__FILE__<< __LINE__;
 
     this->error_log = Log(this->settings.get_error_log_filename(), true,
         this->cast_types_logs_level(error_log_level));
+    std::cout<<__FILE__<< __LINE__;
     this->access_log = Log(this->settings.get_access_log_filename(), true,
         this->cast_types_logs_level(access_log_level));
+    std::cout<<__FILE__<< __LINE__;
 
     this->vector_logs.push_back(&error_log);
+    std::cout<<__FILE__<< __LINE__;
     this->vector_logs.push_back(&access_log);
+    std::cout<<__FILE__<< __LINE__;
+
     db_worker.init();
+    std::cout<<__FILE__<< __LINE__;
 
     this->write_to_logs("SERVER STARTING...", INFO);
 }
