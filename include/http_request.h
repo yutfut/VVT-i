@@ -26,9 +26,9 @@ public:
 
     static int request(const int &socket, const std::string msg);
 
-    static int response(const int &socket);
+    static std::string response(const int &socket);
 
-    static int send(const std::string &message);
+    static std::string send(const std::string &message);
 };
 
 #endif //VVT_I_HTTP_REQEST_H

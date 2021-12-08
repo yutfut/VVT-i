@@ -4,6 +4,7 @@
 
 #include "command.h"
 #include <cstring>
+#include <map>
 
 std::string input_password() {
     std::string password, password_1;
@@ -27,6 +28,61 @@ std::string check_password_upload() {
         return input_password();
     }
     return "";
+}
+
+void create_file(const std::string &file_name, const std::string &message) {
+    std::ofstream out(file_name);
+
+    if (out.is_open()) {
+        out << message;
+    } else {
+        std::cout << "ошибка открытия файла\n";
+    }
+
+    out.close();
+}
+
+int parser(std::string http) {
+    std::map<std::string, std::string> commands;
+    size_t pos = http.find_first_of('\n');
+    http = http.substr(pos + 1);
+    while (!http.empty()) {
+        pos = http.find_first_of('\r');
+        std::string header = http.substr(0, pos);
+        http = http.substr(pos + 1);
+
+        size_t pos1 = header.find_first_of(':');
+        std::string first_part_header = header.substr(0, pos1);
+        std::string rest_part_header = header.substr(pos1 + 1);
+        rest_part_header.erase(rest_part_header.begin(), rest_part_header.begin() + 1);
+
+        commands[first_part_header] = rest_part_header;
+        std::cout << commands[first_part_header] << std::endl;
+
+        if (http[0] == '\n' && http[2] == '\n' && http[1] == '\r') {
+            http.erase(http.begin(), http.begin() + 3);
+            commands["body"] = http;
+            std::cout << commands["body"] << std::endl;
+            break;
+        }
+        http.erase(http.begin(), http.begin() + 1);
+    }
+
+//    if (commands["body"].size() == std::stoi(commands["content-length"])) {
+//        std::cout << "nice\n";
+//    } else {
+//        std::cout << "fuck\n" << commands["body"].size() << " " << std::stoi(commands["content-length"]) <<std::endl;
+//    }
+
+    std::cout << std::endl;
+    if (commands["command"] == "download" && commands["message"] == "OK") {
+        create_file(commands["filename"], commands["body"]);
+    }
+
+    if (commands["message"] == "OK") {
+        return 0;
+    }
+    return -1;
 }
 
 void crate_body(const std::string &file_name, std::string &message) {
@@ -85,7 +141,11 @@ int Command::upload(const std::string& command) {
         return -1;
     }
 
-    return HTTPRequest::send(message);
+    std::string http_response = HTTPRequest::send(message);
+    if (http_response == "ошибка соединения\n") {
+        return -1;
+    }
+    return parser(http_response);
 }
 
 std::string check_password_download() {
@@ -113,20 +173,12 @@ int Command::download(const std::string& command) {
 
     std::string message = create_message("", password, key, "", "download");
 
-    return HTTPRequest::send(message);
+    std::string http_response = HTTPRequest::send(message);
+
+    return parser(http_response);
 }
 
-void create_file(const std::string &file_name, const std::string &message) {
-    std::ofstream out(file_name);
 
-    if (out.is_open()) {
-        out << message;
-    } else {
-        std::cout << "ошибка открытия файла\n";
-    }
-
-    out.close();
-}
 
 //int Command::work_with_chmod(const std::string& command) {
 //    if (Validator::validate_chmod(command)) {
