@@ -28,6 +28,4 @@ public:
     RegAuth reg_auth;
     AuthMode auth_mode;
     GroupMode group_mode;
-
-
 };

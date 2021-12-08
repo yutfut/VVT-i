@@ -1,13 +1,18 @@
 #include "client_connection.h"
+#include "http_status_code.h"
+#include <request_handler_not_auth.h>
+#include <http_status_code.h>
 
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
 
-ClientConnection::ClientConnection(class ServerSettings* server_settings,
-    std::vector<Log*>& vector_logs) : server_settings(server_settings),
-    vector_logs(vector_logs),
-    start_connection(clock())
-{
+
+ClientConnection::ClientConnection(class ServerSettings *server_settings,
+                                   std::vector<Log *> &vector_logs, const FsWorker &fs_worker,
+                                   const DataBase &db_worker) : server_settings(server_settings),
+                                                                vector_logs(vector_logs),
+                                                                start_connection(clock()), fs_worker(fs_worker),
+                                                                db_worker(db_worker) {
 }
 
 void ClientConnection::set_socket(int socket) {
@@ -24,15 +29,14 @@ connection_status_t ClientConnection::connection_processing() {
         try {
             is_succeeded = this->get_request();
         }
-        catch (std::exception& e) {
+        catch (std::exception &e) {
             this->stage = BAD_REQUEST;
             this->message_to_log(ERROR_BAD_REQUEST);
             return ERROR_IN_REQUEST;
         }
         if (is_succeeded) {
             this->stage = HANDLE_REQUEST;
-        }
-        else if (this->is_timeout()) {
+        } else if (this->is_timeout()) {
             this->message_to_log(ERROR_TIMEOUT);
             return CONNECTION_TIMEOUT_ERROR;
         }
@@ -48,8 +52,7 @@ connection_status_t ClientConnection::connection_processing() {
         if (this->send_response()) {
             this->message_to_log(INFO_CONNECTION_FINISHED);
             return CONNECTION_FINISHED;
-        }
-        else if (this->is_timeout()) {
+        } else if (this->is_timeout()) {
             this->message_to_log(ERROR_TIMEOUT);
             return CONNECTION_TIMEOUT_ERROR;
         }
@@ -86,7 +89,8 @@ bool ClientConnection::get_request() {
 }
 
 bool ClientConnection::handle_request() {
-    return true;
+    RequestHandlerNotAuth handler;
+    return handler.handle_request(request, response);
 }
 
 bool ClientConnection::send_response() {
@@ -118,41 +122,48 @@ bool ClientConnection::send_response() {
 
 void ClientConnection::message_to_log(log_messages_t log_type) {
     switch (log_type) {
-    case INFO_CONNECTION_FINISHED: {
-        int status = this->response.get_status();
-        if (status % 100 == 4) {
-            this->write_to_logs("Connection [" + this->request.get_method() + "] [URL " + this->request.get_url() + "] [STATUS " + std::to_string(status) +
-                "] [WRK PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
-                std::to_string(this->sock) + "] [TIME " +
-                std::to_string((clock() - start_connection) / (double)CLOCKS_PER_SEC * 1000) + " ms]",
-                ERROR);
+        case INFO_CONNECTION_FINISHED: {
+            int status = this->response.get_status();
+            if (status % 100 == 4) {
+                this->write_to_logs("Connection [" + this->request.get_method() + "] [URL " + this->request.get_url() +
+                                    "] [STATUS " + std::to_string(status) +
+                                    "] [WRK PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
+                                    std::to_string(this->sock) + "] [TIME " +
+                                    std::to_string((clock() - start_connection) / (double) CLOCKS_PER_SEC * 1000) +
+                                    " ms]",
+                                    ERROR);
+            } else {
+                this->write_to_logs("Connection [" + this->request.get_method() + "] [URL " + this->request.get_url() +
+                                    "] [STATUS " + std::to_string(status) +
+                                    "] [WRK PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
+                                    std::to_string(this->sock) + "] [TIME " +
+                                    std::to_string((clock() - start_connection) / (double) CLOCKS_PER_SEC * 1000) +
+                                    " ms]",
+                                    INFO);
+            }
+            break;
         }
-        else {
-            this->write_to_logs("Connection [" + this->request.get_method() + "] [URL " + this->request.get_url() + "] [STATUS " + std::to_string(status) +
-                "] [WRK PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
-                std::to_string(this->sock) + "] [TIME " +
-                std::to_string((clock() - start_connection) / (double)CLOCKS_PER_SEC * 1000) + " ms]",
-                INFO);
-        }
-        break;
-    }
-    case ERROR_READING_REQUEST:
-        this->write_to_logs("Reading request error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " + std::to_string(this->sock) + "]", ERROR);
-        break;
-    case ERROR_SENDIND_RESPONSE:
-        this->write_to_logs("Sending response error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " + std::to_string(this->sock) + "]", ERROR);
-        break;
-    case ERROR_BAD_REQUEST:
-        this->write_to_logs("Bad request error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " + std::to_string(this->sock) + "]", ERROR);
-        break;
-    case ERROR_TIMEOUT:
-        this->write_to_logs("Timeout error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " + std::to_string(this->sock) + "]", ERROR);
-        break;
+        case ERROR_READING_REQUEST:
+            this->write_to_logs("Reading request error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
+                                std::to_string(this->sock) + "]", ERROR);
+            break;
+        case ERROR_SENDIND_RESPONSE:
+            this->write_to_logs("Sending response error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
+                                std::to_string(this->sock) + "]", ERROR);
+            break;
+        case ERROR_BAD_REQUEST:
+            this->write_to_logs("Bad request error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
+                                std::to_string(this->sock) + "]", ERROR);
+            break;
+        case ERROR_TIMEOUT:
+            this->write_to_logs("Timeout error [WORKER PID " + std::to_string(getpid()) + "] [CLIENT SOCKET " +
+                                std::to_string(this->sock) + "]", ERROR);
+            break;
     }
 }
 
 void ClientConnection::write_to_logs(std::string message, bl::trivial::severity_level lvl) {
-    for (auto& vector_log : this->vector_logs) {
+    for (auto &vector_log: this->vector_logs) {
         vector_log->log(message, lvl);
     }
 }
@@ -162,5 +173,5 @@ int ClientConnection::get_socket() {
 }
 
 bool ClientConnection::is_timeout() {
-    return (clock() - this->timeout) / (double)CLOCKS_PER_SEC > CLIENT_SEC_TIMEOUT;
+    return (clock() - this->timeout) / (double) CLOCKS_PER_SEC > CLIENT_SEC_TIMEOUT;
 }
