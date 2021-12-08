@@ -3,8 +3,6 @@
 //
 
 #include "command.h"
-#include <cstring>
-#include <map>
 
 std::string input_password() {
     std::string password, password_1;
@@ -110,7 +108,8 @@ std::string create_message(const std::string &email,
         crate_body(file_name, body);
     }
 
-    message = "email: " + email + "\r\n"
+    message = "HTTP\r\n"
+              "email: " + email + "\r\n"
               "password: " + password + "\r\n"
               "key: " + key + "\r\n"
               "status: \r\n"
@@ -177,21 +176,3 @@ int Command::download(const std::string& command) {
 
     return parser(http_response);
 }
-
-
-
-//int Command::work_with_chmod(const std::string& command) {
-//    if (Validator::validate_chmod(command)) {
-//        std::cout << "Ошибка ввода команды" << std::endl;
-//        return -1;
-//    }
-//    return HTTPRequest::send("", "", "", "");
-//}
-//
-//int Command::work_with_directory(const std::string& command) {
-//    if (Validator::validate_directory(command)) {
-//        std::cout << "Ошибка ввода команды" << std::endl;
-//        return -1;
-//    }
-//    return HTTPRequest::send("", "", "", "");
-//}

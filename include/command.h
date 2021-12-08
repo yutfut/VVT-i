@@ -7,9 +7,8 @@
 
 #include <iostream>
 #include <string>
-
-#include <stdio.h>
-#include <regex>
+#include <cstring>
+#include <map>
 
 #include "validation.h"
 #include "http_request.h"

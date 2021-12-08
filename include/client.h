@@ -6,6 +6,7 @@
 #define VVTI_CLIENT_CLIENT_H
 
 #include <iostream>
+#include <map>
 #include "validation.h"
 #include "user.h"
 #include "command.h"
@@ -13,6 +14,14 @@
 class Client {
 private:
     User user;
+
+    std::map <std::string, int> commands;
+
+    enum Commands{
+        UPLOAD,
+        DOWNLOAD,
+        EXIT,
+    };
 public:
     Client();
 
