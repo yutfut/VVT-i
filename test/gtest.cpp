@@ -79,42 +79,42 @@ TEST(REGISTRATION_TEST, LOGOUT_TEST_OK_WHERE_USER_LOGOUTED) {
 }
 
 
-TEST(SERVER_TEST, SEND_ON_SERVER_TEST_OK) {
-    HTTPRequest client;
-    EXPECT_EQ(client.send(""), 0);
-}
+//TEST(SERVER_TEST, SEND_ON_SERVER_TEST_OK) {
+//    HTTPRequest client;
+//    EXPECT_EQ(client.send(""), 0);
+//}
+//
+//TEST(SERVER_TEST, SEND_ON_SERVER_TEST_FAIL) {
+//    HTTPRequest client;
+//    EXPECT_EQ(client.send(""), -1);
+//}
 
-TEST(SERVER_TEST, SEND_ON_SERVER_TEST_FAIL) {
-    HTTPRequest client;
-    EXPECT_EQ(client.send(""), -1);
-}
+//TEST(WORK_WITH_COMMAND_TEST, WORK_WITH_FILE_TEST_OK) {
+//    Command client;
+//    EXPECT_EQ(client.upload("m@m.m file name"), 0);
+//}
+//
+//TEST(WORK_WITH_COMMAND_TEST, WORK_WITH_FILE_TEST_FAIL) {
+//    Command client;
+//    EXPECT_EQ(client.upload(""), -1);
+//}
 
-TEST(WORK_WITH_COMMAND_TEST, WORK_WITH_FILE_TEST_OK) {
-    Command client;
-    EXPECT_EQ(client.upload("m@m.m file name"), 0);
-}
+//TEST(ROLE_COMMAND_TEST, ROLE_COMMAND_TEST_OK) {
+//    Client client;
+//    EXPECT_EQ(client.role_command("upload email.file"), 0);
+//    EXPECT_EQ(client.role_command("download key"), 0);
+//    EXPECT_EQ(client.role_command("exit"), 1);
+//}
+//
+//TEST(ROLE_COMMAND_TEST, ROLE_COMMAND_TEST_FAIL) {
+//    Client client;
+//    EXPECT_EQ(client.role_command(""), -1);
+//}
 
-TEST(WORK_WITH_COMMAND_TEST, WORK_WITH_FILE_TEST_FAIL) {
-    Command client;
-    EXPECT_EQ(client.upload(""), -1);
-}
-
-TEST(ROLE_COMMAND_TEST, ROLE_COMMAND_TEST_OK) {
-    Client client;
-    EXPECT_EQ(client.role_command("upload"), 0);
-    EXPECT_EQ(client.role_command("chmod"), 0);
-    EXPECT_EQ(client.role_command("exit"), 1);
-}
-
-TEST(ROLE_COMMAND_TEST, ROLE_COMMAND_TEST_FAIL) {
-    Client client;
-    EXPECT_EQ(client.role_command(""), -1);
-}
-
-TEST(ROLE_COMMAND_TEST, VALIDATION_COMMAND_TEST_OK) {
-    Client client;
-    EXPECT_EQ(client.role_command("upload"), 0);
-}
+//TEST(ROLE_COMMAND_TEST, VALIDATION_COMMAND_TEST_OK) {
+//    Client client;
+//    EXPECT_EQ(client.role_command("upload"), 0);
+//}
 
 TEST(ROLE_COMMAND_TEST, VALIDATION_COMMAND_TEST_FAIL) {
     Client client;

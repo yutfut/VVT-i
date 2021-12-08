@@ -3,6 +3,7 @@
 //
 
 #include "client.h"
+#include "map"
 
 Client::Client(){}
 
@@ -12,36 +13,53 @@ void Client::print() {
     std::cout << ">>>\t";
 }
 
-enum Commands
-{
+enum Commands{
     UPLOAD,
     DOWNLOAD,
+    EXIT,
 };
 
+std::map <std::string, int> commands;
+
+
+
 int Client::role_command(const std::string& command) {
+
+
     size_t pos = command.find_first_of(' ');
     std::string first_part_command = command.substr(0, pos);
     std::string rest_part_command = command.substr(pos + 1);
 
-    if (first_part_command == "upload") {
-        if(first_part_command != rest_part_command) {
-            return Command::upload(rest_part_command);
-        } else {
-            std::cout << "Ошибка ввода команды" << std::endl;
+    switch (commands[first_part_command]) {
+        case UPLOAD: {
+            if(first_part_command != rest_part_command) {
+                return Command::upload(rest_part_command);
+            } else {
+                std::cout << "Ошибка ввода команды" << std::endl;
+                return -1;
+            }
+            break;
+        }
+        case DOWNLOAD: {
+            if(first_part_command != rest_part_command) {
+                return Command::download(rest_part_command);
+            } else {
+                std::cout << "Ошибка ввода команды" << std::endl;
+                return -1;
+            }
+            break;
+        }
+        case EXIT: {
+            return 1;
+            break;
+        }
+        default: {
+            std::cout << "Команды не существует" << std::endl;
             return -1;
+            break;
         }
     }
-    if (first_part_command == "download") {
-        if(first_part_command != rest_part_command) {
-            return Command::download(rest_part_command);
-        } else {
-            std::cout << "Ошибка ввода команды" << std::endl;
-            return -1;
-        }
-    }
-    if (first_part_command == "exit") {
-        return 1;
-    }
+
 //    if (first_part_command == "chmod") {
 //        if(first_part_command != rest_part_command) {
 //            return Command::work_with_chmod(rest_part_command);
@@ -77,8 +95,8 @@ int Client::role_command(const std::string& command) {
 //            return -1;
 //        }
 //    }
-    std::cout << "Команды не существует" << std::endl;
-    return -1;
+//    std::cout << "Команды не существует" << std::endl;
+//    return -1;
 }
 
 int Client::validation_command(const std::string& command) {
@@ -89,6 +107,12 @@ int Client::validation_command(const std::string& command) {
 }
 
 void Client::run() {
+
+    commands["upload"] = UPLOAD;
+    commands["download"] = DOWNLOAD;
+    commands["exit"] = EXIT;
+
+
     std::string command;
     while (true) {
         print();

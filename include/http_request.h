@@ -17,13 +17,11 @@
 #include <netinet/in.h>
 #include <string>
 #include <cstring>
-
 #include <fstream>
 #include <iostream>
 
 class HTTPRequest {
 public:
-
     static void init_socket_address(struct sockaddr_in &name);
 
     static int request(const int &socket, const std::string msg);

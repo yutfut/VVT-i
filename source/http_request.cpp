@@ -30,7 +30,6 @@ int HTTPRequest::request(const int &socket, const std::string msg) {
 //            throw std::runtime_error("write failed: " + std::string(strerror(errno)));
             std::cout << "ошибка соединения\n";
             return -1;
-            break;
         }
 
         left -= sent;

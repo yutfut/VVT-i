@@ -54,13 +54,14 @@ std::string create_message(const std::string &email,
         crate_body(file_name, body);
     }
 
-    message = "email: " + email + "\n"
-              "password: " + password + "\n"
-              "key: " + key + "\n"
-              "status: \n"
-              "message: \n"
-              "command: " + command + "\n"
-              "filename: " + file_name + "\n\n";
+    message = "email: " + email + "\r\n"
+              "password: " + password + "\r\n"
+              "key: " + key + "\r\n"
+              "status: \r\n"
+              "message: \r\n"
+              "command: " + command + "\r\n"
+              "filename: " + file_name + "\r\n"
+              "content-length: " + std::to_string(body.size()) + "\r\n\r\n";
 
     message.append(body);
     return message;
@@ -115,7 +116,7 @@ int Command::download(const std::string& command) {
     return HTTPRequest::send(message);
 }
 
-void create_file(const std::string &file_name, std::string &message) {
+void create_file(const std::string &file_name, const std::string &message) {
     std::ofstream out(file_name);
 
     if (out.is_open()) {
