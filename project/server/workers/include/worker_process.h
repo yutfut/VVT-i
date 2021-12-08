@@ -7,15 +7,20 @@
 
 #include "client_connection.h"
 
+#include <fs_worker.h>
+#include <data_base.h>
+
 extern bool is_hard_stop;
 extern bool is_soft_stop;
 extern bool is_soft_reload;
 
 class WorkerProcess {
 public:
-    WorkerProcess() = default;
+    // TODO: нижняя строка была лишней?
+    // WorkerProcess() = default;
 
-    explicit WorkerProcess(int listen_sock, class ServerSettings* server_settings, std::vector<Log*>& vector_logs);
+    explicit WorkerProcess(int listen_sock, class ServerSettings *server_settings, std::vector<Log *> &vector_logs,
+                           const FsWorker &fs_worker, const DataBase &db_worker);
 
     ~WorkerProcess() = default;
 
@@ -27,7 +32,7 @@ public:
 
     static void sigint_handler(int sig); // Handler for hard stop
 
-    void write_to_logs(std::string message, bl::trivial::severity_level lvl);
+    void write_to_logs(const std::string& message, bl::trivial::severity_level lvl);
 
 private:
     typedef enum {
@@ -36,16 +41,16 @@ private:
         INFO_SOFT_STOP_DONE
     } log_messages_t;
 
-    class ServerSettings* server_settings;
+    class ServerSettings *server_settings;
 
     int listen_sock;
 
-    void write_to_log(log_messages_t log_type);
-
     void message_to_log(log_messages_t log_type);
 
-    std::vector<Log*> vector_logs;
-    // бд
-    // фс
+    std::vector<Log *> vector_logs;
+
+    const FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+
+    const DataBase &db_worker; // TODO: нужна обработка файла конфигурации
 
 };

@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <fs_worker.h>
+#include <data_base.h>
+
 #include "http_request.h"
 #include "http_response.h"
 #include "http_date.h"
@@ -28,7 +31,8 @@ class ClientConnection {
 public:
     ClientConnection() = default;
 
-    ClientConnection(class ServerSettings* server_settings, std::vector<Log*>& vector_logs);
+    ClientConnection(class ServerSettings *server_settings, std::vector<Log *> &vector_logs, const FsWorker &fs_worker,
+                     const DataBase &db_worker);
 
     connection_status_t connection_processing();
 
@@ -43,7 +47,7 @@ private:
 
     clock_t timeout, start_connection;
 
-    std::vector<Log*> vector_logs;
+    std::vector<Log *> vector_logs;
 
     typedef enum {
         GET_REQUEST,
@@ -63,7 +67,7 @@ private:
 
     connection_stages_t stage = GET_REQUEST;
 
-    class ServerSettings* server_settings;
+    class ServerSettings *server_settings;
 
     HttpRequest request;
     HttpResponse response;
@@ -80,4 +84,8 @@ private:
     void message_to_log(log_messages_t log_type);
 
     bool is_timeout();
+
+    const FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+
+    const DataBase &db_worker; // TODO: нужна обработка файла конфигурации
 };

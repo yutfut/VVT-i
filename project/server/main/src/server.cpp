@@ -23,6 +23,7 @@ Server::Server(const std::string& config_filename) {
 
     this->vector_logs.push_back(&error_log);
     this->vector_logs.push_back(&access_log);
+    db_worker.init();
 
     this->write_to_logs("SERVER STARTING...", INFO);
 }
@@ -140,7 +141,7 @@ bool Server::add_work_processes() {
             this->workers_pid.push_back(pid);
         }
         else {
-            WorkerProcess worker(this->listen_sock, &server, vector_logs);
+            WorkerProcess worker(this->listen_sock, &server, vector_logs, fs_worker, db_worker);
             worker.run();
             break;
         }

@@ -6,8 +6,10 @@
 bool is_hard_stop = false;
 bool is_soft_stop = false;
 
-WorkerProcess::WorkerProcess(int listen_sock, class ServerSettings* server_settings,
-    std::vector<Log*>& vector_logs) : listen_sock(listen_sock), server_settings(server_settings), vector_logs(vector_logs) {
+WorkerProcess::WorkerProcess(int listen_sock, class ServerSettings *server_settings,
+                             std::vector<Log *> &vector_logs, const FsWorker &fs_worker, const DataBase &db_worker)
+        : listen_sock(listen_sock), server_settings(server_settings), vector_logs(vector_logs), fs_worker(fs_worker),
+          db_worker(db_worker) {
     signal(SIGPIPE, SIG_IGN);
     this->setup_signals();
 }
@@ -30,8 +32,8 @@ void WorkerProcess::run() {
             }
 
             if (events[i].data.fd == this->listen_sock) {
-                ClientConnection* client_connection = new (std::nothrow) ClientConnection(this->server_settings,
-                    this->vector_logs);
+                auto *client_connection = new(std::nothrow) ClientConnection(this->server_settings,
+                                                                             this->vector_logs, fs_worker, db_worker);
                 if (!client_connection) {
                     continue;
                 }
@@ -43,12 +45,11 @@ void WorkerProcess::run() {
                 fcntl(client, F_SETFL, fcntl(client, F_GETFL, 0) | O_NONBLOCK);
                 client_connection->set_socket(client);
                 ev.events = EPOLLIN | EPOLLET;
-                ev.data.ptr = (ClientConnection*)client_connection;
+                ev.data.ptr = (ClientConnection *) client_connection;
 
                 epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client, &ev);
-            }
-            else {
-                ClientConnection* client_connection = (ClientConnection*)events[i].data.ptr;
+            } else {
+                auto *client_connection = (ClientConnection *) events[i].data.ptr;
                 connection_status_t connection_status = client_connection->connection_processing();
                 if (connection_status == CONNECTION_FINISHED || connection_status == CONNECTION_TIMEOUT_ERROR ||
                     connection_status == ERROR_WHILE_CONNECTION_PROCESSING || connection_status == ERROR_IN_REQUEST) {
@@ -68,7 +69,7 @@ void WorkerProcess::run() {
 
         epoll_events_count = epoll_wait(epoll_fd, events, EPOLL_SIZE, 0);
         for (int i = 0; i < epoll_events_count; ++i) {
-            ClientConnection* client_connection = (ClientConnection*)events[i].data.ptr;
+            auto *client_connection = (ClientConnection *) events[i].data.ptr;
             connection_status_t connection_status = client_connection->connection_processing();
             if (connection_status == CONNECTION_FINISHED || connection_status == CONNECTION_TIMEOUT_ERROR ||
                 connection_status == ERROR_WHILE_CONNECTION_PROCESSING) {
@@ -79,8 +80,7 @@ void WorkerProcess::run() {
         }
 
         this->message_to_log(INFO_SOFT_STOP_DONE);
-    }
-    else {
+    } else {
         this->message_to_log(INFO_HARD_STOP_DONE);
     }
     exit(0);
@@ -108,20 +108,20 @@ void WorkerProcess::setup_signals() {
 
 void WorkerProcess::message_to_log(log_messages_t log_type) {
     switch (log_type) {
-    case INFO_HARD_STOP_DONE:
-        this->write_to_logs("HARD STOP for worker DONE [WORKER PID " + std::to_string(getpid()) + "]", INFO);
-        break;
-    case INFO_SOFT_STOP_START:
-        this->write_to_logs("SOFT STOP for worker START [WORKER PID " + std::to_string(getpid()) + "]", INFO);
-        break;
-    case INFO_SOFT_STOP_DONE:
-        this->write_to_logs("SOFT STOP for worker DONE [WORKER PID " + std::to_string(getpid()) + "]", INFO);
-        break;
+        case INFO_HARD_STOP_DONE:
+            this->write_to_logs("HARD STOP for worker DONE [WORKER PID " + std::to_string(getpid()) + "]", INFO);
+            break;
+        case INFO_SOFT_STOP_START:
+            this->write_to_logs("SOFT STOP for worker START [WORKER PID " + std::to_string(getpid()) + "]", INFO);
+            break;
+        case INFO_SOFT_STOP_DONE:
+            this->write_to_logs("SOFT STOP for worker DONE [WORKER PID " + std::to_string(getpid()) + "]", INFO);
+            break;
     }
 }
 
-void WorkerProcess::write_to_logs(std::string message, bl::trivial::severity_level lvl) {
-    for (auto& vector_log : this->vector_logs) {
+void WorkerProcess::write_to_logs(const std::string &message, bl::trivial::severity_level lvl) {
+    for (auto &vector_log: this->vector_logs) {
         vector_log->log(message, lvl);
     }
 }

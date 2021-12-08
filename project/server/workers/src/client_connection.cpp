@@ -6,10 +6,13 @@
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
 
+
 ClientConnection::ClientConnection(class ServerSettings *server_settings,
-                                   std::vector<Log *> &vector_logs) : server_settings(server_settings),
-                                                                      vector_logs(vector_logs),
-                                                                      start_connection(clock()) {
+                                   std::vector<Log *> &vector_logs, const FsWorker &fs_worker,
+                                   const DataBase &db_worker) : server_settings(server_settings),
+                                                                vector_logs(vector_logs),
+                                                                start_connection(clock()), fs_worker(fs_worker),
+                                                                db_worker(db_worker) {
 }
 
 void ClientConnection::set_socket(int socket) {
@@ -86,14 +89,8 @@ bool ClientConnection::get_request() {
 }
 
 bool ClientConnection::handle_request() {
-    if (request.get_headers()["auth"] == "") {
-        RequestHandlerNotAuth handler;
-        return handler.handle_request(request, response);
-    }
-
-    response = HttpResponse({}, {}, request.get_major(), request.get_minor(), HttpStatusCode::BadRequest,
-                            get_message(HttpStatusCode::BadRequest));
-    return false;
+    RequestHandlerNotAuth handler;
+    return handler.handle_request(request, response);
 }
 
 bool ClientConnection::send_response() {
