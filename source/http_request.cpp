@@ -6,17 +6,17 @@
 
 void HTTPRequest::init_socket_address(struct sockaddr_in &name) {
     name.sin_family = AF_INET;
-//    name->sin_port = htons(3000);
+    name.sin_port = htons(3000);
     name.sin_port = htons(80);
 
-//    inet_pton(AF_INET, "127.0.0.1", &(name->sin_addr));
+    inet_pton(AF_INET, "127.0.0.1", &(name.sin_addr));
 
-    struct hostent* hostinfo = gethostbyname("vk.com");
-    if (hostinfo == NULL) {
-        fprintf(stderr, "Unknown host %s.\n", "vk.com");
-        exit(EXIT_FAILURE);
-    }
-    name.sin_addr = *(struct in_addr*)hostinfo->h_addr;
+//    struct hostent* hostinfo = gethostbyname("vk.com");
+//    if (hostinfo == NULL) {
+//        fprintf(stderr, "Unknown host %s.\n", "vk.com");
+//        exit(EXIT_FAILURE);
+//    }
+//    name.sin_addr = *(struct in_addr*)hostinfo->h_addr;
 }
 
 int HTTPRequest::request(const int &socket, const std::string msg) {
