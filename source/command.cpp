@@ -55,12 +55,12 @@ int parser(std::string http) {
         rest_part_header.erase(rest_part_header.begin(), rest_part_header.begin() + 1);
 
         commands[first_part_header] = rest_part_header;
-        std::cout << commands[first_part_header] << std::endl;
+//        std::cout << commands[first_part_header] << std::endl;
 
         if (http[0] == '\n' && http[2] == '\n' && http[1] == '\r') {
             http.erase(http.begin(), http.begin() + 3);
             commands["body"] = http;
-            std::cout << commands["body"] << std::endl;
+//            std::cout << commands["body"] << std::endl;
             break;
         }
         http.erase(http.begin(), http.begin() + 1);
