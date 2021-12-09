@@ -3,7 +3,7 @@
 #include <request_handler_not_auth.h>
 #include <http_status_code.h>
 
-#define CLIENT_SEC_TIMEOUT 100000
+#define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
 
 
@@ -41,24 +41,13 @@ connection_status_t ClientConnection::connection_processing() {
             return CONNECTION_TIMEOUT_ERROR;
         }
     }
- // TODO: debug
-    write_to_logs(request.get_body(), ERROR);
-    write_to_logs(request.get_body(), ERROR);
-    std::for_each(request.get_headers().begin(), request.get_headers().end(),
-                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
 
-    write_to_logs(std::to_string(__LINE__), ERROR);
     if (this->stage == HANDLE_REQUEST) {
-
-        write_to_logs(std::to_string(__LINE__), ERROR);
         if (this->handle_request()) {
-
-            write_to_logs(std::to_string(__LINE__), ERROR);
             this->stage = SEND_RESPONSE;
         }
     }
 
-    write_to_logs(std::to_string(stage), ERROR);
     if (this->stage == SEND_RESPONSE) {
         if (this->send_response()) {
             this->message_to_log(INFO_CONNECTION_FINISHED);
@@ -68,7 +57,6 @@ connection_status_t ClientConnection::connection_processing() {
             return CONNECTION_TIMEOUT_ERROR;
         }
     }
-    write_to_logs(std::to_string(__LINE__), ERROR);
 
     return CONNECTION_PROCESSING;
 }
@@ -77,8 +65,6 @@ bool ClientConnection::get_request() {
     bool has_read_data = false;
     char last_char;
     std::string line;
-
-    write_to_logs("I AM IN GET_REQUES", ERROR);
 
     line.reserve(LENGTH_LINE_FOR_RESERVE);
     while (read(this->sock, &last_char, sizeof(char)) == sizeof(char)) {
@@ -102,34 +88,25 @@ bool ClientConnection::get_request() {
 }
 
 bool ClientConnection::handle_request() {
-    write_to_logs("Я зашел в handle_request", ERROR);
-    write_to_logs(request.get_body(), ERROR);
-    write_to_logs(request.get_body(), ERROR);
+    write_to_logs("-----------------THE REQUEST---------------", ERROR);
     std::for_each(request.get_headers().begin(), request.get_headers().end(),
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
-//    response = HttpResponse({{"content-length", "0"}}, {}, 1, 1, HttpStatusCode::OK,
-//                            get_message(HttpStatusCode::OK));
-//    return true;
+    write_to_logs(request.get_body(), ERROR);
+    write_to_logs("----------------END OF REQUEST---------------", ERROR);
+
     RequestHandlerNotAuth handler(vector_logs);
     handler.handle_request(request, response, fs_worker, db_worker);
-    write_to_logs("THIS IS AN ANSWER", ERROR);
-    write_to_logs(response.get_body(), ERROR);
-    write_to_logs(response.get_body(), ERROR);
+
+    write_to_logs("----------------THE ANSWER---------------", ERROR);
     std::for_each(response.get_headers().begin(), response.get_headers().end(),
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
-    write_to_logs("END OF ANSWER", ERROR);
+    write_to_logs(response.get_body(), ERROR);
+    write_to_logs("----------------END OF ANSWER---------------", ERROR);
     return true;
 }
 
 bool ClientConnection::send_response() {
     bool has_written_data = false;
-
-//    std::map<std::string, std::string> headers;
-//    headers[CONTENT_TYPE_HDR] = "text/html";
-//    headers[CONTENT_LENGTH_HDR] = "26";
-//    headers[SERVER_HDR] = SERVER_VL;
-//
-//    this->response = HttpResponse(headers, "<div>\r\n\tHELLO WORLD!\r\n</div>\r\n", 1, 1, 200, "OK");
 
     std::string response_str = this->response.get_string();
 

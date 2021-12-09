@@ -16,8 +16,6 @@ extern bool is_soft_reload;
 
 class WorkerProcess {
 public:
-    // TODO: нижняя строка была лишней?
-    // WorkerProcess() = default;
 
     explicit WorkerProcess(int listen_sock, class ServerSettings *server_settings, std::vector<Log *> &vector_logs,
                             FsWorker &fs_worker,  DataBase &db_worker);

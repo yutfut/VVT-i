@@ -9,37 +9,28 @@ int process_hard_reload = EMPTY_MASTER;
 int has_old_master_stopped = 0;
 
 pid_t new_master_pid = 0;
-// TODO: delete cout
-Server::Server(FsWorker& fs_worker, DataBase& db_worker,const std::string& config_filename): fs_worker(fs_worker), db_worker(db_worker) {
-    std::cout<<__FILE__<< __LINE__;
+
+Server::Server(FsWorker &fs_worker, DataBase &db_worker, const std::string &config_filename) : fs_worker(fs_worker),
+                                                                                               db_worker(db_worker) {
     this->config_filename = config_filename;
-    std::cout<<__FILE__<< __LINE__;
     this->settings = MainServerSettings(this->config_filename);
-    std::cout<<__FILE__<< __LINE__;
     this->count_workflows = this->settings.get_count_workflows();
-    std::cout<<__FILE__<< __LINE__;
     this->server = this->settings.get_server();
-    std::cout<<__FILE__<< __LINE__;
 
     this->error_log = Log(this->settings.get_error_log_filename(), true,
-        this->cast_types_logs_level(error_log_level));
-    std::cout<<__FILE__<< __LINE__;
+                          this->cast_types_logs_level(error_log_level));
     this->access_log = Log(this->settings.get_access_log_filename(), true,
-        this->cast_types_logs_level(access_log_level));
-    std::cout<<__FILE__<< __LINE__;
+                           this->cast_types_logs_level(access_log_level));
 
     this->vector_logs.push_back(&error_log);
-    std::cout<<__FILE__<< __LINE__;
     this->vector_logs.push_back(&access_log);
-    std::cout<<__FILE__<< __LINE__;
 
     db_worker.init();
-    std::cout<<__FILE__<< __LINE__;
 
     this->write_to_logs("SERVER STARTING...", INFO);
 }
 
-bl::trivial::severity_level Server::cast_types_logs_level(const std::string& lvl) {
+bl::trivial::severity_level Server::cast_types_logs_level(const std::string &lvl) {
     if (lvl == "info") {
         return INFO;
     }
@@ -53,7 +44,7 @@ bl::trivial::severity_level Server::cast_types_logs_level(const std::string& lvl
 }
 
 void Server::write_to_logs(std::string message, bl::trivial::severity_level lvl) {
-    for (auto& vector_log : this->vector_logs) {
+    for (auto &vector_log: this->vector_logs) {
         vector_log->log(message, lvl);
     }
 }
@@ -119,7 +110,7 @@ bool Server::fill_pid_file() {
 
     stream_to_pid_file << getpid() << std::endl;
 
-    for (auto& i : this->workers_pid) {
+    for (auto &i: this->workers_pid) {
         stream_to_pid_file << i << std::endl;
     }
 
@@ -150,8 +141,7 @@ bool Server::add_work_processes() {
         }
         if (pid != 0) {
             this->workers_pid.push_back(pid);
-        }
-        else {
+        } else {
             WorkerProcess worker(this->listen_sock, &server, vector_logs, fs_worker, db_worker);
             worker.run();
             break;
@@ -183,8 +173,8 @@ bool Server::start() {
     }
 
     this->write_to_logs("Worker processes (" +
-        std::to_string(this->workers_pid.size()) + ") successfully started",
-        INFO);
+                        std::to_string(this->workers_pid.size()) + ") successfully started",
+                        INFO);
 
     this->setup_signals();
 
@@ -221,12 +211,12 @@ bool Server::start() {
     return true;
 }
 
-void Server::sighup_handler(int sig, siginfo_t* info, void* param) {
+void Server::sighup_handler(int sig, siginfo_t *info, void *param) {
     process_soft_stop = 1;
     new_master_pid = info->si_pid;
 }
 
-void Server::sigint_handler(int sig, siginfo_t* info, void* param) {
+void Server::sigint_handler(int sig, siginfo_t *info, void *param) {
     process_hard_stop = 1;
     new_master_pid = info->si_pid;
 }
@@ -280,18 +270,17 @@ bool Server::server_stop(action_level_t level) {
         }
 
         int status;
-        for (auto& i : this->workers_pid) {
+        for (auto &i: this->workers_pid) {
             kill(i, SIGINT);
         }
-        for (auto& i : this->workers_pid) {
+        for (auto &i: this->workers_pid) {
             waitpid(i, &status, 0);
         }
 
         if (process_hard_reload == NEW_MASTER) {
             this->write_to_logs("OLD MASTER STOPPED! PID " + std::to_string(getpid()), INFO);
             kill(new_master_pid, SIGCHLD);
-        }
-        else {
+        } else {
             this->write_to_logs("SERVER STOPPED!", INFO);
             this->delete_pid_file();
         }
@@ -303,18 +292,17 @@ bool Server::server_stop(action_level_t level) {
         this->write_to_logs("SOFT SERVER STOP...", WARNING);
 
         int status;
-        for (auto& i : this->workers_pid) {
+        for (auto &i: this->workers_pid) {
             kill(i, SIGHUP);
         }
-        for (auto& i : this->workers_pid) {
+        for (auto &i: this->workers_pid) {
             waitpid(i, &status, 0);
         }
 
         if (process_soft_reload == NEW_MASTER) {
             this->write_to_logs("OLD MASTER STOPPED! PID " + std::to_string(getpid()), INFO);
             kill(new_master_pid, SIGCHLD);
-        }
-        else {
+        } else {
             close(this->listen_sock);
             this->delete_pid_file();
             this->write_to_logs("SERVER STOPPED!", INFO);
@@ -341,20 +329,17 @@ bool Server::server_reload(action_level_t level) {
     if (getpid() != this->old_master_process) {
         if (level == HARD_LEVEL) {
             this->write_to_logs("HARD SERVER RELOADING...New master process successfully started PID " +
-                std::to_string(getpid()),
-                WARNING);
-        }
-        else if (level == SOFT_LEVEL) {
+                                std::to_string(getpid()),
+                                WARNING);
+        } else if (level == SOFT_LEVEL) {
             this->write_to_logs("SOFT SERVER RELOADING...New master process successfully started PID " +
-                std::to_string(getpid()),
-                WARNING);
+                                std::to_string(getpid()),
+                                WARNING);
         }
-    }
-    else {
+    } else {
         if (level == HARD_LEVEL) {
             process_hard_reload = NEW_MASTER;
-        }
-        else if (level == SOFT_LEVEL) {
+        } else if (level == SOFT_LEVEL) {
             process_soft_reload = NEW_MASTER;
         }
         return true;
@@ -368,19 +353,17 @@ bool Server::server_reload(action_level_t level) {
     int status;
     if (level == HARD_LEVEL) {
         kill(this->old_master_process, SIGINT);
-    }
-    else if (level == SOFT_LEVEL) {
+    } else if (level == SOFT_LEVEL) {
         kill(this->old_master_process, SIGHUP);
     }
     this->write_to_logs("Send kill to old master process", WARNING);
 
-    while (!has_old_master_stopped)
-        ;
+    while (!has_old_master_stopped);
     has_old_master_stopped = 0;
 
     this->write_to_logs("OLD MASTER FINISHED ALL CONNECTIONS WITH STATUS: " +
-        std::to_string(WEXITSTATUS(status)) + " PID " + std::to_string(getpid()),
-        INFO);
+                        std::to_string(WEXITSTATUS(status)) + " PID " + std::to_string(getpid()),
+                        INFO);
 
     this->fill_pid_file();
 
@@ -391,8 +374,7 @@ bool Server::server_reload(action_level_t level) {
 
     if (level == HARD_LEVEL) {
         process_hard_reload = EMPTY_MASTER;
-    }
-    else if (level == SOFT_LEVEL) {
+    } else if (level == SOFT_LEVEL) {
         process_soft_reload = EMPTY_MASTER;
     }
 
@@ -402,8 +384,7 @@ bool Server::server_reload(action_level_t level) {
 bool Server::apply_config(action_level_t level) {
     if (level == HARD_LEVEL) {
         this->write_to_logs("HARD SERVER RELOADING...NEW CONFIG APPLYING", WARNING);
-    }
-    else if (level == SOFT_LEVEL) {
+    } else if (level == SOFT_LEVEL) {
         this->write_to_logs("SOFT SERVER RELOADING...NEW CONFIG APPLYING", WARNING);
     }
 
@@ -425,8 +406,8 @@ bool Server::apply_config(action_level_t level) {
 
     this->write_to_logs("COUNT WORK PROCESSES WAS SUCCESSFULLY CHECKED", WARNING);
     this->write_to_logs("Worker processes (" +
-        std::to_string(this->workers_pid.size()) + ") successfully started",
-        INFO);
+                        std::to_string(this->workers_pid.size()) + ") successfully started",
+                        INFO);
 
     return true;
 }
@@ -449,7 +430,7 @@ bool Server::bind_listen_sock() {
         return false;
     }
 
-    if (bind(this->listen_sock, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+    if (bind(this->listen_sock, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
         return false;
     }
 
