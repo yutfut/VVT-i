@@ -20,6 +20,7 @@ void ClientConnection::set_socket(int socket) {
 }
 
 connection_status_t ClientConnection::connection_processing() {
+    write_to_logs(std::to_string(__LINE__), ERROR);
     if (this->stage == ERROR_STAGE) {
         return ERROR_WHILE_CONNECTION_PROCESSING;
     }
@@ -34,6 +35,8 @@ connection_status_t ClientConnection::connection_processing() {
             this->message_to_log(ERROR_BAD_REQUEST);
             return ERROR_IN_REQUEST;
         }
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        write_to_logs(std::to_string(__LINE__), ERROR);
         if (is_succeeded) {
             this->stage = HANDLE_REQUEST;
         } else if (this->is_timeout()) {
@@ -42,6 +45,7 @@ connection_status_t ClientConnection::connection_processing() {
         }
     }
 
+    write_to_logs(std::to_string(__LINE__), ERROR);
     if (this->stage == HANDLE_REQUEST) {
         if (this->handle_request()) {
             this->stage = SEND_RESPONSE;
@@ -57,14 +61,18 @@ connection_status_t ClientConnection::connection_processing() {
             return CONNECTION_TIMEOUT_ERROR;
         }
     }
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     return CONNECTION_PROCESSING;
 }
 
 bool ClientConnection::get_request() {
+    write_to_logs(std::to_string(__LINE__), ERROR);
     bool has_read_data = false;
     char last_char;
     std::string line;
+
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     line.reserve(LENGTH_LINE_FOR_RESERVE);
     while (read(this->sock, &last_char, sizeof(char)) == sizeof(char)) {
@@ -77,9 +85,11 @@ bool ClientConnection::get_request() {
         has_read_data = true;
     }
 
+    write_to_logs(std::to_string(__LINE__), ERROR);
     if (this->request.requst_ended()) {
         return true;
     }
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     if (has_read_data) {
         this->timeout = clock();

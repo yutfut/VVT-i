@@ -70,7 +70,7 @@ void HttpRequest::add_header(const std::string& line) {
     if (lf_pos == start_pos || line[start_pos] == '\r') {
         this->headers_added = true;
 
-        if (this->headers.find("content-length") == this->headers.end()) {
+        if (this->headers.find("content-length") == this->headers.end() || this->headers["content-length"] == "0" ) {
             this->request_ended = true;
         }
 
