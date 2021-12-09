@@ -73,7 +73,6 @@ std::string HTTPRequest::send(const std::string &message) {
     if (request(client_socket, message)) {
         return "ошибка соединения\n";
     }
-
     std::cout << "сокет отправилен на сервер\n";
 
     std::string http_response = response(client_socket);
