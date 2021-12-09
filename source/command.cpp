@@ -28,6 +28,21 @@ std::string check_password_upload() {
     return "";
 }
 
+std::string check_password_download() {
+    std::string password;
+    while (true) {
+        password = getpass("Введите пароль или нажмите enter если его не указывали:\t");
+        if (password.empty()) {
+            return "";
+        }
+        if (!Validator::validate_password(password)) {
+            return password;
+        } else {
+            std::cout << "Попробуйте еще раз: ";
+        }
+    }
+}
+
 void create_file(const std::string &file_name, const std::string &message) {
     std::ofstream out(file_name);
 
@@ -53,14 +68,11 @@ int parser(std::string http) {
         std::string first_part_header = header.substr(0, pos1);
         std::string rest_part_header = header.substr(pos1 + 1);
         rest_part_header.erase(rest_part_header.begin(), rest_part_header.begin() + 1);
-
         commands[first_part_header] = rest_part_header;
-//        std::cout << commands[first_part_header] << std::endl;
 
         if (http[0] == '\n' && http[2] == '\n' && http[1] == '\r') {
             http.erase(http.begin(), http.begin() + 3);
             commands["body"] = http;
-//            std::cout << commands["body"] << std::endl;
             break;
         }
         http.erase(http.begin(), http.begin() + 1);
@@ -139,22 +151,6 @@ int Command::upload(const std::string& command) {
         return -1;
     }
     return parser(http_response);
-}
-
-std::string check_password_download() {
-    std::string password;
-    std::cout << "Введите пароль или нажмите enter если его не указывали:\t";
-    while (true) {
-        std::getline (std::cin, password);
-        if (password.empty()) {
-            return "";
-        }
-        if (!Validator::validate_password(password)) {
-            return password;
-        } else {
-            std::cout << "Попробуйте еще раз: ";
-        }
-    }
 }
 
 int Command::download(const std::string& command) {
