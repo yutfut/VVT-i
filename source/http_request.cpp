@@ -7,7 +7,6 @@
 void HTTPRequest::init_socket_address(struct sockaddr_in &server) {
     server.sin_family = AF_INET;
     server.sin_port = htons(3000);
-    server.sin_port = htons(80);
     inet_pton(AF_INET, "127.0.0.1", &(server.sin_addr));
 }
 
