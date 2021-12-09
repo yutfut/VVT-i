@@ -85,7 +85,7 @@ private:
 
     bool is_timeout();
 
-     FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+     FsWorker &fs_worker;
 
-     DataBase &db_worker; // TODO: нужна обработка файла конфигурации
+     DataBase &db_worker;
 };
