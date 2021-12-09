@@ -46,7 +46,7 @@ std::string HttpResponse::get_string() {
     if (this->body == "") {
         str += "\r\n";
     } else {
-        str += "\r\n" + this->body;
+        str += "\r\n" + this->body + "\r\n";
     }
 
     return str;

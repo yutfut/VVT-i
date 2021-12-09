@@ -13,5 +13,5 @@ set(CMAKE_CXX_FLAGS "-g -O0 -Wall  -Wextra  -Wpedantic  -pthread")
 
 add_library(fs_worker_lib STATIC ${FILESYSTEM_LIB_SRCS})
 target_include_directories(fs_worker_lib PRIVATE ${INCLUDE_DIRS})
-target_compile_definitions(fs_worker_lib PRIVATE FS_ROOT_PATH="/home")
+target_compile_definitions(fs_worker_lib PRIVATE FS_ROOT_PATH="/home/ns/vvti_filesystem")
 target_compile_definitions(fs_worker_lib PRIVATE FS_NOT_AUTH_DIR_NAME="not_auth")
