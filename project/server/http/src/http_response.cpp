@@ -37,16 +37,16 @@ HttpResponse &HttpResponse::operator=(HttpResponse &&src) noexcept {
 
 std::string HttpResponse::get_string() {
     std::string str = "HTTP/" + std::to_string(this->get_major()) + "." + std::to_string(this->get_minor()) + " " +
-                      std::to_string(this->status) + " " + this->message + "\n";
+                      std::to_string(this->status) + " " + this->message + "\r\n";
 
     for (const auto &header: this->headers) {
-        str += header.first + ": " + header.second + "\n";
+        str += header.first + ": " + header.second + "\r\n";
     }
 
     if (this->body == "") {
-        str += "\n";
+        str += "\r\n";
     } else {
-        str += "\n" + this->body;
+        str += "\r\n" + this->body + "\r\n";
     }
 
     return str;

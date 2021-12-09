@@ -111,7 +111,7 @@ void HttpRequest::add_body(const std::string& line) {
     this->body += line;
 
     curr_len -= line.length();
-    if (curr_len == 0) {
+    if (curr_len <= 0) { // TODO: тут мы исправили c ==
         this->request_ended = true;
     }
 }

@@ -18,7 +18,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_RESPONSE_WITH_BODY) {
     headers[CONTENT_LENGTH_HDR] = "26";
     headers[SERVER_HDR] = SERVER_VL;
 
-    HttpResponse response(headers, "<div>\r\n\tHELLO WORLD!\r\n</div>\r\n", 1, 1, 200, "OK");
+    HttpResponse response(headers, "<div>\r\n\tHELLO WORLD!\r\n</div>", 1, 1, 200, "OK");
 
     EXPECT_EQ(response.get_string(), result);
 }
