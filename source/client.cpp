@@ -47,7 +47,9 @@ void Client::run() {
     commands["download"] = DOWNLOAD;
     commands["exit"] = EXIT;
 
+    std::cout << "Welcome to VVTi!" << std::endl;
     std::string command;
+
     while (true) {
         print();
         std::getline (std::cin, command);

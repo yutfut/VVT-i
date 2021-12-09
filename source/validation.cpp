@@ -36,8 +36,16 @@ int Validator::validate_password(const std::string& password) {
 }
 
 int Validator::validate_key(const std::string& key) {
-    if (key.empty()) {
+    std::regex key_regex{ "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}$" };
+    if (!key.empty()) {
+        bool is_valid = std::regex_search(key, key_regex);
+        if (is_valid == 1) {
+            return 0;
+        } else {
+            std::cout << "пароль не удовлетворяет регулярному выражению\n";
+            return -1;
+        }
+    } else {
         return -1;
     }
-    return 0;
 }
