@@ -23,7 +23,7 @@ int HTTPRequest::request(const int &socket, const std::string msg) {
         left -= sent;
     }
 
-    std::cout << msg << std::endl;
+    std::cout << std::endl << msg << std::endl;
     return 0;
 }
 
@@ -51,26 +51,31 @@ std::string HTTPRequest::response(const int &socket) {
 }
 
 std::string HTTPRequest::send(const std::string &message) {
-
-
     int client_socket = socket(PF_INET, SOCK_STREAM, 0);
     if (client_socket <= 0) {
         std::cout << "ошибка соединения\n";
         return "ошибка соединения\n";
     }
 
+    std::cout << "сокет сделан\n";
+
     struct sockaddr_in server;
     init_socket_address(server);
+
+    std::cout << "сокет проинициализирован\n";
 
     if (connect(client_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
         close(client_socket);
         return "ошибка соединения\n";
     }
 
+    std::cout << "сокет забиндился к серверу\n";
+
     if (request(client_socket, message)) {
         return "ошибка соединения\n";
     }
 
+    std::cout << "сокет отправилен на сервер\n";
 
     std::string http_response = response(client_socket);
     if (http_response == "ошибка соединения\n") {
@@ -78,7 +83,11 @@ std::string HTTPRequest::send(const std::string &message) {
         return "ошибка соединения\n";
     }
 
+    std::cout << "сокет принят с сервер\n";
+
     close(client_socket);
+    std::cout << "сокет закрылся\n";
+    std::cout << "респонс передался\n";
 
     return http_response;
 }
