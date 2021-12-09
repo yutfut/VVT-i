@@ -22,7 +22,7 @@ std::string check_password_upload() {
     std::cout << "Хотите задать пароль для файла? y/n:\t";
     std::getline (std::cin, y_or_n);
 
-    if (y_or_n.empty() || y_or_n == "y") {
+    if (y_or_n == "y") {
         return input_password();
     }
     return "";
@@ -57,8 +57,10 @@ void create_file(const std::string &file_name, const std::string &message) {
 
 int parser(std::string http) {
     std::map<std::string, std::string> commands;
+
     size_t pos = http.find_first_of('\n');
     http = http.substr(pos + 1);
+
     while (!http.empty()) {
         pos = http.find_first_of('\r');
         std::string header = http.substr(0, pos);
@@ -71,6 +73,9 @@ int parser(std::string http) {
         commands[first_part_header] = rest_part_header;
 
         if (http[0] == '\n' && http[2] == '\n' && http[1] == '\r') {
+            if (commands["command"] == "upload") {
+                break;
+            }
             http.erase(http.begin(), http.begin() + 3);
             commands["body"] = http;
             break;
@@ -97,7 +102,7 @@ void crate_body(const std::string &file_name, std::string &message) {
         std::cout << "ошибка открытия файла\n";
     }
     while (getline(in, buff)) {
-        message.append(buff.append("\n"));
+        message.append(buff.append("\r\n"));
     }
 
     in.close();

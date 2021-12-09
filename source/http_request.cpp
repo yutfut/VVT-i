@@ -28,26 +28,25 @@ int HTTPRequest::request(const int &socket, const std::string msg) {
 }
 
 std::string HTTPRequest::response(const int &socket) {
-    char buf[1024];
-#ifdef __APPLE__
-    int n = ::recv(socket, buf, sizeof(buf), 0);
-#else
-    int n = ::recv(socket, buf, sizeof(buf), MSG_NOSIGNAL);
-#endif
-
-    if (-1 == n && errno != EAGAIN) {
-        return "ошибка соединения\n";
-    }
-    if (0 == n) {
-        return "ошибка соединения\n";
-    }
-    if (-1 == n) {
-        return "ошибка соединения\n";
+    char last_char;
+    std::string line;
+    line.reserve(1024);
+    while (read(socket, &last_char, sizeof(char)) == sizeof(char)) {
+        line.push_back(last_char);
     }
 
-    std::string ret(buf, buf + n);
-    std::cerr << ret << " [" << n << " bytes]" << std::endl;
-    return ret;
+    if (-1 == line.size() && errno != EAGAIN) {
+        return "ошибка соединения\n";
+    }
+    if (0 == line.size()) {
+        return "ошибка соединения\n";
+    }
+    if (-1 == line.size()) {
+        return "ошибка соединения\n";
+    }
+
+    std::cerr << line << " [" << line.size() << " bytes]" << std::endl;
+    return line;
 }
 
 std::string HTTPRequest::send(const std::string &message) {
