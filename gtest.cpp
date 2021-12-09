@@ -46,7 +46,7 @@ TEST(DATA_BASE_TEST, WORK_WITH_TMP_FILES) {
     EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_2.filename, "type1234"), curr_date);
     EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_3.filename, "type1234"), curr_date);
 
-    db.not_auth_mode.delete_unauth_user_files(curr_date);
+    db.not_auth_mode.delete_files_by_date(curr_date);
     EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_1.filename, ""), "");
 }
 

@@ -38,7 +38,8 @@ int DataBase::init() {
                                           "upload_date DATE DEFAULT CURRENT_DATE);");
 
     } catch(const pqxx::sql_error& e) {
-        throw(e.what());
+        // throw(e.what());
+        std::cout << e.what() << "\n";
         return -1;
     }
 
