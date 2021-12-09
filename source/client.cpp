@@ -54,16 +54,19 @@ void Client::run() {
         if (command.empty()) {
             continue;
         }
-        int role = role_command(command);
-        if (role == 1) {
-            break;
-        }
-        if (role == 0) {
-            std::cout << "SUCСESS" << std::endl;
-        } else {
-            std::cout << "ERROR" << std::endl;
+
+        switch (role_command(command)){
+            case SUCCESS:
+                std::cout << "SUCСESS" << std::endl;
+                break;
+            case GOODBYE:
+                std::cout << "GOODBYE" << std::endl;
+                return;
+            default:
+                std::cout << "ERROR" << std::endl;
+                break;
         }
     }
-    std::cout << "good buy" << std::endl;
+
 }
 

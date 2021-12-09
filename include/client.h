@@ -17,10 +17,15 @@ private:
 
     std::map <std::string, int> commands;
 
-    enum Commands{
+    enum Commands {
         UPLOAD,
         DOWNLOAD,
         EXIT,
+    };
+
+    enum Role {
+        SUCCESS,
+        GOODBYE,
     };
 public:
     Client();
@@ -30,8 +35,6 @@ public:
     void print();
 
     int role_command(const std::string& command);
-
-    int validation_command(const std::string& command);
 
     void run();
 };
