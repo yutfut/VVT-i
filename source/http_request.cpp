@@ -45,7 +45,6 @@ std::string HTTPRequest::response(const int &socket) {
         return "ошибка соединения\n";
     }
 
-    std::cerr << line << " [" << line.size() << " bytes]" << std::endl;
     return line;
 }
 
