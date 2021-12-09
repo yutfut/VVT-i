@@ -102,7 +102,7 @@ std::string create_message(const std::string &email,
         crate_body(file_name, body);
     }
 
-    message = "POST HTTP/1.0\r\n\r\n"
+    message = "POST / HTTP/1.0\r\n"
               "email: " + email + "\r\n"
               "password: " + password + "\r\n"
               "key: " + key + "\r\n"
