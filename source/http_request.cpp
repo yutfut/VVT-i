@@ -28,25 +28,25 @@ int HTTPRequest::request(const int &socket, const std::string msg) {
 }
 
 std::string HTTPRequest::response(const int &socket) {
-    char last_char;
-    std::string line;
-    line.reserve(1024);
-    while (read(socket, &last_char, sizeof(char)) == sizeof(char)) {
-        line.push_back(last_char);
+    char buf[1024];
+#ifdef __APPLE__
+    int n = ::recv(socket, buf, sizeof(buf), 0);
+#else
+    int n = ::recv(socket, buf, sizeof(buf), MSG_NOSIGNAL);
+#endif
+
+    if (-1 == n && errno != EAGAIN) {
+        return "ошибка соединения\n";
+    }
+    if (0 == n) {
+        return "ошибка соединения\n";
+    }
+    if (-1 == n) {
+        return "ошибка соединения\n";
     }
 
-    if (-1 == line.size() && errno != EAGAIN) {
-        return "ошибка соединения\n";
-    }
-    if (0 == line.size()) {
-        return "ошибка соединения\n";
-    }
-    if (-1 == line.size()) {
-        return "ошибка соединения\n";
-    }
-
-    std::cerr << line << " [" << line.size() << " bytes]" << std::endl;
-    return line;
+    std::string ret(buf, buf + n);
+    return ret;
 }
 
 std::string HTTPRequest::send(const std::string &message) {
@@ -56,24 +56,17 @@ std::string HTTPRequest::send(const std::string &message) {
         return "ошибка соединения\n";
     }
 
-    std::cout << "сокет сделан\n";
-
     struct sockaddr_in server;
     init_socket_address(server);
-
-    std::cout << "сокет проинициализирован\n";
 
     if (connect(client_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
         close(client_socket);
         return "ошибка соединения\n";
     }
 
-    std::cout << "сокет забиндился к серверу\n";
-
     if (request(client_socket, message)) {
         return "ошибка соединения\n";
     }
-    std::cout << "сокет отправилен на сервер\n";
 
     std::string http_response = response(client_socket);
     if (http_response == "ошибка соединения\n") {
@@ -81,11 +74,7 @@ std::string HTTPRequest::send(const std::string &message) {
         return "ошибка соединения\n";
     }
 
-    std::cout << "сокет принят с сервер\n";
-
     close(client_socket);
-    std::cout << "сокет закрылся\n";
-    std::cout << "респонс передался\n";
 
     return http_response;
 }

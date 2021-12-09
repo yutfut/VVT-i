@@ -68,7 +68,7 @@ int parser(std::string http) {
         size_t pos1 = header.find_first_of(':');
         std::string first_part_header = header.substr(0, pos1);
         std::string rest_part_header = header.substr(pos1 + 1);
-        if( rest_part_header.empty()) {
+        if(rest_part_header.empty()) {
             break;
         }
         rest_part_header.erase(rest_part_header.begin(), rest_part_header.begin() + 1);
