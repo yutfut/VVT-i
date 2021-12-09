@@ -66,12 +66,6 @@ int parser(std::string http) {
         http.erase(http.begin(), http.begin() + 1);
     }
 
-//    if (commands["body"].size() == std::stoi(commands["content-length"])) {
-//        std::cout << "nice\n";
-//    } else {
-//        std::cout << "fuck\n" << commands["body"].size() << " " << std::stoi(commands["content-length"]) <<std::endl;
-//    }
-
     std::cout << std::endl;
     if (commands["command"] == "download" && commands["message"] == "OK") {
         create_file(commands["filename"], commands["body"]);

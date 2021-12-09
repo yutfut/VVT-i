@@ -41,17 +41,3 @@ int Validator::validate_key(const std::string& key) {
     }
     return 0;
 }
-
-int Validator::validate_chmod(const std::string& chmod) {
-    if (chmod.empty()) {
-        return -1;
-    }
-    return 0;
-}
-
-int Validator::validate_directory(const std::string& directory) {
-    if (directory.empty()) {
-        return -1;
-    }
-    return 0;
-}

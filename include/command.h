@@ -19,10 +19,6 @@ public:
     static int upload(const std::string& command);
 
     static int download(const std::string& command);
-
-//    static int work_with_chmod(const std::string& command);
-//
-//    static int work_with_directory(const std::string& command);
 };
 
 #endif //VVT_I_COMMAND_H

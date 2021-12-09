@@ -21,7 +21,6 @@ int User::register_user(const std::string& command) {
         return -1;
     }
     return 0;
-//    return HTTPRequest::send("", "", "", "");
 }
 
 int User::login(const std::string& command) {
@@ -37,7 +36,6 @@ int User::login(const std::string& command) {
         }
         authorize = true;
         return 0;
-//        return HTTPRequest::send("", "", "", "");
     } else {
         std::cout << "Вы уже вошли в систему" << std::endl;
         return 0;
@@ -52,5 +50,4 @@ int User::logout() {
     }
 
     return 0;
-//    return HTTPRequest::send("", "", "", "");
 }
