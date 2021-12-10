@@ -1,34 +1,21 @@
 //
-// Created by Yut Fut on 18.11.2021.
+// Created by Yut Fut on 10.12.2021.
 //
 
-// http base
+#ifndef VVT_I_HTTP_REQUEST_H
+#define VVT_I_HTTP_REQUEST_H
 
-#ifndef VVT_I_HTTP_REQEST_H
-#define VVT_I_HTTP_REQEST_H
-
-#include "command.h"
-
-#include <errno.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <string>
-#include <cstring>
-#include <fstream>
 #include <iostream>
+#include <string>
+#include <fstream>
 
 class HTTPRequest {
 public:
-    static void init_socket_address(struct sockaddr_in &name);
-
-    static int request(const int &socket, const std::string msg);
-
-    static std::string response(const int &socket);
-
-    static std::string send(const std::string &message);
+    static std::string create_message(const std::string &email,
+                               const std::string &password,
+                               const std::string &key,
+                               const std::string &file_name,
+                               const std::string &command);
 };
 
-#endif //VVT_I_HTTP_REQEST_H
+#endif //VVT_I_HTTP_REQUEST_H

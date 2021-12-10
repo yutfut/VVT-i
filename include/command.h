@@ -8,14 +8,14 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <map>
 
 #include "validation.h"
+#include "http_base.h"
 #include "http_request.h"
+#include "http_response.h"
 
 class Command {
 public:
-
     static int upload(const std::string& command);
 
     static int download(const std::string& command);

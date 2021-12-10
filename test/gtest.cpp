@@ -7,7 +7,7 @@
 #include "client.h"
 #include "command.h"
 #include "validation.h"
-#include "http_request.h"
+#include "http_base.h"
 
 TEST(VALIDATION_TEST, VALIDATION_EMAIL_TEST_OK) {
     EXPECT_EQ(Validator::validate_email("m@m.m"), 0);

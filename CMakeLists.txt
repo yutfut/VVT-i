@@ -14,7 +14,9 @@ add_library(client STATIC ${SOURCE_DIRECTORY}/client.cpp
                           ${SOURCE_DIRECTORY}/validation.cpp
                           ${SOURCE_DIRECTORY}/user.cpp
                           ${SOURCE_DIRECTORY}/command.cpp
-                          ${SOURCE_DIRECTORY}/http_request.cpp)
+                          ${SOURCE_DIRECTORY}/http_base.cpp
+                          ${SOURCE_DIRECTORY}/http_request.cpp
+                          ${SOURCE_DIRECTORY}/http_response.cpp)
 target_include_directories(client PUBLIC ${INCLUDE_DIRECTORY})
 
 add_executable(vvti_client source/main.cpp)

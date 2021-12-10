@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include "validation.h"
-#include "http_request.h"
+#include "http_base.h"
 
 class User {
 private:
