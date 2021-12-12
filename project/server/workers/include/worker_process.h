@@ -18,7 +18,7 @@ class WorkerProcess {
 public:
 
     explicit WorkerProcess(int listen_sock, class ServerSettings *server_settings, std::vector<Log *> &vector_logs,
-                            FsWorker &fs_worker,  DataBase &db_worker);
+                           FsWorker &fs_worker, DataBase &db_worker);
 
     ~WorkerProcess() = default;
 
@@ -47,8 +47,8 @@ private:
 
     std::vector<Log *> vector_logs;
 
-    FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+    FsWorker &fs_worker;
 
-    DataBase &db_worker; // TODO: нужна обработка файла конфигурации
+    DataBase &db_worker;
 
 };

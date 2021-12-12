@@ -4,9 +4,10 @@
 int main() {
     DataBase db("postgres", "postgres", "5432", "localhost", "");
     db.init();
-    db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
-    db.not_auth_mode.delete_unauth_user_files("2021-12-01");
+    std::cout << db.not_auth_mode.get_upload_file_date("b6882d0e-eedd-45c1-a146-44cd70f02a4d", "").filename << "\n";
+    std::cout << db.not_auth_mode.get_upload_file_date("b6882d0e-eedd-45c1-a146-44cd70f02a4d", "").filename << "\n";
+    std::cout << db.not_auth_mode.get_upload_file_date("b6882d0e-eedd-45c1-a146-44cd70f02a4d", "").filename << "\n";
+    std::cout << db.not_auth_mode.get_upload_file_date("b6882d0e-eedd-45c1-a146-44cd70f02a4d", "").filename << "\n";
 
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }

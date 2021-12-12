@@ -25,6 +25,7 @@ Server::Server(FsWorker &fs_worker, DataBase &db_worker, const std::string &conf
     this->vector_logs.push_back(&error_log);
     this->vector_logs.push_back(&access_log);
 
+    // TODO: создавать воркеры ФС и БД тут
     db_worker.init();
 
     this->write_to_logs("SERVER STARTING...", INFO);

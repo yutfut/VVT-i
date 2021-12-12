@@ -1,8 +1,8 @@
 #include "db_not_auth_mode.h"
 
 
-NotAuthMode::NotAuthMode(pqxx::nontransaction *transaction) :
-        transaction(transaction) {}
+NotAuthMode::NotAuthMode(pqxx::nontransaction *transaction, pqxx::connection *conn) :
+        transaction(transaction), connection(conn) {}
 
 unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_filename,
                                                      const std::string &option_password) {
@@ -30,12 +30,15 @@ int NotAuthMode::delete_files_by_date(const std::string &upload_date) {
 unauth_file_data_t NotAuthMode::get_upload_file_date(const std::string &file_uuid,
                                                      const std::string &option_password) {
     std::string str_query;
+    transaction->commit();
+    pqxx::work trans(*connection);
 
     try {
         str_query = "SELECT user_filename, upload_date FROM Unauth_user_files WHERE uuid = '"
                     + file_uuid + "' AND password = '" + option_password + "';";
 
-        pqxx::result res = transaction->exec(str_query);
+        pqxx::result res = trans.exec(str_query);
+        trans.commit();
 
         if (res.empty()) {
             return {};
@@ -46,7 +49,7 @@ unauth_file_data_t NotAuthMode::get_upload_file_date(const std::string &file_uui
 
         return res_struct;
     } catch (const pqxx::sql_error &e) {
-        return {};
+        throw;
     }
 }
 

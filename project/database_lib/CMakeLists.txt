@@ -21,3 +21,7 @@ aux_source_directory( ${CMAKE_CURRENT_SOURCE_DIR}/src/ DATABASE_LIB_SRCS)
 add_library(database_lib ${DATABASE_LIB_SRCS})
 target_include_directories(database_lib PUBLIC ${DATABASE_LIB_INCLUDES})
 target_link_libraries(database_lib ${PQXX_LIB} ${PQ_LIB})
+
+add_executable(db_main main.cpp)
+target_include_directories( db_main PUBLIC ${DATABASE_LIB_INCLUDES})
+target_link_libraries(db_main database_lib ${PQXX_LIB} ${PQ_LIB})
