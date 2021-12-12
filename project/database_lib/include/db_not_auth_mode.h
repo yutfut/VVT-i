@@ -5,7 +5,7 @@
 class NotAuthMode {
 public:
 
-    NotAuthMode(pqxx::nontransaction *transaction);
+    NotAuthMode(pqxx::nontransaction *transaction, pqxx::connection *conn);
 
     unauth_file_data_t add_unauth_user_file(const std::string &user_filename,
                                             const std::string &option_password);       // return unique id-code of file (success) or ""
@@ -16,4 +16,5 @@ public:
 private:
 
     pqxx::nontransaction *transaction;
+    pqxx::connection *connection;
 };

@@ -1,7 +1,5 @@
 #include "http_status_code.h"
 
-
-//TODO: изменеить сообщения на обнословные
 std::string get_message(HttpStatusCode status){
     switch (status) {
         case HttpStatusCode::OK:

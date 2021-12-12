@@ -46,7 +46,7 @@ bool FsWorkerNotAuthUsr::move_file_to_fs(const fs::path &src_path, const fs::pat
 }
 
 std::ifstream FsWorkerNotAuthUsr::get_file(const fs::path &file_name, const fs::path &date_added) const noexcept {
-    return {root_path / date_added / file_name};
+    return {root_path / date_added / file_name, std::ios_base::binary};
 }
 
 bool FsWorkerNotAuthUsr::create_day_dir(const fs::path &date_added) noexcept {
