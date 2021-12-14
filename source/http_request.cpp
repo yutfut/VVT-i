@@ -6,7 +6,7 @@
 
 void crate_body(const std::string &file_name, std::string &message) {
     std::string buff;
-    std::ifstream in(file_name);
+    std::ifstream in(file_name, std::ios::binary);
 
     if (!in.is_open()) {
         std::cout << "ошибка открытия файла\n";
@@ -40,5 +40,6 @@ std::string HTTPRequest::create_message(const std::string &email,
               "content-length: " + std::to_string(body.size()) + "\r\n\r\n";
 
     message.append(body);
+    std::cout << message << std::endl;
     return message;
 }
