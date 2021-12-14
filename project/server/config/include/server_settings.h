@@ -39,6 +39,8 @@ public:
 
     std::string get_servername();
 
+    std::string get_fs_root();
+
     database_t get_database();
 
 private:
@@ -46,11 +48,14 @@ private:
 
     std::string servername = "127.0.0.1";
 
+    std::string fs_root = "/";
+
     database_t database;
 
     typedef enum {
         LISTEN_NUMBER,
-        SERVERNAME_NUMBER
+        SERVERNAME_NUMBER,
+        FS_ROOT
     } numbers_of_properties;
 
     typedef enum {

@@ -70,7 +70,7 @@ void HttpRequest::add_header(const std::string& line) {
     if (lf_pos == start_pos || line[start_pos] == '\r') {
         this->headers_added = true;
 
-        if (this->headers.find("content-length") == this->headers.end()) {
+        if (this->headers.find("content-length") == this->headers.end() || this->headers["content-length"] == "0" ) {
             this->request_ended = true;
         }
 
@@ -111,8 +111,9 @@ void HttpRequest::add_body(const std::string& line) {
     this->body += line;
 
     curr_len -= line.length();
-    if (curr_len == 0) {
+    if (curr_len <= 0) {
         this->request_ended = true;
+        this->body.erase(this->body.rfind("\r\n"), 2);
     }
 }
 

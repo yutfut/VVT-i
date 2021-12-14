@@ -1,6 +1,8 @@
 #include "server_settings.h"
 
-const std::vector<std::string> ServerSettings::valid_properties = { "listen", "servername", "database" };
+const std::vector<std::string> ServerSettings::valid_properties = {
+    "listen", "servername", "fs_root", "database"
+};
 
 const std::vector<std::string> ServerSettings::database_valid_properties = {
     "user", "password", "host", "port", "dbname"
@@ -54,6 +56,9 @@ void ServerSettings::set_property(int number_of_property, std::string value)
     }
     case SERVERNAME_NUMBER:
         this->servername = value.substr(begin, value_length);
+        break;
+    case FS_ROOT:
+        this->fs_root = value.substr(begin, value_length);
         break;
     }
 }
@@ -127,6 +132,11 @@ int ServerSettings::get_port()
 std::string ServerSettings::get_servername()
 {
     return this->servername;
+}
+
+std::string ServerSettings::get_fs_root()
+{
+    return this->fs_root;
 }
 
 database_t ServerSettings::get_database()

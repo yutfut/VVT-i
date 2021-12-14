@@ -11,6 +11,7 @@ TEST(TEST_CONFIG, HANDLE_EMPTY_CONFIG) {
 
     EXPECT_EQ(settings.get_server().get_port(), 80);
     EXPECT_EQ(settings.get_server().get_servername(), "127.0.0.1");
+    EXPECT_EQ(settings.get_server().get_fs_root(), "/");
 
     EXPECT_EQ(settings.get_server().get_database().user, "postgres");
     EXPECT_EQ(settings.get_server().get_database().password, "postgres");
@@ -32,6 +33,7 @@ TEST(TEST_CONFIG, HandleConfig) {
 
     EXPECT_EQ(settings.get_server().get_port(), 3000);
     EXPECT_EQ(settings.get_server().get_servername(), "192.168.0.1");
+    EXPECT_EQ(settings.get_server().get_fs_root(), "/path");
 
     EXPECT_EQ(settings.get_server().get_database().user, "test_user");
     EXPECT_EQ(settings.get_server().get_database().password, "test_password");
