@@ -40,6 +40,6 @@ std::string HTTPRequest::create_message(const std::string &email,
               "content-length: " + std::to_string(body.size()) + "\r\n\r\n";
 
     message.append(body);
-    std::cout << message << std::endl;
+    message.append("\r\n");
     return message;
 }
