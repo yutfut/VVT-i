@@ -4,6 +4,7 @@
 
 TEST(TEST_HTTP, HANDLE_HTTP_RESPONSE_WITH_BODY) {
     std::string result = ""
+
         "HTTP/1.1 200 OK\r\n"
         "Content-Length: 26\r\n"
         "Content-Type: text/html\r\n"

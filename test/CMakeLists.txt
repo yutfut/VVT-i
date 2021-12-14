@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(test)
+project(fs_worker_lib)
 
-# Find package for test
+# Find package for fs_worker_lib
 find_package(GTest REQUIRED)
 
 if(GTest_FOUND)
