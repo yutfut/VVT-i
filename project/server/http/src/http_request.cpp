@@ -19,12 +19,8 @@ void HttpRequest::add_line(const std::string& line) {
         add_header(line);
         return;
     }
-    if (!this->body_added) {
-        add_body(line);
-        return;
-    }
 
-    this->request_ended = true;
+    add_body(line);
 }
 
 void HttpRequest::add_first_line(const std::string& line) {
@@ -55,7 +51,7 @@ void HttpRequest::add_first_line(const std::string& line) {
         ++start_pos;
     }
 
-    std::string protocol(line, start_pos, lf_pos - start_pos);
+    std::string protocol(line, start_pos, lf_pos - 1 - start_pos);
 
     if (sscanf(protocol.c_str(), "HTTP/%d.%d", &version_major, &version_minor) != 2) {
         throw "Error while reading from file descriptor";
@@ -71,8 +67,13 @@ void HttpRequest::add_header(const std::string& line) {
     }
 
     size_t start_pos = 0;
-    if (lf_pos == start_pos) {
+    if (lf_pos == start_pos || line[start_pos] == '\r') {
         this->headers_added = true;
+
+        if (this->headers.find("content-length") == this->headers.end() || this->headers["content-length"] == "0" ) {
+            this->request_ended = true;
+        }
+
         return;
     }
 
@@ -92,14 +93,14 @@ void HttpRequest::add_header(const std::string& line) {
         ++start_pos;
     }
 
-    std::string header_value(line, start_pos, lf_pos - start_pos);
+    std::string header_value(line, start_pos, lf_pos - 1 - start_pos);
     this->headers[header_name] = header_value;
 }
 
 void HttpRequest::add_body(const std::string& line) {
     int len;
     if (sscanf(this->headers["content-length"].c_str(), "%d", &len) != 1) {
-        throw "Error while reading from file descriptor";
+        return;
     }
 
     if (curr_len == -1) {
@@ -109,8 +110,9 @@ void HttpRequest::add_body(const std::string& line) {
     this->body += line;
 
     curr_len -= line.length();
-    if (curr_len == 0) {
-        this->body_added = true;
+    if (curr_len <= 0) {
+        this->request_ended = true;
+        this->body.erase(this->body.rfind("\r\n"), 2);
     }
 }
 

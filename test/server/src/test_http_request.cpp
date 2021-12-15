@@ -4,14 +4,14 @@
 
 TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITH_BODY) {
     std::string str = ""
-        "GET /index.html HTTP/1.1\n"
-        "Host: VVT-i\n"
-        "Content-Length: 23\n"
-        "Content-Type: text/html\n"
-        "\n"
-        "<div>\n"
-        "\tHELLO WORLD!\n"
-        "</div>\n";
+        "GET /index.html HTTP/1.1\r\n"
+        "Host: VVT-i\r\n"
+        "Content-Length: 23\r\n"
+        "Content-Type: text/html\r\n"
+        "\r\n"
+        "<div>\r\n"
+        "\tHELLO WORLD!\r\n"
+        "</div>\r\n";
 
     size_t pos;
     HttpRequest request;
@@ -29,14 +29,14 @@ TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITH_BODY) {
     EXPECT_EQ(request.get_headers()["content-length"], "23");
     EXPECT_EQ(request.get_headers()["content-type"], "text/html");
 
-    EXPECT_EQ(request.get_body(), "<div>\n\tHELLO WORLD!\n</div>\n");
+    EXPECT_EQ(request.get_body(), "<div>\r\n\tHELLO WORLD!\r\n</div>");
 }
 
 TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITHOUT_BODY) {
     std::string str = ""
-        "GET /index.html HTTP/1.1\n"
-        "Host: VVT-i\n"
-        "\n";
+        "GET /index.html HTTP/1.1\r\n"
+        "Host: VVT-i\r\n"
+        "\r\n";
 
     size_t pos;
     HttpRequest request;
@@ -51,6 +51,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITHOUT_BODY) {
     EXPECT_EQ(request.get_url(), "/index.html");
 
     EXPECT_EQ(request.get_headers()["host"], "VVT-i");
+    EXPECT_EQ(request.get_body(), "");
 }
 
 TEST(TEST_HTTP, HANDLE_INVALID_HTTP_REQUEST) {
