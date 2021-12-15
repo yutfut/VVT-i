@@ -12,7 +12,7 @@ void crate_body(const std::string &file_name, std::string &message) {
         std::cout << "ошибка открытия файла\n";
     }
     while (getline(in, buff)) {
-        message.append(buff.append("\r\n"));
+        message.append(buff);
     }
 
     in.close();

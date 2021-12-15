@@ -16,6 +16,12 @@
 
 class Command {
 public:
+    static std::string input_password();
+
+    static std::string check_password_upload();
+
+    static std::string check_password_download();
+
     static int upload(const std::string& command);
 
     static int download(const std::string& command);

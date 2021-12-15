@@ -4,7 +4,7 @@
 
 #include "command.h"
 
-std::string input_password() {
+std::string Command::input_password() {
     std::string password, password_1;
     while (true) {
         password = getpass("Введите пароль: ");
@@ -17,7 +17,7 @@ std::string input_password() {
     }
 }
 
-std::string check_password_upload() {
+std::string Command::check_password_upload() {
     std::string y_or_n;
     std::cout << "Хотите задать пароль для файла? y/n:\t";
     std::getline (std::cin, y_or_n);
@@ -28,7 +28,7 @@ std::string check_password_upload() {
     return "";
 }
 
-std::string check_password_download() {
+std::string Command::check_password_download() {
     std::string password;
     while (true) {
         password = getpass("Введите пароль или нажмите enter если его не указывали:\t");
@@ -49,7 +49,7 @@ int Command::upload(const std::string& command) {
         return -1;
     }
 
-    std::string password = check_password_upload();
+    std::string password = Command::check_password_upload();
 
     std::string file_name = command.substr(pos + 1);
     std::string message;
@@ -72,7 +72,7 @@ int Command::download(const std::string& command) {
     if (Validator::validate_key(key)) {
         return -1;
     }
-    password = check_password_download();
+    password = Command::check_password_download();
 
     std::string message = HTTPRequest::create_message("", password, key, "", "download");
 
