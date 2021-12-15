@@ -30,6 +30,7 @@
 *.exe
 *.ogitut
 *.app
+
 *.i*86
 *.x86_64
 *.hex
@@ -69,8 +70,6 @@ dkms.conf
 cmake-build-debug/
 
 test/test.txt
-
-.venv
 
 # Added ignores
 *.out
