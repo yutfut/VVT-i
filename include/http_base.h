@@ -20,18 +20,11 @@
 #include <fstream>
 #include <iostream>
 
-const char *ip_address = "127.0.0.1";
 const int host = 3000;
 const int line_size = 1024;
 
 class HTTPBase {
 public:
-    static void init_socket_address(struct sockaddr_in &name);
-
-    static int request(const int &socket, const std::string& msg);
-
-    static std::string response(const int &socket);
-
     static std::string send(const std::string &message);
 };
 

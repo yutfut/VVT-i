@@ -15,7 +15,8 @@ void crate_body(const std::string &file_name, std::string &message) {
         message.append(buff);
     }
 
-    if (!in.is_open()) {
+    in.close();
+    if (in.is_open()) {
         std::cout << "ошибка закрытия файла\n";
     }
 }
