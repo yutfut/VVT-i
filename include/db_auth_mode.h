@@ -5,18 +5,18 @@
 class AuthMode {
 public:
 
-    AuthMode(pqxx::nontransaction *trans);
+    AuthMode(pqxx::connection *connection);
 
     int add_auth_user_file(int user_id, const std::string &dir_path,
-                          const std::string &filename);                               // return success (0) or already exists (1)
+                          const std::string &filename);
     int delete_auth_user_file(int user_id, const std::string &dir_path,
-                            const std::string &filename);                             // return success (0) or not (1)
+                            const std::string &filename);
     int change_file_name(int user_id, const std::string &dir_path, const std::string
-    &old_filename, const std::string &new_filename);                                  // return file uuid
+    &old_filename, const std::string &new_filename);
     std::vector<std::string>
-    get_list_files_in_dir(int user_id, const std::string &curr_dir_path);             // return std::vector of files
+    get_list_files_in_dir(int user_id, const std::string &curr_dir_path);
 
 private:
 
-    pqxx::nontransaction *transaction;
+    pqxx::connection *connection;
 };

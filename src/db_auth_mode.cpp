@@ -1,8 +1,8 @@
 #include "db_auth_mode.h"
 
 
-AuthMode::AuthMode(pqxx::nontransaction *transaction) :
-                                    transaction(transaction) {}
+AuthMode::AuthMode(pqxx::connection *connection) :
+                                    connection(connection) {}
 
 int AuthMode::add_auth_user_file(int user_id, const std::string &dir_path,
                       const std::string &filename) {

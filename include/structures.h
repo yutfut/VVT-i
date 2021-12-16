@@ -14,7 +14,7 @@ typedef struct {
 typedef struct {
     std::string uuid;
     std::string filename;
-    std::string upload_data;
+    std::string upload_date;
 } unauth_file_data_t;
 
 

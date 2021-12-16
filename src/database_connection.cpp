@@ -18,6 +18,7 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
 
         bool db_already_exist = transaction->exec(
                 "SELECT COUNT(*) FROM pg_database WHERE datname ='vvti'")[0][0].as<bool>();
+                
         transaction->commit();
 
         if (!db_already_exist) {
@@ -29,6 +30,7 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
         str_query = "postgresql://postgres:postgres@localhost:5432/vvti";
 
         try {
+            conn->disconnect();
             delete conn;
             conn = new pqxx::connection(str_query);
         } catch (const pqxx::sql_error &e) {
