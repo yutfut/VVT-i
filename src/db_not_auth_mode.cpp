@@ -1,5 +1,9 @@
 #include "db_not_auth_mode.h"
 
+std::string ADD_UNAUTH_USER_FILE = "INSERT INTO Unauth_user_files(user_filename, password) VALUES('{0}', '{1}') RETURNING uuid, upload_date;";
+std::string DELETE_FILE_BY_DATE = "DELETE FROM Unauth_user_files WHERE upload_date = '{0}';";
+std::string GET_UPLOAD_DATE = "SELECT user_filename, upload_date FROM Unauth_user_files WHERE uuid = '{0}' AND password = '{1}';";
+std::string DELETE_CERTAIN_UNAUTH_FILE = "DELETE FROM Unauth_user_files WHERE uuid = '{0}';";
 
 NotAuthMode::NotAuthMode(pqxx::connection *conn) : connection(conn) {}
 
@@ -11,6 +15,7 @@ unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_fil
 
     pqxx::work transaction(*connection);
     pqxx::result res = transaction.exec(str_query);
+
 
     unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
                                        .filename = user_filename,

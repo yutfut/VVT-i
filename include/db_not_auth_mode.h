@@ -1,6 +1,14 @@
 #pragma once
 
 #include "library_list.h"
+#include <fmt/core.h>
+
+
+extern std::string ADD_UNAUTH_USER_FILE;
+extern std::string DELETE_FILE_BY_DATE;
+extern std::string GET_UPLOAD_DATE;
+extern std::string DELETE_CERTAIN_UNAUTH_FILE;
+
 
 class NotAuthMode {
     

@@ -8,7 +8,6 @@
 #include <pqxx/nontransaction>
 #include <pqxx/connection>
 #include <pqxx/result.hxx>
-#include <fmt/core.h>
 
 #include "structures.h"
 #include "constants.h"

@@ -30,7 +30,7 @@ const std::string CREATE_TABLE_AUTH_USER_FILES = "CREATE TABLE IF NOT EXISTS Aut
 
 ///---Requests to DB---///
 
-std::string ADD_UNAUTH_USER_FILE = "INSERT INTO Unauth_user_files(user_filename, password) VALUES('{0}', '{1}') RETURNING uuid, upload_date;";
-std::string DELETE_FILE_BY_dATE = "DELETE FROM Unauth_user_files WHERE upload_date = '{0}';";
-std::string GET_UPLOAD_DATE = "SELECT user_filename, upload_date FROM Unauth_user_files WHERE uuid = '{0}' AND password = '{1}';";
-std::string DELETE_CERTAIN_UNAUTH_FILE = "DELETE FROM Unauth_user_files WHERE uuid = '{0}';";
+// std::string ADD_UNAUTH_USER_FILE = "INSERT INTO Unauth_user_files(user_filename, password) VALUES('{0}', '{1}') RETURNING uuid, upload_date;";
+// std::string DELETE_FILE_BY_dATE = "DELETE FROM Unauth_user_files WHERE upload_date = '{0}';";
+// std::string GET_UPLOAD_DATE = "SELECT user_filename, upload_date FROM Unauth_user_files WHERE uuid = '{0}' AND password = '{1}';";
+// std::string DELETE_CERTAIN_UNAUTH_FILE = "DELETE FROM Unauth_user_files WHERE uuid = '{0}';";
