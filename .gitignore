@@ -60,6 +60,7 @@ dkms.conf
 
 .vscode/
 *.code-workspace
+build/
 
 # Local History for Visual Studio Code
 .history/
