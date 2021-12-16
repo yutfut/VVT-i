@@ -4,12 +4,12 @@
 
 #include "command.h"
 
-std::string Command::input_password() {
-    std::string password, password_1;
+std::string input_password() {
+    std::string password, password_confirm;
     while (true) {
         password = getpass("Введите пароль: ");
-        password_1 = getpass("Введите пароль повторно: ");
-        if (password != password_1 || Validator::validate_password(password)) {
+        password_confirm = getpass("Введите пароль повторно: ");
+        if (password != password_confirm || Validator::validate_password(password)) {
             std::cout << "Пароли не совпадают попробуйте еще раз\n";
         } else {
             return password;
@@ -17,7 +17,7 @@ std::string Command::input_password() {
     }
 }
 
-std::string Command::check_password_upload() {
+std::string check_password_upload() {
     std::string y_or_n;
     std::cout << "Хотите задать пароль для файла? y/n:\t";
     std::getline (std::cin, y_or_n);
@@ -25,10 +25,10 @@ std::string Command::check_password_upload() {
     if (y_or_n == "y") {
         return input_password();
     }
-    return "";
+    return {};
 }
 
-std::string Command::check_password_download() {
+std::string check_password_download() {
     std::string password;
     while (true) {
         password = getpass("Введите пароль или нажмите enter если его не указывали:\t");
@@ -49,16 +49,16 @@ int Command::upload(const std::string& command) {
         return -1;
     }
 
-    std::string password = Command::check_password_upload();
+    std::string password = check_password_upload();
 
     std::string file_name = command.substr(pos + 1);
-    std::string message;
-    if (email != file_name) {
-        message = HTTPRequest::create_message(email, password, "", file_name, "upload");
-    } else {
+
+    if (email == file_name) {
         std::cout << "Ошибка ввода команды" << std::endl;
         return -1;
     }
+
+    std::string message = HTTPRequest::create_message(email, password, "", file_name, "upload");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -72,7 +72,7 @@ int Command::download(const std::string& command) {
     if (Validator::validate_key(key)) {
         return -1;
     }
-    password = Command::check_password_download();
+    password = check_password_download();
 
     std::string message = HTTPRequest::create_message("", password, key, "", "download");
 

@@ -4,13 +4,15 @@
 
 #include "http_base.h"
 
+
+
 void HTTPBase::init_socket_address(struct sockaddr_in &server) {
     server.sin_family = AF_INET;
-    server.sin_port = htons(3000);
-    inet_pton(AF_INET, "127.0.0.1", &(server.sin_addr));
+    server.sin_port = htons(host);
+    inet_pton(AF_INET, ip_address, &(server.sin_addr));
 }
 
-int HTTPBase::request(const int &socket, const std::string msg) {
+int HTTPBase::request(const int &socket, const std::string& msg) {
     size_t left = msg.size();
     ssize_t sent = 0;
 
@@ -30,7 +32,7 @@ int HTTPBase::request(const int &socket, const std::string msg) {
 std::string HTTPBase::response(const int &socket) {
     char last_char;
     std::string line;
-    line.reserve(1024);
+    line.reserve(line_size);
     while (read(socket, &last_char, sizeof(char)) == sizeof(char)) {
         line.push_back(last_char);
     }
@@ -38,7 +40,7 @@ std::string HTTPBase::response(const int &socket) {
     if (-1 == line.size() && errno != EAGAIN) {
         return "ошибка соединения\n";
     }
-    if (0 == line.size()) {
+    if (line.empty()) {
         return "ошибка соединения\n";
     }
     if (-1 == line.size()) {
