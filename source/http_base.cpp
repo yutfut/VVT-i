@@ -4,8 +4,6 @@
 
 #include "http_base.h"
 
-
-
 void HTTPBase::init_socket_address(struct sockaddr_in &server) {
     server.sin_family = AF_INET;
     server.sin_port = htons(host);
@@ -58,7 +56,7 @@ std::string HTTPBase::send(const std::string &message) {
         return "ошибка соединения\n";
     }
 
-    struct sockaddr_in server;
+    struct sockaddr_in server{};
     init_socket_address(server);
 
     if (connect(client_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
