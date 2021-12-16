@@ -4,7 +4,7 @@
 
 #include "http_base.h"
 
-const char *ip_address = "127.0.0.1";
+const char ip_address[] = "127.0.0.1";
 
 void init_socket_address(struct sockaddr_in &server) {
     server.sin_family = AF_INET;

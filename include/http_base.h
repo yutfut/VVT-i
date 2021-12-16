@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iostream>
 
+extern const char ip_address[];
 const int host = 3000;
 const int line_size = 1024;
 
