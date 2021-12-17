@@ -27,7 +27,17 @@ int main() {
     
     // std::cout << db.reg_auth.get_email(id);
 
-    
+    std::cout << db.auth_mode.add_auth_user_file(1, "1", "1.txt");
+    std::cout << db.auth_mode.add_auth_user_file(1, "1", "1.txt");
+    std::cout << db.auth_mode.add_auth_user_file(1, "1", "2.txt");
+
+    std::cout << db.auth_mode.change_filename(1, "1", "1.txt", "2.txt");
+    std::cout << db.auth_mode.change_filename(1, "1", "2.txt", "1.txt");
+    std::cout << db.auth_mode.change_filename(1, "1", "1.txt", "3.txt");
+
+    std::cout << db.auth_mode.delete_auth_user_file(1, "1", "4.txt");
+    std::cout << db.auth_mode.delete_auth_user_file(1, "1", "3.txt");
+    std::cout << db.auth_mode.delete_auth_user_file(1, "1", "2.txt");
 
     std::cout << "Hello, World!" << std::endl;
 

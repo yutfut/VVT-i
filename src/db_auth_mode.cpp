@@ -63,23 +63,24 @@ int AuthMode::delete_auth_user_file(int user_id, const std::string &dir_path,
 }
 
 
-int AuthMode::change_file_name(int user_id, const std::string &dir_path, const std::string
+int AuthMode::change_filename(int user_id, const std::string &dir_path, const std::string
                                             &old_filename, const std::string &new_filename) {
 
     // May be not need
     if (trans_check_empty_exec(fmt::format(CHECK_FILENAME_FREE, user_id, dir_path, old_filename)) != FILENAME_FREE) {
-        simple_transaction_exec(fmt::format(CHANGE_FILENAME, user_id, dir_path, new_filename));
-        return 0;
+        if (trans_check_empty_exec(fmt::format(CHECK_FILENAME_FREE, user_id, dir_path, new_filename)) == FILENAME_FREE) {
+            simple_transaction_exec(fmt::format(CHANGE_FILENAME, user_id, dir_path, new_filename));
+            return 0;
+        }
     }
 
     return -1;
 }
 
 
-std::vector<std::string> AuthMode::get_list_files_in_dir(
-            int user_id, const std::string &curr_dir_path) {
+// std::vector<std::string> AuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
 
-    va_list list_files;
+//     va_list list_files;
 
-    return {};
-}
+//     return {};
+// }

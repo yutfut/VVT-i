@@ -16,7 +16,7 @@ public:
     int delete_auth_user_file(int user_id, const std::string &dir_path,
                             const std::string &filename);
 
-    int change_file_name(int user_id, const std::string &dir_path, const std::string
+    int change_filename(int user_id, const std::string &dir_path, const std::string
     &old_filename, const std::string &new_filename);
     
     std::vector<std::string>
