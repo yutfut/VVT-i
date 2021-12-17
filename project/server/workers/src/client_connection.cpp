@@ -4,8 +4,6 @@
 #include <http_status_code.h>
 #include <mailio/message.hpp>
 #include <mailio/smtp.hpp>
-#include <fmt/core.h>
-#include <regex>
 
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
@@ -107,74 +105,16 @@ bool ClientConnection::handle_request() {
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
     write_to_logs(response.get_body(), ERROR);
 
-    write_to_logs("----------------END OF ANSWER---------------", ERROR);
-
-    write_to_logs(this->response.get_headers()["status"], ERROR);
-
-    if (this->response.get_headers()["status"] != "200") {
-        return true;
-    }
-
-    this->send_message_on_email(0);
-    return true;
-}
-
-bool ClientConnection::send_message_on_email(size_t step) {
-    if (step > 1) {
-        return false;
-    }
-
-    write_to_logs("12345", ERROR);
-
     try
     {
         mailio::message message;
 
         message.from(mailio::mail_address("VVTI", "vvticlient@gmail.com"));
         message.add_recipient(mailio::mail_address("User", this->request.get_headers()["email"]));
+        message.subject("Your Code");
+        // message.content_type(mailio::message::media_type_t::TEXT, "html", "utf-8");
 
-        message.content_type(mailio::message::media_type_t::TEXT, "html", "utf-8");
-
-        std::ifstream file;
-
-        if (this->request.get_headers()["command"] == "upload") {
-            message.subject("Your code");
-
-            if (this->request.get_headers().find("content-length") != this->request.get_headers().end() &&
-                !this->request.get_headers()["jwt"].empty()) {
-                file.open("./static/auth_code.html");
-            } else {
-                file.open("./static/not_auth_code.html");
-            }
-        } else if (this->request.get_headers()["command"] == "register") {
-            message.subject("Successfull registration");
-            file.open("./static/registration.html");
-        }
-
-        std::string html;
-
-        std::string line;
-        while(std::getline(file, line))
-        {
-            html += line;
-        }
-        file.close();
-
-        if (this->request.get_headers()["command"] == "upload") {
-            if (this->request.get_headers().find("content-length") != this->request.get_headers().end() &&
-                !this->request.get_headers()["jwt"].empty()) {
-                html = fmt::format(html, this->request.get_headers()["filename"]);
-                html = std::regex_replace(html, std::regex("  "), "\r\n");
-            } else {
-                html = fmt::format(
-                    html,
-                    this->request.get_headers()["filename"],
-                    this->response.get_headers()["key"]
-                );
-            }
-        }
-
-        message.content(html);
+        message.content("HELLO!");
 
         mailio::smtps conn("smtp.gmail.com", 587);
 
@@ -183,13 +123,14 @@ bool ClientConnection::send_message_on_email(size_t step) {
     }
     catch (mailio::smtp_error& exc)
     {
-        return send_message_on_email(step + 1);
+        // TODO: MAKE
     }
     catch (mailio::dialog_error& exc)
     {
-        return send_message_on_email(step + 1);
+        // TODO: MAKE
     }
 
+    write_to_logs("----------------END OF ANSWER---------------", ERROR);
     return true;
 }
 
