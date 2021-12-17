@@ -1,6 +1,6 @@
 #include "server.h"
 
-#define BACKLOG 256
+const int BACKLOG = 256;
 
 int process_soft_stop = 0;
 int process_hard_stop = 0;

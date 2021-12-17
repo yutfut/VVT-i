@@ -1,7 +1,7 @@
 #include "client_connection.h"
 
-#define CLIENT_SEC_TIMEOUT 180
-#define LENGTH_LINE_FOR_RESERVE 256
+const int CLIENT_SEC_TIMEOUT = 180;
+const int LENGTH_LINE_FOR_RESERVE = 256;
 
 ClientConnection::ClientConnection(class ServerSettings* server_settings,
     std::vector<Log*>& vector_logs) : server_settings(server_settings),

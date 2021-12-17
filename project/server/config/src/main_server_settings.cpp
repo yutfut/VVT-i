@@ -1,8 +1,6 @@
 #include "main_server_settings.h"
 
-const std::vector<std::string> MainServerSettings::valid_properties = {
-    "http", "count_workflows", "access_log", "error_log", "server"
-};
+const int HTTP_LENGTH = 4;
 
 MainServerSettings::MainServerSettings(const std::string& config_filename) : config_filename(std::move(config_filename)) {
     this->parse_config();
@@ -30,25 +28,30 @@ void MainServerSettings::set_property(int number_of_property, const std::string&
         ++begin;
     }
     int value_length = (value[value.length() - 1] == ';') ? value.length() - begin - 1 : value.length() - begin;
-    switch (number_of_property) {
-    case COUNT_WORKFLOWS_NUMBER: {
-        try {
-            this->count_workflows = stoi(value.substr(begin, value_length));
-        }
-        catch (std::exception& e) {
-            throw "Count workflows can be only integer";
-        }
-        if (this->count_workflows <= 0) {
-            throw "Count workflows can be only greater than zero";
-        }
+
+    NumbersOfProperties number = (NumbersOfProperties)number_of_property;
+    switch (number) {
+    case NumbersOfProperties::COUNT_WORKFLOWS_NUMBER:
+        this->set_count_workflows(value, begin, value_length);
         break;
-    }
-    case ACCESS_LOG_NUMBER:
+    case NumbersOfProperties::ACCESS_LOG_NUMBER:
         this->access_log_filename = value.substr(begin, value_length);
         break;
-    case ERROR_LOG_NUMBER:
+    case NumbersOfProperties::ERROR_LOG_NUMBER:
         this->error_log_filename = value.substr(begin, value_length);
         break;
+    }
+}
+
+void MainServerSettings::set_count_workflows(const std::string& value, int begin, int value_length) {
+    try {
+        this->count_workflows = stoi(value.substr(begin, value_length));
+    }
+    catch (std::exception& e) {
+        throw "Count workflows can be only integer";
+    }
+    if (this->count_workflows <= 0) {
+        throw "Count workflows can be only greater than zero";
     }
 }
 
@@ -68,7 +71,7 @@ std::string MainServerSettings::get_error_log_filename() {
     return this->error_log_filename;
 }
 
-int MainServerSettings::get_lexeme(const std::string& config, int& pos, const std::vector<std::string>& valid_properties)
+MainServerSettings::lexeme_t MainServerSettings::get_lexeme_t(const std::string& config, int& pos, const std::array<std::string, 5>& valid_properties)
 {
     while (isspace(config[pos]) && config[pos] != '\n')
     {
@@ -78,19 +81,19 @@ int MainServerSettings::get_lexeme(const std::string& config, int& pos, const st
     if (config[pos] == '\n')
     {
         ++pos;
-        return L_NEW_LINE;
+        return lexeme_t::L_NEW_LINE;
     }
 
     if (config[pos] == '{')
     {
         ++pos;
-        return L_BRACE_OPEN;
+        return lexeme_t::L_BRACE_OPEN;
     }
 
     if (config[pos] == '}')
     {
         ++pos;
-        return L_BRACE_CLOSE;
+        return lexeme_t::L_BRACE_CLOSE;
     }
 
     for (int i = pos; i < config.size() && config[i] != '\n'; ++i)
@@ -102,14 +105,14 @@ int MainServerSettings::get_lexeme(const std::string& config, int& pos, const st
         if (config[i] == ';')
         {
             pos = i + 1; // +1 to skip the semicolon
-            return L_VALUE;
+            return lexeme_t::L_VALUE;
         }
     }
 
-    if (config.substr(pos, sizeof("http") - 1) == "http")
+    if (config.substr(pos, HTTP_LENGTH) == "http")
     {
-        pos += sizeof("http") - 1;
-        return L_PROTOCOL;
+        pos += HTTP_LENGTH;
+        return lexeme_t::L_PROTOCOL;
     }
 
     for (auto iter = valid_properties.begin(); iter != valid_properties.end(); ++iter)
@@ -119,17 +122,17 @@ int MainServerSettings::get_lexeme(const std::string& config, int& pos, const st
             pos += iter->size() + 1; // +1 to skip a colon or space
             if (*iter == "server")
             {
-                return L_SERVER_START;
+                return lexeme_t::L_SERVER_START;
             }
             if (*iter == "database")
             {
-                return L_DATABASE_START;
+                return lexeme_t::L_DATABASE_START;
             }
-            return L_KEY;
+            return lexeme_t::L_KEY;
         }
     }
 
-    return L_ERR;
+    return lexeme_t::L_ERR;
 }
 
 std::string MainServerSettings::get_string_from_file(const std::string& filename)
@@ -151,7 +154,6 @@ std::string MainServerSettings::get_string_from_file(const std::string& filename
     {
         file.get(i);
     }
-    file.close();
 
     return str;
 }
@@ -163,109 +165,91 @@ void MainServerSettings::parse_config()
     config_text = this->get_string_from_file(this->config_filename);
     int pos = 0;
 
-    state_t stages[S_COUNT][L_COUNT] = {
-        {S_BRACE_OPEN, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
-        {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
-        {S_ERR, S_ERR, S_END, S_KEY, S_VALUE, S_ERR, S_SERVER_START, S_DATABASE_START, S_KEY, S_KEY},
-        {S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR},
-        {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
-        {S_ERR, S_KEY, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR},
+    // Finite state_t machine
+    // Input signals are presented in lexeme_t
+    // state_ts are presented in state_t
+    state_t stages[6][10] = {
+        /* L_PROTOCOL  L_BRACE_OPEN  L_BRACE_CLOSE  L_NEW_LINE  L_KEY  L_VALUE  L_SERVER_START  L_DATABASE_START  L_DATABASE_END  L_SERVER_END*/
+        /*S_START*/  {state_t::S_BRACE_OPEN, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR},
+        /*S_BRACE_OPEN*/  {state_t::S_ERR, state_t::S_KEY, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_BRACE_OPEN, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR},
+        /*S_KEY*/  {state_t::S_ERR, state_t::S_ERR, state_t::S_END, state_t::S_KEY, state_t::S_VALUE, state_t::S_ERR, state_t::S_SERVER_START, state_t::S_DATABASE_START, state_t::S_KEY, state_t::S_KEY},
+        /*S_VALUE*/  {state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_KEY, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR},
+        /*S_SERVER_START*/  {state_t::S_ERR, state_t::S_KEY, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR},
+        /*S_DATABASE_START*/  {state_t::S_ERR, state_t::S_KEY, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR, state_t::S_ERR},
     };
 
-    state_t state = S_START;
-    lexeme_t lexeme;
+    state_t state_t = state_t::S_START;
+    lexeme_t lexeme_t;
     int pos_before;
     int property_number;
 
     bool is_server_adding = false, has_server_added = false;
     bool is_database_adding = false, has_database_added = false;
 
-    while (state != S_END && state != S_ERR)
+    while (state_t != state_t::S_END && state_t != state_t::S_ERR)
     {
         pos_before = pos;
+
         if (is_server_adding)
         {
             if (is_database_adding)
             {
-                lexeme = static_cast<lexeme_t>(get_lexeme(config_text, pos, this->server.database_valid_properties));
+                lexeme_t = get_lexeme_t(config_text, pos, this->server.database_valid_properties);
             }
             else
             {
-                lexeme = static_cast<lexeme_t>(get_lexeme(config_text, pos, this->server.valid_properties));
+                lexeme_t = get_lexeme_t(config_text, pos, this->server.valid_properties);
             }
         }
         else
         {
-            lexeme = static_cast<lexeme_t>(get_lexeme(config_text, pos, this->valid_properties));
+            lexeme_t = get_lexeme_t(config_text, pos, this->valid_properties);
         }
-        if (lexeme == L_ERR)
+
+        int _i = (int)state_t, _j = (int)lexeme_t;
+        if (lexeme_t == lexeme_t::L_ERR || stages[_i][_j] == state_t::S_ERR)
         {
-            state = S_ERR;
+            state_t = state_t::S_ERR;
             continue;
         }
 
-        if (stages[state][lexeme] == S_ERR)
+        if (lexeme_t == lexeme_t::L_KEY)
         {
-            state = S_ERR;
-            continue;
-        }
-
-        if (lexeme == L_KEY)
-        {
-            if (is_server_adding)
-            {
-                if (is_database_adding)
-                {
-                    property_number = this->server.get_number_of_database_property(
-                        config_text.substr(pos_before, pos - pos_before));
-                }
-                else
-                {
-                    property_number = this->server.get_number_of_property(
-                        config_text.substr(pos_before, pos - pos_before));
-                }
-                if (property_number == -1)
-                {
-                    state = S_ERR;
-                    continue;
-                }
-            }
-            else
+            if (!is_server_adding)
             {
                 property_number = this->get_number_of_property(
                     config_text.substr(pos_before, pos - pos_before));
                 if (property_number == -1)
                 {
-                    state = S_ERR;
+                    state_t = state_t::S_ERR;
                     continue;
                 }
-            }
-        }
-        else if (lexeme == L_VALUE)
-        {
-            if (is_server_adding)
-            {
-                try
-                {
-                    if (is_database_adding)
-                    {
-                        this->server.set_database_property(property_number,
-                            config_text.substr(pos_before, pos - pos_before));
 
-                    }
-                    else
-                    {
-                        this->server.set_property(property_number,
-                            config_text.substr(pos_before, pos - pos_before));
-                    }
-                }
-                catch (std::exception& e)
-                {
-                    state = S_ERR;
-                    continue;
-                }
+
+                int i = (int)state_t, j = (int)lexeme_t;
+                state_t = stages[i][j];
+                continue;
+            }
+
+            if (is_database_adding)
+            {
+                property_number = this->server.get_number_of_database_property(
+                    config_text.substr(pos_before, pos - pos_before));
             }
             else
+            {
+                property_number = this->server.get_number_of_property(
+                    config_text.substr(pos_before, pos - pos_before));
+            }
+            if (property_number == -1)
+            {
+                state_t = state_t::S_ERR;
+                continue;
+            }
+        }
+        else if (lexeme_t == lexeme_t::L_VALUE)
+        {
+            if (!is_server_adding)
             {
                 try
                 {
@@ -273,45 +257,71 @@ void MainServerSettings::parse_config()
                 }
                 catch (std::exception& e)
                 {
-                    state = S_ERR;
+                    state_t = state_t::S_ERR;
                     continue;
                 }
+
+                int i = (int)state_t, j = (int)lexeme_t;
+                state_t = stages[i][j];
+                continue;
+            }
+
+            try
+            {
+                if (is_database_adding)
+                {
+                    this->server.set_database_property(property_number,
+                        config_text.substr(pos_before, pos - pos_before));
+
+                }
+                else
+                {
+                    this->server.set_property(property_number,
+                        config_text.substr(pos_before, pos - pos_before));
+                }
+            }
+            catch (std::exception& e)
+            {
+                state_t = state_t::S_ERR;
+                continue;
             }
         }
-        else if (lexeme == L_SERVER_START && stages[state][lexeme] == S_SERVER_START)
+        else if (lexeme_t == lexeme_t::L_SERVER_START && stages[_i][_j] == state_t::S_SERVER_START)
         {
             if (is_server_adding || has_server_added)
             {
-                state = S_ERR;
+                state_t = state_t::S_ERR;
                 continue;
             }
             is_server_adding = true;
             has_server_added = true;
         }
-        else if (lexeme == L_DATABASE_START && stages[state][lexeme] == S_DATABASE_START)
+        else if (lexeme_t == lexeme_t::L_DATABASE_START && stages[_i][_j] == state_t::S_DATABASE_START)
         {
             if (!is_server_adding || is_database_adding || has_database_added)
             {
-                state = S_ERR;
+                state_t = state_t::S_ERR;
                 continue;
             }
             is_database_adding = true;
             has_database_added = true;
         }
-        else if (lexeme == L_BRACE_CLOSE && is_database_adding)
+        else if (lexeme_t == lexeme_t::L_BRACE_CLOSE && is_database_adding)
         {
             is_database_adding = false;
-            lexeme = L_DATABASE_END;
+            lexeme_t = lexeme_t::L_DATABASE_END;
         }
-        else if (lexeme == L_BRACE_CLOSE && is_server_adding)
+        else if (lexeme_t == lexeme_t::L_BRACE_CLOSE && is_server_adding)
         {
             is_server_adding = false;
-            lexeme = L_SERVER_END;
+            lexeme_t = lexeme_t::L_SERVER_END;
         }
 
-        state = stages[state][lexeme];
+        int i = (int)state_t, j = (int)lexeme_t;
+        state_t = stages[i][j];
     }
-    if (state == S_ERR)
+
+    if (state_t == state_t::S_ERR)
     {
         throw "Invalid config file, pos = " + std::to_string(pos);
     }

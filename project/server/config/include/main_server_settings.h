@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
+#include <array>
 #include <map>
 #include <string>
 #include <utility>
@@ -18,7 +18,9 @@ public:
 
     ~MainServerSettings() = default;
 
-    static const std::vector<std::string> valid_properties;
+    std::array<std::string, 5> valid_properties = {
+        "http", "count_workflows", "access_log", "error_log", "server"
+    };
 
     int get_number_of_property(const std::string& property);
 
@@ -34,20 +36,7 @@ public:
 
     std::string get_error_log_filename();
 
-private:
-    typedef enum {
-        S_START,
-        S_BRACE_OPEN,
-        S_KEY,
-        S_VALUE,
-        S_SERVER_START,
-        S_DATABASE_START,
-        S_COUNT,
-        S_ERR,
-        S_END
-    } state_t;
-
-    typedef enum {
+    enum class lexeme_t {
         L_PROTOCOL,
         L_BRACE_OPEN,
         L_BRACE_CLOSE,
@@ -58,27 +47,42 @@ private:
         L_DATABASE_START,
         L_DATABASE_END,
         L_SERVER_END,
-        L_COUNT,
         L_ERR
-    } lexeme_t;
+    };
+
+private:
+    enum class state_t {
+        S_START,
+        S_BRACE_OPEN,
+        S_KEY,
+        S_VALUE,
+        S_SERVER_START,
+        S_DATABASE_START,
+        S_ERR,
+        S_END
+    };
+
+    void set_count_workflows(const std::string& value, int begin, int value_length);
 
     std::string get_string_from_file(const std::string& filename);
 
     void parse_config();
 
-    int get_lexeme(const std::string& config, int& pos, const std::vector<std::string>& valid_properties);
+    lexeme_t get_lexeme_t(const std::string& config, int& pos, const std::array<std::string, 5>& valid_properties);
 
     std::string config_filename;
 
     int count_workflows = 4;
 
-    std::string access_log_filename = "access.log", error_log_filename = "error.log";
+    std::string access_log_filename = "access.log";
+
+    std::string error_log_filename = "error.log";
 
     ServerSettings server;
 
-    typedef enum {
+    enum class NumbersOfProperties {
         COUNT_WORKFLOWS_NUMBER = 1,
         ACCESS_LOG_NUMBER = 2,
         ERROR_LOG_NUMBER = 3
-    } numbers_of_properties;
+    };
 };

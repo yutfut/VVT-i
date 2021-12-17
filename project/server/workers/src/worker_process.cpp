@@ -1,7 +1,7 @@
 #include "worker_process.h"
 
-#define EPOLL_SIZE 2048
-#define EPOLL_RUN_TIMEOUT 1
+const int EPOLL_SIZE = 2048;
+const int EPOLL_RUN_TIMEOUT = 1;
 
 bool is_hard_stop = false;
 bool is_soft_stop = false;

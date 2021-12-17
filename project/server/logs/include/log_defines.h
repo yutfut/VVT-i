@@ -1,7 +1,9 @@
 #pragma once
 
-#define INFO boost::log::trivial::severity_level::info
-#define ERROR boost::log::trivial::severity_level::error
-#define DEBUG boost::log::trivial::severity_level::debug
-#define TRACE boost::log::trivial::severity_level::trace
-#define WARNING boost::log::trivial::severity_level::warning
+#include <string>
+
+const auto INFO = boost::log::trivial::severity_level::info;
+const auto ERROR = boost::log::trivial::severity_level::error;
+const auto DEBUG = boost::log::trivial::severity_level::debug;
+const auto TRACE = boost::log::trivial::severity_level::trace;
+const auto WARNING = boost::log::trivial::severity_level::warning;

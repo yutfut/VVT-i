@@ -1,7 +1,7 @@
 #include "server.h"
 
 int main() {
-    Server server("settings/server.conf");
+    Server server("./settings/server.conf");
     if (!server.start()) {
         return -1;
     }

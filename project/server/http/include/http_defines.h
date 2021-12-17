@@ -1,21 +1,23 @@
 #pragma once
 
-#define GET_METHOD "GET"
-#define HEAD_METHOD "HEAD"
+#include <string>
 
-#define NO_ROOT "no root"
+const std::string GET_METHOD = "GET";
+const std::string HEAD_METHOD = "HEAD";
 
-#define OK_STATUS 200
-#define OK_MSG "OK"
+const std::string NO_ROOT = "no root";
 
-#define NOT_FOUND_STATUS 404
-#define NOT_FOUND_MSG "not found"
+const int OK_STATUS = 200;
+const std::string OK_MSG = "OK";
 
-#define SERVER_HDR "Server"
-#define CONTENT_TYPE_HDR "Content-Type"
-#define CONTENT_LENGTH_HDR "Content-Length"
-#define DATE_HDR "Date"
-#define CONNECTION_HDR "Connection"
+const int NOT_FOUND_STATUS = 404;
+const std::string NOT_FOUND_MSG = "not found";
 
-#define SERVER_VL "VVT-i"
-#define CLOSE_VL "close"
+const std::string SERVER_HDR = "Server";
+const std::string CONTENT_TYPE_HDR = "Content-Type";
+const std::string CONTENT_LENGTH_HDR = "Content-Length";
+const std::string DATE_HDR = "Date";
+const std::string CONNECTION_HDR = "Connection";
+
+const std::string SERVER_VL = "VVT-i";
+const std::string CLOSE_VL = "close";

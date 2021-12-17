@@ -1,11 +1,5 @@
 #include "server_settings.h"
 
-const std::vector<std::string> ServerSettings::valid_properties = { "listen", "servername", "database" };
-
-const std::vector<std::string> ServerSettings::database_valid_properties = {
-    "user", "password", "host", "port", "dbname"
-};
-
 int ServerSettings::get_number_of_property(const std::string& property)
 {
     int begin = 0;
@@ -34,27 +28,32 @@ void ServerSettings::set_property(int number_of_property, std::string value)
         ++begin;
     }
     int value_length = (value[value.length() - 1] == ';') ? value.length() - begin - 1 : value.length() - begin;
-    switch (number_of_property)
+
+    NumbersOfProperties number = (NumbersOfProperties)number_of_property;
+    switch (number)
     {
-    case LISTEN_NUMBER:
-    {
-        try
-        {
-            this->port = stoi(value.substr(begin, value_length));
-        }
-        catch (std::exception& e)
-        {
-            throw "Listen port can be only integer";
-        }
-        if (this->port <= 0)
-        {
-            throw "Listen port can be only greater than zero";
-        }
+    case NumbersOfProperties::LISTEN_NUMBER:
+        this->set_port(value, begin, value_length);
         break;
-    }
-    case SERVERNAME_NUMBER:
+    case NumbersOfProperties::SERVERNAME_NUMBER:
         this->servername = value.substr(begin, value_length);
         break;
+    }
+}
+
+void ServerSettings::set_port(const std::string& value, int begin, int value_length)
+{
+    try
+    {
+        this->port = stoi(value.substr(begin, value_length));
+    }
+    catch (std::exception& e)
+    {
+        throw "Listen port can be only integer";
+    }
+    if (this->port <= 0)
+    {
+        throw "Listen port can be only greater than zero";
     }
 }
 
@@ -86,36 +85,41 @@ void ServerSettings::set_database_property(int number_of_property, std::string v
         ++begin;
     }
     int value_length = (value[value.length() - 1] == ';') ? value.length() - begin - 1 : value.length() - begin;
-    switch (number_of_property)
+
+    NumbersOfDatabaseProperties number = (NumbersOfDatabaseProperties)number_of_property;
+    switch (number)
     {
-    case USER_NUMBER:
+    case NumbersOfDatabaseProperties::USER_NUMBER:
         this->database.user = value.substr(begin, value_length);
         break;
-    case PASSWORD_NUMBER:
+    case NumbersOfDatabaseProperties::PASSWORD_NUMBER:
         this->database.password = value.substr(begin, value_length);
         break;
-    case HOST_NUMBER:
+    case NumbersOfDatabaseProperties::HOST_NUMBER:
         this->database.host = value.substr(begin, value_length);
         break;
-    case PORT_NUMBER:
-    {
-        try
-        {
-            this->database.port = stoi(value.substr(begin, value_length));
-        }
-        catch (std::exception& e)
-        {
-            throw "Listen port can be only integer";
-        }
-        if (this->database.port <= 0)
-        {
-            throw "Listen port can be only greater than zero";
-        }
+    case NumbersOfDatabaseProperties::PORT_NUMBER:
+        this->set_port_number(value, begin, value_length);
         break;
-    }
-    case DBNAME_NUMBER:
+    case NumbersOfDatabaseProperties::DBNAME_NUMBER:
         this->database.dbname = value.substr(begin, value_length);
         break;
+    }
+}
+
+void ServerSettings::set_port_number(const std::string& value, int begin, int value_length)
+{
+    try
+    {
+        this->database.port = stoi(value.substr(begin, value_length));
+    }
+    catch (std::exception& e)
+    {
+        throw "Listen port can be only integer";
+    }
+    if (this->database.port <= 0)
+    {
+        throw "Listen port can be only greater than zero";
     }
 }
 
