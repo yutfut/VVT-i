@@ -5,13 +5,29 @@
 int main() {
     DataBase db("postgres", "postgres", "5432", "localhost", "");
     db.init();
-    db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
-    db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
-    db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
-    std::cout << db.not_auth_mode.get_upload_file_date("d659ca4b-904c-4e68-b05a-d4624cbddeee", "pass1").filename << "\n";
-    std::cout << db.not_auth_mode.get_upload_file_date("d659ca4b-904c-4e68-b05a-d4624cbddeee", "pass1").upload_date << "\n";
-    std::cout << db.not_auth_mode.get_upload_file_date("e07dbace-20ef-413d-965d-6d458a2a842c", "pass1").upload_date << "\n";
+    // db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
+    // db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
+    // db.not_auth_mode.add_unauth_user_file("first_file", "pass1");
+    // std::cout << db.not_auth_mode.get_upload_file_date("d659ca4b-904c-4e68-b05a-d4624cbddeee", "pass1").filename << "\n";
+    // std::cout << db.not_auth_mode.get_upload_file_date("d659ca4b-904c-4e68-b05a-d4624cbddeee", "pass1").upload_date << "\n";
+    // std::cout << db.not_auth_mode.get_upload_file_date("e07dbace-20ef-413d-965d-6d458a2a842c", "pass1").upload_date << "\n";
     // db.not_auth_mode.delete_files_by_date("2021-12-01");
+
+    // std::cout << db.reg_auth.is_email_free("email") << "\n";
+    // db.reg_auth.try_register("name", "email", "pass");
+    // std::cout << db.reg_auth.is_email_free("email") << "\n";
+
+    // std::cout << db.reg_auth.try_auth("email", "pa") << "\n";
+    // std::cout << db.reg_auth.try_auth("emai", "pass") << "\n";
+    // std::cout << db.reg_auth.try_auth("email", "pass") << "\n";
+
+    // std::cout << db.reg_auth.get_id_auth_user("emai") << "\n";
+    // int id =  db.reg_auth.get_id_auth_user("email");
+    // std::cout << id << "\n";
+    
+    // std::cout << db.reg_auth.get_email(id);
+
+    
 
     std::cout << "Hello, World!" << std::endl;
 

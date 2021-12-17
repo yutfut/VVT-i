@@ -8,7 +8,7 @@ void NotAuthMode::simple_transaction_exec(std::string sql_request) {
     pqxx::work transaction(*connection);
     
     try {
-        pqxx::result res = transaction.exec(sql_request);
+        transaction.exec(sql_request);
         transaction.commit();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
@@ -22,7 +22,7 @@ unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_fil
     pqxx::work transaction(*connection);
 
     try {
-        pqxx::result res = transaction.exec(fmt::format(ADD_FILE, user_filename, option_password));
+        pqxx::result res = transaction.exec(fmt::format(ADD_UNAUTH_USER_FILE, user_filename, option_password));
 
         unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
                                               .filename = user_filename,
@@ -40,13 +40,13 @@ unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_fil
 
 void NotAuthMode::delete_certain_file(std::string uuid) {
     
-    simple_transaction_exec(fmt::format(DELETE_CERTAIN_FILE, uuid));
+    simple_transaction_exec(fmt::format(DELETE_UNAUTH_USER_FILE, uuid));
 }
 
 
 void NotAuthMode::delete_files_by_date(const std::string &upload_date) {
     
-    simple_transaction_exec(fmt::format(DELETE_FILE_BY_DATE, upload_date));
+    simple_transaction_exec(fmt::format(DELETE_FILES_BY_DATE, upload_date));
 }
 
 

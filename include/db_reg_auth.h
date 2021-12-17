@@ -22,4 +22,12 @@ public:
 private:
 
     pqxx::connection *connection;
+
+    void simple_transaction_exec(std::string sql_request);
+
+    bool trans_check_empty_exec(std::string sql_request);
+
+    int trans_one_int_value_exec(std::string sql_request);
+    
+    std::string trans_one_string_value_exec(std::string sql_request);
 };

@@ -3,7 +3,6 @@
 #include "library_list.h"
 
 class DataBaseConnection {
-    
 public:
 
     DataBaseConnection(const std::string &user, const std::string &password,

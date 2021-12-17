@@ -5,30 +5,87 @@ RegAuth::RegAuth(pqxx::connection *connection) :
                                     connection(connection) {}
 
 
-bool RegAuth::is_email_free(const std::string &email) {
-    std::string str_query = "SELECT email FROM Users WHERE email = '" + email + "';";
-    
+void RegAuth::simple_transaction_exec(std::string sql_request) {
     pqxx::work transaction(*connection);
-    pqxx::result res = transaction.exec(str_query);
-    transaction.commit();
     
-    if (res.empty()) {
-        return true;
+    try {
+        pqxx::result res = transaction.exec(sql_request);
+        transaction.commit();
+    } catch (const pqxx::sql_error &e) {
+        transaction.abort();
+        throw(e.what());
     }
+}
 
-    return false;
+
+bool RegAuth::trans_check_empty_exec(std::string sql_request) {
+    pqxx::work transaction(*connection);
+    
+    try {
+        pqxx::result res = transaction.exec(sql_request);
+        transaction.commit();
+
+        if (res.empty()) {
+            return true;
+        }
+        
+        return false;
+    } catch (const pqxx::sql_error &e) {
+        transaction.abort();
+        throw(e.what());
+    }
+}
+
+
+int RegAuth::trans_one_int_value_exec(std::string sql_request) {
+    pqxx::work transaction(*connection);
+    
+    try {
+        pqxx::result res = transaction.exec(sql_request);
+        transaction.commit();
+
+        if (res.empty()) {
+            return -1;
+        }
+
+        return res[0][0].as<int>();
+    } catch (const pqxx::sql_error &e) {
+        transaction.abort();
+        throw(e.what());
+    }
+}
+
+
+std::string RegAuth::trans_one_string_value_exec(std::string sql_request) {
+    pqxx::work transaction(*connection);
+    
+    try {
+        pqxx::result res = transaction.exec(sql_request);
+        transaction.commit();
+
+        if (res.empty()) {
+            return "";
+        }
+
+        return res[0][0].as<std::string>();
+    } catch (const pqxx::sql_error &e) {
+        transaction.abort();
+        throw(e.what());
+    }
+}
+
+
+bool RegAuth::is_email_free(const std::string &email) {    
+    
+    return trans_check_empty_exec(fmt::format(CHECK_EMAIL_FREE, email));
 }
 
 
 int RegAuth::try_register(const std::string &name, const std::string &email,
                  const std::string &password) {
     if (is_email_free(email)) {
-        std::string str_query = "INSERT INTO Users (username, email, password) "
-            "VALUES ('" + name + "', '" + email + "', '" + password + "');";
 
-        pqxx::work transaction(*connection);
-        pqxx::result res = transaction.exec(str_query);
-        transaction.commit();
+            simple_transaction_exec(fmt::format(REGISTER, name, email, password));
 
         return 0;
     }
@@ -38,46 +95,18 @@ int RegAuth::try_register(const std::string &name, const std::string &email,
 
 
 int RegAuth::try_auth(const std::string &email, const std::string &password) {
-    std::string str_query = "SELECT id FROM Users WHERE email = '" + email + "' AND password = '" + password + "';";
     
-    pqxx::work transaction(*connection);
-    pqxx::result res = transaction.exec(str_query);
-    transaction.commit();
-    
-    if (res.empty()) {
-        return -1;
-    }
-
-    return res[0][0].as<int>();
+    return trans_one_int_value_exec(fmt::format(TRY_AUTH, email, password));
 }
 
 
 int RegAuth::get_id_auth_user(const std::string &email) {
-    std::string str_query = "SELECT id FROM Users WHERE email = '" + email + "';";
     
-    pqxx::work transaction(*connection);
-    pqxx::result res = transaction.exec(str_query);
-    transaction.commit();
-
-
-    if (res.empty()) {
-        return -1;
-    }
-
-    return res[0][0].as<int>();
+    return trans_one_int_value_exec(fmt::format(GET_ID_AUTH_USER, email));
 }
 
 
 std::string RegAuth::get_email(int user_id) {
-    std::string str_query = "SELECT email FROM Users WHERE user_id = '" + std::to_string(user_id) + "';";
     
-    pqxx::work transaction(*connection);
-    pqxx::result res = transaction.exec(str_query);
-    transaction.commit();
-    
-    if (res.empty()) {
-        return "";
-    }
-
-    return res[0][0].as<std::string>();
+    return trans_one_string_value_exec(fmt::format(GET_EMAIL_AUTH_USER, user_id));
 }

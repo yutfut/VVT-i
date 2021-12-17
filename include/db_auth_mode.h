@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdarg.h>
+
 #include "library_list.h"
 
 class AuthMode {
@@ -23,4 +25,8 @@ public:
 private:
 
     pqxx::connection *connection;
+
+    void simple_transaction_exec(std::string sql_request);
+
+    bool trans_check_empty_exec(std::string sql_request);
 };

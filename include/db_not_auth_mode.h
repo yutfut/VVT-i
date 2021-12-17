@@ -1,7 +1,6 @@
 #pragma once
 
 #include "library_list.h"
-#include <fmt/core.h>
 
 
 class NotAuthMode {
