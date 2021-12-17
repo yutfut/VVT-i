@@ -2,6 +2,8 @@
 #include "http_status_code.h"
 #include <request_handler_not_auth.h>
 #include <http_status_code.h>
+#include <mailio/message.hpp>
+#include <mailio/smtp.hpp>
 
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
@@ -102,6 +104,32 @@ bool ClientConnection::handle_request() {
     std::for_each(response.get_headers().begin(), response.get_headers().end(),
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
     write_to_logs(response.get_body(), ERROR);
+
+    try
+    {
+        mailio::message message;
+
+        message.from(mailio::mail_address("VVTI", "vvticlient@gmail.com"));
+        message.add_recipient(mailio::mail_address("User", this->request.get_headers()["email"]));
+        message.subject("Your Code");
+        // message.content_type(mailio::message::media_type_t::TEXT, "html", "utf-8");
+
+        message.content("HELLO!");
+
+        mailio::smtps conn("smtp.gmail.com", 587);
+
+        conn.authenticate("vvticlient@gmail.com", "ycfjgpxboqpegxrx", mailio::smtps::auth_method_t::START_TLS);
+        conn.submit(message);
+    }
+    catch (mailio::smtp_error& exc)
+    {
+        // TODO: MAKE
+    }
+    catch (mailio::dialog_error& exc)
+    {
+        // TODO: MAKE
+    }
+
     write_to_logs("----------------END OF ANSWER---------------", ERROR);
     return true;
 }
