@@ -20,14 +20,14 @@ int Client::role_command(const std::string& command, User &user) {
     switch (commands[first_part_command]) {
         case UPLOAD: {
             if(first_part_command != rest_part_command) {
-                return Command::upload(rest_part_command);
+                return upload(rest_part_command, user);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
         case DOWNLOAD: {
             if(first_part_command != rest_part_command) {
-                return Command::download(rest_part_command);
+                return download(rest_part_command, user);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;

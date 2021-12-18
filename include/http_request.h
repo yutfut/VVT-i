@@ -13,6 +13,7 @@ class HTTPRequest {
 public:
     static std::string create_message(const std::string &email,
                                const std::string &password,
+                               const std::string &jwt,
                                const std::string &key,
                                const std::string &file_name,
                                const std::string &command);

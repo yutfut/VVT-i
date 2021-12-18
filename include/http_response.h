@@ -11,6 +11,6 @@
 
 class HTTPResponse {
 public:
-    static int parser(std::string http);
+    static int parser(std::string &http);
 };
 #endif //VVT_I_HTTP_RESPONSE_H

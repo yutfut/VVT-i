@@ -16,7 +16,7 @@ void create_file(const std::string &file_name, const std::string &message) {
     out.close();
 }
 
-int HTTPResponse::parser(std::string http) {
+int HTTPResponse::parser(std::string &http) {
     std::map<std::string, std::string> commands;
 
     size_t pos = http.find_first_of('\n');
@@ -46,10 +46,12 @@ int HTTPResponse::parser(std::string http) {
         }
         http.erase(http.begin(), http.begin() + 1);
     }
-
-    std::cout << std::endl;
     if (commands["command"] == "download" && commands["message"] == "OK") {
         create_file(commands["filename"], commands["body"]);
+    }
+
+    if (!commands["jwt"].empty()) {
+        http = commands["jwt"];
     }
 
     if (commands["message"] == "OK") {

@@ -4,23 +4,23 @@
 
 #include "command.h"
 
-int Command::upload(const std::string& command) {
+int upload(const std::string& command, User &user) {
     size_t pos = command.find_first_of(' ');
     std::string email = command.substr(0, pos);
     if (Validator::validate_email(email)) {
         return -1;
     }
 
-    std::string password = check_password_upload();
-
     std::string file_name = command.substr(pos + 1);
+
+    std::string password = check_password_upload();
 
     if (email == file_name) {
         std::cout << "Ошибка ввода команды" << std::endl;
         return -1;
     }
 
-    std::string message = HTTPRequest::create_message(email, password, "", file_name, "upload");
+    std::string message = HTTPRequest::create_message(email, password, "", "", file_name, "upload");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -29,14 +29,15 @@ int Command::upload(const std::string& command) {
     return HTTPResponse::parser(http_response);
 }
 
-int Command::download(const std::string& command) {
+int download(const std::string& command, const User &user) {
     std::string key = command, password;
     if (Validator::validate_key(key)) {
         return -1;
     }
+
     password = check_password_download();
 
-    std::string message = HTTPRequest::create_message("", password, key, "", "download");
+    std::string message = HTTPRequest::create_message("", password, user.jwt, key, "", "download");
 
     std::string http_response = HTTPBase::send(message);
 

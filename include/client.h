@@ -7,7 +7,6 @@
 
 #include <map>
 
-#include "user.h"
 #include "command.h"
 
 class Client {

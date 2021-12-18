@@ -15,12 +15,10 @@
 #include "http_response.h"
 
 class User {
-private:
-    bool authorize;
-    int id;
-    std::string jwt;
-    std::string email;
 public:
+    bool authorize;
+
+    std::string jwt;
 
     User();
 
@@ -31,7 +29,6 @@ public:
     int login(const std::string& command);
 
     int logout();
-
 };
 
 #endif //VVT_I_REGISTRATE_H
