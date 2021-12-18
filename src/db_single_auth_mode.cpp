@@ -1,13 +1,13 @@
-#include "db_auth_mode.h"
+#include "db_single_auth_mode.h"
 
 #define FILENAME_FREE 1
 
 
-AuthMode::AuthMode(pqxx::connection *connection) :
+SingleAuthMode::SingleAuthMode(pqxx::connection *connection) :
                                     connection(connection) {}
 
 
-void AuthMode::simple_transaction_exec(std::string sql_request) {
+void SingleAuthMode::simple_transaction_exec(std::string sql_request) {
     pqxx::work transaction(*connection);
     
     try {
@@ -15,12 +15,13 @@ void AuthMode::simple_transaction_exec(std::string sql_request) {
         transaction.commit();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
+        std::cout << e.what() << "\n";
         throw(e.what());
     }
 }
 
 
-bool AuthMode::trans_check_empty_exec(std::string sql_request) {
+bool SingleAuthMode::trans_check_empty_exec(std::string sql_request) {
     pqxx::work transaction(*connection);
     
     try {
@@ -39,7 +40,7 @@ bool AuthMode::trans_check_empty_exec(std::string sql_request) {
 }
 
 
-int AuthMode::add_auth_user_file(int user_id, const std::string &dir_path,
+int SingleAuthMode::add_auth_user_file(int user_id, const std::string &dir_path,
                       const std::string &filename) {
     // TODO: May be not need
     if (trans_check_empty_exec(fmt::format(CHECK_FILENAME_FREE, user_id, dir_path, filename)) == FILENAME_FREE) {
@@ -51,7 +52,7 @@ int AuthMode::add_auth_user_file(int user_id, const std::string &dir_path,
 }
 
 
-int AuthMode::delete_auth_user_file(int user_id, const std::string &dir_path,
+int SingleAuthMode::delete_auth_user_file(int user_id, const std::string &dir_path,
                                                     const std::string &filename) {
                                                         
     if (trans_check_empty_exec(fmt::format(CHECK_FILENAME_FREE, user_id, dir_path, filename)) != FILENAME_FREE) {
@@ -63,7 +64,7 @@ int AuthMode::delete_auth_user_file(int user_id, const std::string &dir_path,
 }
 
 
-int AuthMode::change_filename(int user_id, const std::string &dir_path, const std::string
+int SingleAuthMode::change_filename(int user_id, const std::string &dir_path, const std::string
                                             &old_filename, const std::string &new_filename) {
 
     // May be not need
@@ -78,7 +79,7 @@ int AuthMode::change_filename(int user_id, const std::string &dir_path, const st
 }
 
 
-// std::vector<std::string> AuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
+// std::vector<std::string> SingleAuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
 
 //     va_list list_files;
 

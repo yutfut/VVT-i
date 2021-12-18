@@ -87,6 +87,8 @@ int RegAuth::try_register(const std::string &name, const std::string &email,
 
             simple_transaction_exec(fmt::format(REGISTER, name, email, password));
 
+            // TODO: add creation user default root directory
+
         return 0;
     }
 

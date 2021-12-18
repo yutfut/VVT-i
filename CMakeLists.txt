@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
 
 add_executable(main.out main.cpp src/data_base.cpp src/database_connection.cpp
-        src/db_auth_mode.cpp src/db_group_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp)
+        src/db_single_auth_mode.cpp src/db_group_auth_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp)
 target_link_libraries(main.out ${PQXX_LIB} ${PQ_LIB} fmt::fmt)
 target_include_directories(main.out PUBLIC include)
 

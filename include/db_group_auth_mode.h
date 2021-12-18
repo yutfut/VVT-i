@@ -2,11 +2,11 @@
 
 #include "library_list.h"
 
-class GroupMode {
+class GroupAuthMode {
 
 public:
 
-    GroupMode(pqxx::connection *connection);
+    GroupAuthMode(pqxx::connection *connection);
 
     int create_group(int user_id, const std::string &group_name);
 

@@ -8,7 +8,7 @@ DataBase::DataBase(const std::string &user,
                     const std::string &dbname) : 
     connection(DataBaseConnection(user, password, port, host, dbname)),
     not_auth_mode(NotAuthMode(connection.get_connection())), reg_auth(RegAuth(connection.get_connection())),
-    auth_mode(AuthMode(connection.get_connection())), group_mode(GroupMode(connection.get_connection())) {}
+    single_auth_mode(SingleAuthMode(connection.get_connection())), group_auth_mode(GroupAuthMode(connection.get_connection())) {}
 
 int DataBase::init() {
     pqxx::nontransaction transaction(*connection.get_connection(), "transaction");
