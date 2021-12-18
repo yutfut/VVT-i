@@ -12,7 +12,7 @@ void Client::print() {
     std::cout << ">>>\t";
 }
 
-int Client::role_command(const std::string& command) {
+int Client::role_command(const std::string& command, User &user) {
     size_t pos = command.find_first_of(' ');
     std::string first_part_command = command.substr(0, pos);
     std::string rest_part_command = command.substr(pos + 1);
@@ -32,6 +32,13 @@ int Client::role_command(const std::string& command) {
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
+        case REGISTER: {
+            if(first_part_command != rest_part_command) {
+                return user.register_user(rest_part_command);
+            }
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
         case EXIT: {
             return 1;
         }
@@ -45,7 +52,10 @@ int Client::role_command(const std::string& command) {
 void Client::run() {
     commands["upload"] = UPLOAD;
     commands["download"] = DOWNLOAD;
+    commands["register"] = REGISTER;
     commands["exit"] = EXIT;
+
+    User user;
 
     std::cout << "Welcome to VVTi!" << std::endl;
     std::string command;
@@ -57,7 +67,7 @@ void Client::run() {
             continue;
         }
 
-        switch (role_command(command)){
+        switch (role_command(command, user)){
             case SUCCESS:
                 std::cout << "SUCСESS" << std::endl;
                 break;

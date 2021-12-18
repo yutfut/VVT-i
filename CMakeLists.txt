@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(VVT-i)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_DIRECTORY source)
 set(INCLUDE_DIRECTORY include)
@@ -16,7 +16,8 @@ add_library(client STATIC ${SOURCE_DIRECTORY}/client.cpp
                           ${SOURCE_DIRECTORY}/command.cpp
                           ${SOURCE_DIRECTORY}/http_base.cpp
                           ${SOURCE_DIRECTORY}/http_request.cpp
-                          ${SOURCE_DIRECTORY}/http_response.cpp)
+                          ${SOURCE_DIRECTORY}/http_response.cpp
+                          ${SOURCE_DIRECTORY}/password.cpp)
 target_include_directories(client PUBLIC ${INCLUDE_DIRECTORY})
 
 add_executable(vvti_client source/main.cpp)

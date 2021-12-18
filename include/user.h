@@ -7,9 +7,12 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
-#include "validation.h"
+#include <cstring>
+
+#include "password.h"
 #include "http_base.h"
+#include "http_request.h"
+#include "http_response.h"
 
 class User {
 private:
@@ -18,6 +21,7 @@ private:
     std::string jwt;
     std::string email;
 public:
+
     User();
 
     ~User();

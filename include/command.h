@@ -5,11 +5,7 @@
 #ifndef VVT_I_COMMAND_H
 #define VVT_I_COMMAND_H
 
-#include <iostream>
-#include <string>
-#include <cstring>
-
-#include "validation.h"
+#include "password.h"
 #include "http_base.h"
 #include "http_request.h"
 #include "http_response.h"

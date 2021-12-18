@@ -5,21 +5,19 @@
 #ifndef VVTI_CLIENT_CLIENT_H
 #define VVTI_CLIENT_CLIENT_H
 
-#include <iostream>
 #include <map>
-#include "validation.h"
+
 #include "user.h"
 #include "command.h"
 
 class Client {
 private:
-    User user;
-
     std::map <std::string, int> commands;
 
     enum Commands {
         UPLOAD,
         DOWNLOAD,
+        REGISTER,
         EXIT,
     };
 
@@ -34,7 +32,7 @@ public:
 
     void print();
 
-    int role_command(const std::string& command);
+    int role_command(const std::string& command, User &user);
 
     void run();
 };
