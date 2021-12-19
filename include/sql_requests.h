@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <fmt/core.h>
 
 
 ///----CREATE TABLES---///
@@ -14,11 +15,11 @@ const std::string CREATE_TABLE_UNAUTH_USER_FILES = "CREATE TABLE IF NOT EXISTS U
                                                    "uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(), user_filename TEXT, password TEXT, "
                                                    "upload_date DATE DEFAULT CURRENT_DATE);";
 
-const std::string CREATE_TABLE_USERS = "CREATE TABLE IF NOT EXISTS Users(id SERIAL PRIMARY KEY, username TEXT NOT NULL, "
+const std::string CREATE_TABLE_USERS = "CREATE TABLE IF NOT EXISTS Users(id SERIAL PRIMARY KEY, "
                                        "email TEXT NOT NULL, password TEXT NOT NULL);";
 
 const std::string CREATE_TABLE_PERSON_DIR = "CREATE TABLE IF NOT EXISTS Person_dir(user_id SERIAL REFERENCES Users(id), "
-                                            "dir_path TEXT UNIQUE);";
+                                            "dir_path TEXT UNIQUE, upload_date DATE DEFAULT CURRENT_DATE);";
 
 const std::string CREATE_TABLE_GROUPS = "CREATE TABLE IF NOT EXISTS Groups(id SERIAL PRIMARY KEY, dir_path TEXT UNIQUE);";
 
@@ -28,7 +29,7 @@ const std::string CREATE_TABLE_GROUP_DIR = "CREATE TABLE IF NOT EXISTS Group_dir
 const std::string CREATE_TABLE_AUTH_USER_FILES = "CREATE TABLE IF NOT EXISTS Auth_user_files("
                                                  "user_id SERIAL REFERENCES Users(id), "
                                                  "dir_path TEXT REFERENCES Person_dir(dir_path), "
-                                                 "user_filename TEXT);";
+                                                 "user_filename TEXT, upload_date DATE DEFAULT CURRENT_DATE);";
 
 
 ///---Unauth_mode---///
@@ -46,7 +47,7 @@ const std::string GET_UPLOAD_DATE = "SELECT user_filename, upload_date FROM Unau
 ///---Reg_auth---///
 
 
-const std::string REGISTER = "INSERT INTO Users (username, email, password) VALUES ('{0}', '{1}', crypt('{2}', gen_salt('bf')));";
+const std::string REGISTER = "INSERT INTO Users (email, password) VALUES ('{0}', crypt('{1}', gen_salt('bf'))) RETURNING id;";
 
 const std::string CHECK_EMAIL_FREE = "SELECT email FROM Users WHERE email = '{0}';";
 
@@ -70,6 +71,10 @@ const std::string CHECK_FILENAME_FREE = "SELECT user_filename FROM Auth_user_fil
 
 const std::string CHANGE_FILENAME = "UPDATE Auth_user_files SET user_filename = '{0}' WHERE user_id = {1} AND dir_path = '{2}' AND user_filename = '{3}';";
 
-const std::string MKDIR = "INSERT INTO Person_dir(user_id, dir_path) VALUES({0}, '{1}');";
+const std::string COMMAND_MKDIR = "INSERT INTO Person_dir(user_id, dir_path) VALUES({0}, '{1}');";
 
-const std::string LS = "SELECT user_filename, upload_data FROM Auth_user_files WHERE id = {0} AND dir_path = '{1}' FULL JOIN person_dir ON dir_path = NEW_DIR_PATH;";
+const std::string COMMAND_LS_FILES = "SELECT user_filename, upload_date FROM Auth_user_files WHERE user_id = {0} AND dir_path = '{1}' ORDER BY user_filename;";
+
+const std::string REGEX_SEARCH_INCLUDE_DIRS = "^{0}\/[A-Za-z0-9-]+$";
+
+const std::string COMMAND_LS_DIRS = "SELECT dir_path, upload_date FROM Person_dir WHERE user_id = {0} AND dir_path ~ '{1}' ORDER BY DIR_APTH_OBREZANNIY;";

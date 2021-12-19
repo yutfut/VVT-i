@@ -54,9 +54,21 @@ int SingleAuthMode::change_filename(int user_id, const std::string &dir_path, co
 }
 
 
-// std::vector<std::string> SingleAuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
+void SingleAuthMode::create_directory(int user_id, const std::string &dir_path, const std::string &dir_name) {
+    if (is_dir_name_free(user_id, dir_path + "/" + dir_name) == true) {
+        simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path + "/" + dir_name), connection);
+    }
+}
 
-//     va_list list_files;
 
-//     return {};
-// }
+std::string SingleAuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
+
+    std::string regex_search_dirs = fmt::format(REGEX_SEARCH_INCLUDE_DIRS, curr_dir_path);
+
+    // auto s1 = fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path);
+    // std::cout << s1 << "\n";
+    // auto s2 = fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs);
+    // std::cout << s2 << "\n";
+    
+    return trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path), fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);
+}

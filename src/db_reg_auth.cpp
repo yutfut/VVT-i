@@ -16,11 +16,10 @@ int RegAuth::try_register(const std::string &name, const std::string &email,
 
     if (is_email_free(email)) {
 
-            simple_transaction_exec(fmt::format(REGISTER, name, email, password), connection);
-            auto id = get_id_auth_user(email);
-            simple_transaction_exec(fmt::format(MKDIR, id, std::to_string(id)), connection);
+            int id = trans_one_int_value_exec(fmt::format(REGISTER, name, email, password), connection);
+            simple_transaction_exec(fmt::format(COMMAND_MKDIR, id, std::to_string(id)), connection);
 
-        return 0;
+        return id;
     }
 
     return -1;
