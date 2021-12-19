@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(project)
 
 # Make executable fs_worker_lib
-#add_subdirectory(test)
+add_subdirectory(test)
 
 # Make executable sever program
 add_executable(server.out main.cpp)

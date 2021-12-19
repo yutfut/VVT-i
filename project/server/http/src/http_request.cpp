@@ -36,21 +36,14 @@ void HttpRequest::add_first_line(const std::string& line) {
     }
     this->method = std::string(line, start_pos, end_pos - start_pos);
 
-    start_pos = end_pos + 1;
-    while (line[start_pos] == ' ') {
-        ++start_pos;
-    }
+    start_pos = line.find_first_not_of(' ', end_pos + 1);
     end_pos = line.find(' ', start_pos);
     if (end_pos == std::string::npos) {
         throw "Space not found";
     }
     this->url = std::string(line, start_pos, end_pos - start_pos);
 
-    start_pos = end_pos + 1;
-    while (line[start_pos] == ' ') {
-        ++start_pos;
-    }
-
+    start_pos = line.find_first_not_of(' ', end_pos + 1);
     std::string protocol(line, start_pos, lf_pos - 1 - start_pos);
 
     if (sscanf(protocol.c_str(), "HTTP/%d.%d", &version_major, &version_minor) != 2) {
@@ -88,10 +81,7 @@ void HttpRequest::add_header(const std::string& line) {
         header_name.begin(),
         [](unsigned char c) { return std::tolower(c); });
 
-    start_pos = colon_pos + 1;
-    while (line[start_pos] == ' ') {
-        ++start_pos;
-    }
+    start_pos = line.find_first_not_of(' ', colon_pos + 1);
 
     std::string header_value(line, start_pos, lf_pos - 1 - start_pos);
     this->headers[header_name] = header_value;
@@ -100,8 +90,7 @@ void HttpRequest::add_header(const std::string& line) {
 void HttpRequest::add_body(const std::string& line) {
     int len;
     if (sscanf(this->headers["content-length"].c_str(), "%d", &len) != 1) {
-        // TODO: catch expection
-        // throw "Not valid request";
+        return;
     }
 
     if (curr_len == -1) {
@@ -113,6 +102,7 @@ void HttpRequest::add_body(const std::string& line) {
     curr_len -= line.length();
     if (curr_len <= 0) {
         this->request_ended = true;
+        this->body.erase(this->body.rfind("\r\n"), 2);
     }
 }
 

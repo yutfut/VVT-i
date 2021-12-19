@@ -29,7 +29,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITH_BODY) {
     EXPECT_EQ(request.get_headers()["content-length"], "23");
     EXPECT_EQ(request.get_headers()["content-type"], "text/html");
 
-    EXPECT_EQ(request.get_body(), "<div>\r\n\tHELLO WORLD!\r\n</div>\r\n");
+    EXPECT_EQ(request.get_body(), "<div>\r\n\tHELLO WORLD!\r\n</div>");
 }
 
 TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITHOUT_BODY) {
