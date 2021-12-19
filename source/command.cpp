@@ -58,5 +58,6 @@ int work_with_directory(const std::string& first_part_command, const std::string
 
         return HTTPResponse::parser(http_response);
     }
+    std::cout << "Вы не авторизованы!\n";
     return -1;
 }

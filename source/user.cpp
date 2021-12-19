@@ -5,7 +5,7 @@
 #include "user.h"
 
 User::User(){
-    authorize = true;
+    authorize = false;
 }
 
 User::~User(){}
