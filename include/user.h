@@ -2,8 +2,8 @@
 // Created by Yut Fut on 18.11.2021.
 //
 
-#ifndef VVT_I_REGISTRATE_H
-#define VVT_I_REGISTRATE_H
+#ifndef VVT_I_USER_H
+#define VVT_I_USER_H
 
 #include <iostream>
 #include <string>
@@ -15,14 +15,18 @@
 #include "http_response.h"
 
 class User {
-public:
+private:
     bool authorize;
-
     std::string jwt;
-
+    std::string current_directory;
+public:
     User();
 
     ~User();
+
+    std::string get_jwt() {
+        return jwt;
+    }
 
     int register_user(const std::string& command);
 
@@ -31,4 +35,4 @@ public:
     int logout();
 };
 
-#endif //VVT_I_REGISTRATE_H
+#endif //VVT_I_USER_H

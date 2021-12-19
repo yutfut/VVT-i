@@ -39,6 +39,16 @@ int Client::role_command(const std::string& command, User &user) {
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
+        case LOGIN: {
+            if(first_part_command != rest_part_command) {
+                return user.login(rest_part_command);
+            }
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
+        case LOGOUT: {
+            return user.logout();
+        }
         case EXIT: {
             return 1;
         }
@@ -53,6 +63,8 @@ void Client::run() {
     commands["upload"] = UPLOAD;
     commands["download"] = DOWNLOAD;
     commands["register"] = REGISTER;
+    commands["login"] = LOGIN;
+    commands["logout"] = LOGOUT;
     commands["exit"] = EXIT;
 
     User user;

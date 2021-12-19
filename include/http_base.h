@@ -7,9 +7,6 @@
 #ifndef VVT_I_HTTP_REQEST_H
 #define VVT_I_HTTP_REQEST_H
 
-#include "command.h"
-
-#include <errno.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>

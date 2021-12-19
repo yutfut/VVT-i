@@ -17,6 +17,8 @@ private:
         UPLOAD,
         DOWNLOAD,
         REGISTER,
+        LOGIN,
+        LOGOUT,
         EXIT,
     };
 

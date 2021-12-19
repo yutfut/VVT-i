@@ -12,7 +12,7 @@
 #include "http_response.h"
 
 int upload(const std::string& command, User &user);
-int download(const std::string& command, const User &user);
+int download(const std::string& command, User &user);
 
 //class Command {
 //public:

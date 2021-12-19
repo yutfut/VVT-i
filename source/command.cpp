@@ -29,7 +29,7 @@ int upload(const std::string& command, User &user) {
     return HTTPResponse::parser(http_response);
 }
 
-int download(const std::string& command, const User &user) {
+int download(const std::string& command, User &user) {
     std::string key = command, password;
     if (Validator::validate_key(key)) {
         return -1;
@@ -37,7 +37,7 @@ int download(const std::string& command, const User &user) {
 
     password = check_password_download();
 
-    std::string message = HTTPRequest::create_message("", password, user.jwt, key, "", "download");
+    std::string message = HTTPRequest::create_message("", password, user.get_jwt(), key, "", "download");
 
     std::string http_response = HTTPBase::send(message);
 
