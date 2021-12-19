@@ -79,13 +79,15 @@ private:
 
     bool handle_request();
 
+    bool send_message_on_email(size_t step);
+
     bool send_response();
 
     void message_to_log(log_messages_t log_type);
 
     bool is_timeout();
 
-     FsWorker &fs_worker;
+    FsWorker &fs_worker;
 
-     DataBase &db_worker;
+    DataBase &db_worker;
 };
