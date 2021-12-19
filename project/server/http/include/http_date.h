@@ -17,7 +17,7 @@ public:
 private:
     static std::string get_week_day(int week_day);
 
-    static std::string add_leading_zero(int num);
+    static std::string convert_number_to_string(int num);
 
     static std::string get_month(int month);
 
