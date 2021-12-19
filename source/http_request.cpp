@@ -5,14 +5,14 @@
 #include "http_request.h"
 
 void crate_body(const std::string &file_name, std::string &message) {
-    std::string buff;
+    char c;
     std::ifstream in(file_name, std::ios::binary);
 
     if (!in.is_open()) {
         std::cout << "ошибка открытия файла\n";
     }
-    while (getline(in, buff)) {
-        message.append(buff);
+    while (in.get(c)) {
+        message.push_back(c);
     }
 
     in.close();
