@@ -3,7 +3,7 @@
 #include <string>
 
 int main() {
-    DataBase db("postgres", "postgres", "5432", "localhost", "");
+    DataBase db("postgres", "postgres", "5432", "", "vvti");
     db.init();
     // db.not_auth_mode.add_file("first_file", "pass1");
     // db.not_auth_mode.add_file("first_file", "pass1");
@@ -40,7 +40,7 @@ int main() {
     // std::cout << db.single_auth_mode.change_filename(1, "1", "2.txt", "1.txt");
     // std::cout << db.single_auth_mode.change_filename(1, "1", "1.txt", "3.txt");
 
-    // std::cout << db.single_auth_mode.delete_file(1, "1", "4.txt");
+    // std::cout << db.single_auth_mode.delete_file (1, "1", "4.txt");
     // std::cout << db.single_auth_mode.delete_file(1, "1", "3.txt");
     // std::cout << db.single_auth_mode.delete_file(1, "1", "2.txt");
 
