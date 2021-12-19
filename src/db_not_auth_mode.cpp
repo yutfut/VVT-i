@@ -4,7 +4,7 @@
 NotAuthMode::NotAuthMode(pqxx::connection *conn) : connection(conn) {}
 
 
-unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_filename,
+unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
                                                   const std::string &option_password) {
     pqxx::work transaction(*connection);
 

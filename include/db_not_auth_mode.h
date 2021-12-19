@@ -9,7 +9,7 @@ public:
 
     NotAuthMode(pqxx::connection *conn);
 
-    unauth_file_data_t add_unauth_user_file(const std::string &user_filename,
+    unauth_file_data_t add_file(const std::string &user_filename,
                                             const std::string &option_password);
 
     void delete_certain_file(std::string uuid);

@@ -10,10 +10,10 @@ public:
 
     SingleAuthMode(pqxx::connection *connection);
 
-    int add_auth_user_file(int user_id, const std::string &dir_path,
+    int add_file(int user_id, const std::string &dir_path,
                           const std::string &filename);
 
-    int delete_auth_user_file(int user_id, const std::string &dir_path,
+    int delete_file(int user_id, const std::string &dir_path,
                             const std::string &filename);
 
     int create_directory(int user_id, const std::string &dir_path, const std::string &dir_name);

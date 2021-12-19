@@ -19,7 +19,7 @@ bool SingleAuthMode::is_filename_free(int user_id, const std::string &dir_path, 
 }
 
 
-int SingleAuthMode::add_auth_user_file(int user_id, const std::string &dir_path,
+int SingleAuthMode::add_file(int user_id, const std::string &dir_path,
                       const std::string &filename) {
     
     simple_transaction_exec(fmt::format(ADD_AUTH_USER_FILE, user_id, dir_path, filename), connection);
@@ -28,7 +28,7 @@ int SingleAuthMode::add_auth_user_file(int user_id, const std::string &dir_path,
 }
 
 
-int SingleAuthMode::delete_auth_user_file(int user_id, const std::string &dir_path,
+int SingleAuthMode::delete_file(int user_id, const std::string &dir_path,
                                                     const std::string &filename) {
                                                         
     if (is_filename_free(user_id, dir_path, filename) != FILENAME_FREE) {

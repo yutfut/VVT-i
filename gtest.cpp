@@ -36,9 +36,9 @@ TEST(DATA_BASE_TEST, WORK_WITH_TMP_FILES) {
     curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
             + "-" + std::to_string(now->tm_mday);
 
-    auto unauth_user_file_1 = db.not_auth_mode.add_unauth_user_file("first_file", "password_1");
-    auto unauth_user_file_2 = db.not_auth_mode.add_unauth_user_file("second_file", "password_2");
-    auto unauth_user_file_3 = db.not_auth_mode.add_unauth_user_file("third_file", "password_3");
+    auto unauth_user_file_1 = db.not_auth_mode.add_file("first_file", "password_1");
+    auto unauth_user_file_2 = db.not_auth_mode.add_file("second_file", "password_2");
+    auto unauth_user_file_3 = db.not_auth_mode.add_file("third_file", "password_3");
 
     EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_1.filename, "qwertyui"), "");
     EXPECT_EQ(db.not_auth_mode.get_upload_file_date(unauth_user_file_1.filename, ""), curr_date);
@@ -93,10 +93,10 @@ TEST(DATA_BASE_TEST, GET_EMAIL) {
 
 TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
     DataBase db("", "", "", "", "");
-    db.auth_mode.add_auth_user_file(1, "first_dir", "1.txt");
-    db.auth_mode.add_auth_user_file(1, "first_dir", "2.txt");
-    db.auth_mode.add_auth_user_file(1, "first_dir/second_dir", "2.txt");
-    db.auth_mode.add_auth_user_file(1, "first_dir", "1.txt");
+    db.auth_mode.add_file(1, "first_dir", "1.txt");
+    db.auth_mode.add_file(1, "first_dir", "2.txt");
+    db.auth_mode.add_file(1, "first_dir/second_dir", "2.txt");
+    db.auth_mode.add_file(1, "first_dir", "1.txt");
     db.auth_mode.change_file_name(1, "first_dir", "2.txt", "3.txt");
 
     std::vector<std::string> test_files = {"3.txt"};
