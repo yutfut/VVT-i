@@ -8,9 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Make libraries
 add_subdirectory(project)
 
-# Make executable fs_worker_lib
+# Make executable test program
 add_subdirectory(test)
 
 # Make executable sever program
 add_executable(server.out main.cpp)
-target_link_libraries(server.out server_lib fs_worker_lib database_lib)
+target_link_libraries(server.out database_lib fs_worker_lib server_lib)

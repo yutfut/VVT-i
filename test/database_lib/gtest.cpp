@@ -145,9 +145,3 @@ TEST(DATA_BASE_TEST, GROUP_MODE) {
     db.group_mode.has_access_on_action(1, 1, DELETE_GROUP);
     db.group_mode.delete_group(1, 1);
 }
-
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
