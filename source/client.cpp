@@ -49,6 +49,13 @@ int Client::role_command(const std::string& command, User &user) {
         case LOGOUT: {
             return user.logout();
         }
+        case DIR: {
+            if(first_part_command != rest_part_command) {
+                return work_with_directory(first_part_command, rest_part_command, user);
+            }
+            std::cout << "Ошибка ввода команды" << std::endl;
+            return -1;
+        }
         case EXIT: {
             return 1;
         }
@@ -65,6 +72,10 @@ void Client::run() {
     commands["register"] = REGISTER;
     commands["login"] = LOGIN;
     commands["logout"] = LOGOUT;
+    commands["cd"] = DIR;
+    commands["ls"] = DIR;
+    commands["mkdir"] = DIR;
+    commands["rmdir"] = DIR;
     commands["exit"] = EXIT;
 
     User user;

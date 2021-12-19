@@ -5,20 +5,17 @@
 #ifndef VVT_I_COMMAND_H
 #define VVT_I_COMMAND_H
 
-#include "user.h"
 #include "password.h"
 #include "http_base.h"
 #include "http_request.h"
 #include "http_response.h"
 
 int upload(const std::string& command, User &user);
+
 int download(const std::string& command, User &user);
 
-//class Command {
-//public:
-//    static int upload(const std::string& command);
-//
-//    static int download(const std::string& command);
-//};
+int work_with_directory(const std::string& first_part_command, const std::string& rest_part_command, User &user);
+
+
 
 #endif //VVT_I_COMMAND_H

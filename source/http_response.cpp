@@ -51,7 +51,8 @@ int HTTPResponse::parser(std::string &http) {
     }
 
     if (!commands["jwt"].empty()) {
-        http = commands["jwt"];
+        http = commands["jwt"].append(" ");
+        http.append(commands["current_directory"]);
     }
 
     if (commands["message"] == "OK") {

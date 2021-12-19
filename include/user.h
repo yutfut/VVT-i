@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <utility>
 
 #include "password.h"
 #include "http_base.h"
@@ -24,11 +25,19 @@ public:
 
     ~User();
 
+    bool get_authorize() {
+        return authorize;
+    }
+
     std::string get_jwt() {
         return jwt;
     }
 
-    int register_user(const std::string& command);
+    std::string get_current_directory() {
+        return current_directory;
+    }
+
+    static int register_user(const std::string& command);
 
     int login(const std::string& command);
 

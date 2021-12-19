@@ -19,6 +19,7 @@ private:
         REGISTER,
         LOGIN,
         LOGOUT,
+        DIR,
         EXIT,
     };
 

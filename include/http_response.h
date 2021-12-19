@@ -9,6 +9,8 @@
 #include <map>
 #include <fstream>
 
+#include "user.h"
+
 class HTTPResponse {
 public:
     static int parser(std::string &http);

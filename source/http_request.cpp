@@ -24,6 +24,7 @@ void crate_body(const std::string &file_name, std::string &message) {
 std::string HTTPRequest::create_message(const std::string &email,
                            const std::string &password,
                            const std::string &jwt,
+                           const std::string &current_directory,
                            const std::string &key,
                            const std::string &file_name,
                            const std::string &command) {
@@ -38,6 +39,7 @@ std::string HTTPRequest::create_message(const std::string &email,
               "email: " + email + "\r\n"
               "password: " + password + "\r\n"
               "jwt: " + jwt + "\r\n"
+              "current_directory: " + current_directory + "\r\n"
               "key: " + key + "\r\n"
               "status: \r\n"
               "message: \r\n"
