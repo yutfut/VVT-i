@@ -25,11 +25,11 @@ std::string HTTPRequest::create_message(const std::string &email,
                            const std::string &password,
                            const std::string &jwt,
                            const std::string &current_directory,
+                           const std::string &work_directory,
                            const std::string &key,
                            const std::string &file_name,
                            const std::string &command) {
-    std::string body,
-                message;
+    std::string body, message;
 
     if (command == "upload") {
         crate_body(file_name, body);
@@ -40,9 +40,8 @@ std::string HTTPRequest::create_message(const std::string &email,
               "password: " + password + "\r\n"
               "jwt: " + jwt + "\r\n"
               "current_directory: " + current_directory + "\r\n"
+              "work_directory: " + work_directory + "\r\n"
               "key: " + key + "\r\n"
-              "status: \r\n"
-              "message: \r\n"
               "command: " + command + "\r\n"
               "filename: " + file_name + "\r\n"
               "content-length: " + std::to_string(body.size()) + "\r\n\r\n";

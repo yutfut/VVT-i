@@ -16,6 +16,4 @@ int download(const std::string& command, User &user);
 
 int work_with_directory(const std::string& first_part_command, const std::string& rest_part_command, User &user);
 
-
-
 #endif //VVT_I_COMMAND_H

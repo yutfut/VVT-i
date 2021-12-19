@@ -15,6 +15,7 @@ public:
                                const std::string &password,
                                const std::string &jwt,
                                const std::string &current_directory,
+                               const std::string &work_directory,
                                const std::string &key,
                                const std::string &file_name,
                                const std::string &command);

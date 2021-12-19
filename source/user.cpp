@@ -18,7 +18,7 @@ int User::register_user(const std::string& command) {
 
     std::string password = confirm_input_password();
 
-    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", "register");
+    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", "", "register");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -40,7 +40,7 @@ int User::login(const std::string& command) {
 
     std::string password = single_input_password();
 
-    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", "login");
+    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", "", "login");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -64,7 +64,7 @@ int User::logout() {
     }
     authorize = false;
 
-    std::string message = HTTPRequest::create_message("", "", jwt,"", "", "", "logout");
+    std::string message = HTTPRequest::create_message("", "", jwt, "", "", "", "", "logout");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
