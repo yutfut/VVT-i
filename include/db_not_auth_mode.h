@@ -3,7 +3,7 @@
 #include "library_list.h"
 
 
-class NotAuthMode {
+class NotAuthMode : public TransactionExec {
     
 public:
 
@@ -21,6 +21,5 @@ public:
 private:
 
     pqxx::connection *connection;
-
-    void simple_transaction_exec(std::string sql_request);
+    
 };

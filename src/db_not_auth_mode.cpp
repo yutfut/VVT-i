@@ -4,20 +4,6 @@
 NotAuthMode::NotAuthMode(pqxx::connection *conn) : connection(conn) {}
 
 
-void NotAuthMode::simple_transaction_exec(std::string sql_request) {
-    pqxx::work transaction(*connection);
-    
-    try {
-        transaction.exec(sql_request);
-        transaction.commit();
-    } catch (const pqxx::sql_error &e) {
-        transaction.abort();
-        std::cout << e.what() << "\n";
-        throw(e.what());
-    }
-}
-
-
 unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_filename,
                                                   const std::string &option_password) {
     pqxx::work transaction(*connection);
@@ -42,13 +28,13 @@ unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_fil
 
 void NotAuthMode::delete_certain_file(std::string uuid) {
     
-    simple_transaction_exec(fmt::format(DELETE_UNAUTH_USER_FILE, uuid));
+    simple_transaction_exec(fmt::format(DELETE_UNAUTH_USER_FILE, uuid), connection);
 }
 
 
 void NotAuthMode::delete_files_by_date(const std::string &upload_date) {
     
-    simple_transaction_exec(fmt::format(DELETE_FILES_BY_DATE, upload_date));
+    simple_transaction_exec(fmt::format(DELETE_FILES_BY_DATE, upload_date), connection);
 }
 
 
