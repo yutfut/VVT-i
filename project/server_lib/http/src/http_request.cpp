@@ -93,17 +93,19 @@ void HttpRequest::add_body(const std::string& line) {
         return;
     }
 
-    if (curr_len == -1) {
-        curr_len = len;
+    if (this->curr_len == -1) {
+        this->curr_len = len;
     }
 
-    this->body += line;
-
-    curr_len -= line.length();
-    if (curr_len <= 0) {
-        this->request_ended = true;
-        this->body.erase(this->body.rfind("\r\n"), 2);
+    if (this->curr_len >= line.length()) {
+        this->body += line;
+        this->curr_len -= line.length();
+        return;
     }
+
+    this->body += line.substr(0, curr_len);
+    this->curr_len = 0;
+    this->request_ended = true;
 }
 
 bool HttpRequest::requst_ended() const {

@@ -70,11 +70,10 @@ bool ClientConnection::get_request() {
     char last_char;
     std::string line;
 
-
     line.reserve(LENGTH_LINE_FOR_RESERVE);
     while (read(this->sock, &last_char, sizeof(char)) == sizeof(char)) {
         line.push_back(last_char);
-        if (last_char == '\n' && line.length() != 1) {
+        if (last_char == '\n') {
             this->request.add_line(line);
             line.clear();
             line.reserve(LENGTH_LINE_FOR_RESERVE);

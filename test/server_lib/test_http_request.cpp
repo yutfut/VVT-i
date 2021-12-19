@@ -6,7 +6,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITH_BODY) {
     std::string str = ""
         "GET /index.html HTTP/1.1\r\n"
         "Host: VVT-i\r\n"
-        "Content-Length: 23\r\n"
+        "Content-Length: 28\r\n"
         "Content-Type: text/html\r\n"
         "\r\n"
         "<div>\r\n"
@@ -26,7 +26,7 @@ TEST(TEST_HTTP, HANDLE_HTTP_REQUEST_WITH_BODY) {
     EXPECT_EQ(request.get_url(), "/index.html");
 
     EXPECT_EQ(request.get_headers()["host"], "VVT-i");
-    EXPECT_EQ(request.get_headers()["content-length"], "23");
+    EXPECT_EQ(request.get_headers()["content-length"], "28");
     EXPECT_EQ(request.get_headers()["content-type"], "text/html");
 
     EXPECT_EQ(request.get_body(), "<div>\r\n\tHELLO WORLD!\r\n</div>");
