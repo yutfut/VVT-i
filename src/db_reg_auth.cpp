@@ -13,6 +13,7 @@ void RegAuth::simple_transaction_exec(std::string sql_request) {
         transaction.commit();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
+        std::cout << e.what() << "\n";
         throw(e.what());
     }
 }
@@ -82,12 +83,12 @@ bool RegAuth::is_email_free(const std::string &email) {
 
 
 int RegAuth::try_register(const std::string &name, const std::string &email,
-                 const std::string &password) {
+                 const std::string &password) { 
+
     if (is_email_free(email)) {
 
             simple_transaction_exec(fmt::format(REGISTER, name, email, password));
-
-            // TODO: add creation user default root directory
+            simple_transaction_exec(fmt::format(MKDIR, get_id_auth_user(email), "1" /*path = FS_ROOT + std::to_string(get_id_auth_user(email))*/));
 
         return 0;
     }

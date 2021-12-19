@@ -12,6 +12,7 @@ void NotAuthMode::simple_transaction_exec(std::string sql_request) {
         transaction.commit();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
+        std::cout << e.what() << "\n";
         throw(e.what());
     }
 }
@@ -33,6 +34,7 @@ unauth_file_data_t NotAuthMode::add_unauth_user_file(const std::string &user_fil
         return add_file_result;
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
+        std::cout << e.what() << "\n";
         throw(e.what());
     }
 }
