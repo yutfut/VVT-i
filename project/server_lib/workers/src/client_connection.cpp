@@ -136,7 +136,7 @@ bool ClientConnection::send_message_on_email(size_t step) {
         std::ifstream file;
 
         if (this->request.get_headers()["command"] == "upload") {
-            message.subject("Your code");
+            message.subject("Successfull upload");
 
             if (this->request.get_headers().find("content-length") != this->request.get_headers().end() &&
                 !this->request.get_headers()["jwt"].empty()) {
