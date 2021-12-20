@@ -11,12 +11,12 @@ bool RegAuth::is_email_free(const std::string &email) {
 }
 
 
-int RegAuth::try_register(const std::string &name, const std::string &email,
+int RegAuth::try_register(const std::string &email,
                  const std::string &password) { 
 
     if (is_email_free(email)) {
 
-            int id = trans_one_int_value_exec(fmt::format(REGISTER, name, email, password), connection);
+            int id = trans_one_int_value_exec(fmt::format(REGISTER, email, password), connection);
             simple_transaction_exec(fmt::format(COMMAND_MKDIR, id, std::to_string(id)), connection);
 
         return id;

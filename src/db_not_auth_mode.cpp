@@ -11,6 +11,11 @@ unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
     try {
         pqxx::result res = transaction.exec(fmt::format(ADD_UNAUTH_USER_FILE, user_filename, option_password));
 
+        if (res.empty()) {
+            unauth_file_data_t empty_struct{};
+            return empty_struct;
+        }
+        
         unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
                                               .filename = user_filename,
                                               .upload_date = res[0][1].as<std::string>()};
@@ -21,7 +26,7 @@ unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
         std::cout << e.what() << "\n";
-        throw(e.what());
+        throw std::string(e.what());
     }
 }
 
@@ -44,6 +49,7 @@ unauth_file_data_t NotAuthMode::get_upload_file_date(const std::string &file_uui
 
     try {
         pqxx::result res = transaction.exec(fmt::format(GET_UPLOAD_DATE, file_uuid, option_password));
+        transaction.commit();
 
         if (res.empty()) {
             return {};
@@ -52,11 +58,10 @@ unauth_file_data_t NotAuthMode::get_upload_file_date(const std::string &file_uui
         unauth_file_data_t res_struct = {.uuid = file_uuid, .filename = res[0][0].as<std::string>(),
                 .upload_date = res[0][1].as<std::string>()};
 
-        transaction.commit();
 
         return res_struct;
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        throw(e.what());
+        throw std::string(e.what());
     }
 }

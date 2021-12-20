@@ -10,7 +10,7 @@ public:
 
     bool is_email_free(const std::string &email);
 
-    int try_register(const std::string &name, const std::string &email,
+    int try_register(const std::string &email,
                      const std::string &password);
 
     int try_auth(const std::string &email, const std::string &password);
