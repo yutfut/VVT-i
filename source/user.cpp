@@ -60,15 +60,8 @@ int User::login(const std::string& command) {
 int User::logout() {
     if (!authorize) {
         std::cout << "Вы еще не вошли в систему" << std::endl;
-        return 0;
     }
     authorize = false;
-
-    std::string message = HTTPRequest::create_message("", "", jwt, "", "", "", "", "logout");
-
-    std::string http_response = HTTPBase::send(message);
-    if (http_response == "ошибка соединения\n") {
-        return -1;
-    }
-    return HTTPResponse::parser(http_response);
+    jwt = std::string {};
+    return 0;
 }

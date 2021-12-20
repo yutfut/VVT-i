@@ -18,45 +18,45 @@ int Client::role_command(const std::string& command, User &user) {
     std::string rest_part_command = command.substr(pos + 1);
 
     switch (commands[first_part_command]) {
-        case UPLOAD: {
+        case Commands::UPLOAD: {
             if(first_part_command != rest_part_command) {
                 return upload(rest_part_command, user);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
-        case DOWNLOAD: {
+        case Commands::DOWNLOAD: {
             if(first_part_command != rest_part_command) {
                 return download(rest_part_command, user);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
-        case REGISTER: {
+        case Commands::REGISTER: {
             if(first_part_command != rest_part_command) {
                 return user.register_user(rest_part_command);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
-        case LOGIN: {
+        case Commands::LOGIN: {
             if(first_part_command != rest_part_command) {
                 return user.login(rest_part_command);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
-        case LOGOUT: {
+        case Commands::LOGOUT: {
             return user.logout();
         }
-        case DIR: {
+        case Commands::DIR: {
             if(first_part_command != rest_part_command) {
                 return work_with_directory(first_part_command, rest_part_command, user);
             }
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
-        case EXIT: {
+        case Commands::EXIT: {
             return 1;
         }
         default: {
@@ -67,16 +67,16 @@ int Client::role_command(const std::string& command, User &user) {
 }
 
 void Client::run() {
-    commands["upload"] = UPLOAD;
-    commands["download"] = DOWNLOAD;
-    commands["register"] = REGISTER;
-    commands["login"] = LOGIN;
-    commands["logout"] = LOGOUT;
-    commands["cd"] = DIR;
-    commands["ls"] = DIR;
-    commands["mkdir"] = DIR;
-    commands["rmdir"] = DIR;
-    commands["exit"] = EXIT;
+    commands[UPLOAD] = Commands::UPLOAD;
+    commands[DOWNLOAD] = Commands::DOWNLOAD;
+    commands[REGISTER] = Commands::REGISTER;
+    commands[LOGIN] = Commands::LOGIN;
+    commands[LOGOUT] = Commands::LOGOUT;
+    commands[CD] = Commands::DIR;
+    commands[LS] = Commands::DIR;
+    commands[MKDIR] = Commands::DIR;
+    commands[RMDIR] = Commands::DIR;
+    commands[EXIT] = Commands::EXIT;
 
     User user;
 
@@ -90,11 +90,12 @@ void Client::run() {
             continue;
         }
 
-        switch (role_command(command, user)){
-            case SUCCESS:
+        Role role = (Role) role_command(command, user);
+        switch (role){
+            case Role::SUCCESS:
                 std::cout << "SUCСESS" << std::endl;
                 break;
-            case GOODBYE:
+            case Role::GOODBYE:
                 std::cout << "GOODBYE" << std::endl;
                 return;
             default:

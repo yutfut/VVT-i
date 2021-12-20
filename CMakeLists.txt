@@ -25,10 +25,10 @@ target_link_libraries(vvti_client client)
 
 target_include_directories(vvti_client PUBLIC ../include)
 
-#enable_testing()
-#
-#find_package(GTest REQUIRED)
-#find_package(Threads REQUIRED)
-#
-#add_executable(vvti_client_test test/gtest.cpp)
-#target_link_libraries(vvti_client_test client ${GTEST_LIBRARIES} Threads::Threads)
+enable_testing()
+
+find_package(GTest REQUIRED)
+find_package(Threads REQUIRED)
+
+add_executable(vvti_client_test test/main.cpp test/test_validation.cpp)
+target_link_libraries(vvti_client_test client ${GTEST_LIBRARIES} Threads::Threads)

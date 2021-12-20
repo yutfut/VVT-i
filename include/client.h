@@ -9,11 +9,20 @@
 
 #include "command.h"
 
+const std::string UPLOAD = "upload";
+const std::string DOWNLOAD = "download";
+const std::string REGISTER = "register";
+const std::string LOGIN = "login";
+const std::string LOGOUT = "logout";
+const std::string CD = "cd";
+const std::string LS = "ls";
+const std::string MKDIR = "mkdir";
+const std::string RMDIR = "rmdir";
+const std::string EXIT = "exit";
+
 class Client {
 private:
-    std::map <std::string, int> commands;
-
-    enum Commands {
+    enum class Commands {
         UPLOAD,
         DOWNLOAD,
         REGISTER,
@@ -23,7 +32,9 @@ private:
         EXIT,
     };
 
-    enum Role {
+    std::map <std::string, Commands> commands;
+
+    enum class Role {
         SUCCESS,
         GOODBYE,
     };
