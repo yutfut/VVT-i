@@ -26,7 +26,14 @@ int upload(const std::string& command, User &user) {
         }
     }
 
-    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", file_name, "upload");
+    std::string message = HTTPRequest::create_message(email,
+                                                      password,
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      file_name,
+                                                      "upload");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -43,7 +50,14 @@ int download(const std::string& command, User &user) {
 
     password = check_password_download();
 
-    std::string message = HTTPRequest::create_message("", password, user.get_jwt(), "", "", key, "", "download");
+    std::string message = HTTPRequest::create_message(std::string {},
+                                                      password,
+                                                      user.get_jwt(),
+                                                      std::string {},
+                                                      std::string {},
+                                                      key,
+                                                      std::string {},
+                                                      "download");
 
     std::string http_response = HTTPBase::send(message);
 
@@ -55,7 +69,14 @@ int work_with_directory(const std::string& first_part_command, const std::string
         return -1;
     }
     if (user.get_authorize()) {
-        std::string message = HTTPRequest::create_message("", "", user.get_jwt(), user.get_current_directory(), rest_part_command, "", "", first_part_command);
+        std::string message = HTTPRequest::create_message(std::string {},
+                                                          std::string {},
+                                                          user.get_jwt(),
+                                                          user.get_current_directory(),
+                                                          rest_part_command,
+                                                          std::string {},
+                                                          std::string {},
+                                                          first_part_command);
 
         std::string http_response = HTTPBase::send(message);
 

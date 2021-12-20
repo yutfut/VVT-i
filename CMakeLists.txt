@@ -30,5 +30,5 @@ enable_testing()
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 
-add_executable(vvti_client_test test/main.cpp test/test_validation.cpp)
+add_executable(vvti_client_test test/main.cpp test/test_http_request.cpp test/test_validation.cpp)
 target_link_libraries(vvti_client_test client ${GTEST_LIBRARIES} Threads::Threads)

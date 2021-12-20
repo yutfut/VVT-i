@@ -6,6 +6,8 @@
 
 User::User(){
     authorize = false;
+    jwt = std::string {};
+    current_directory = std::string {};
 }
 
 User::~User(){}
@@ -18,7 +20,14 @@ int User::register_user(const std::string& command) {
 
     std::string password = confirm_input_password();
 
-    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", "", "register");
+    std::string message = HTTPRequest::create_message(email,
+                                                      password,
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      "register");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -40,7 +49,14 @@ int User::login(const std::string& command) {
 
     std::string password = single_input_password();
 
-    std::string message = HTTPRequest::create_message(email, password, "", "", "", "", "", "login");
+    std::string message = HTTPRequest::create_message(email,
+                                                      password,
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      std::string {},
+                                                      "login");
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
@@ -49,9 +65,8 @@ int User::login(const std::string& command) {
 
     if (HTTPResponse::parser(http_response) == 0) {
         authorize = true;
-        size_t pos = http_response.find_first_of(' ');
-        jwt = command.substr(0, pos);
-        current_directory = command.substr(pos + 1);
+        jwt = http_response;
+        current_directory = "/";
         return 0;
     }
     return -1;
@@ -63,5 +78,6 @@ int User::logout() {
     }
     authorize = false;
     jwt = std::string {};
+    current_directory = std::string {};
     return 0;
 }
