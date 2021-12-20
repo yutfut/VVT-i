@@ -27,10 +27,9 @@ const std::string CREATE_TABLE_GROUP_DIR = "CREATE TABLE IF NOT EXISTS Group_dir
                                            "user_id SERIAL REFERENCES Users(id), group_id SERIAL REFERENCES Groups(id), group_name TEXT, modifiers TEXT);";
 
 const std::string CREATE_TABLE_AUTH_USER_FILES = "CREATE TABLE IF NOT EXISTS Auth_user_files("
-                                                 "user_id SERIAL REFERENCES Users(id), "
+                                                 "user_id SERIAL REFERENCES Users(id), upload_date DATE DEFAULT CURRENT_DATE, "
                                                  "dir_path TEXT REFERENCES Person_dir(dir_path), "
-                                                 "user_filename TEXT, upload_date DATE DEFAULT CURRENT_DATE);";
-
+                                                 "user_filename TEXT);";
 
 ///---Unauth_mode---///
 

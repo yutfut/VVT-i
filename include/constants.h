@@ -14,4 +14,4 @@ const std::string PORT = "5432";
 
 const std::string DBNAME = "postgres";
 
-const std::string REGEX_SEARCH_INCLUDE_DIRS = "^{0}\/[A-Za-z0-9-]+$";
+const std::string REGEX_SEARCH_INCLUDE_DIRS = "^{0}\/[A-Za-z0-9-]+";

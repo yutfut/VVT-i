@@ -15,7 +15,7 @@ int main() {
     // db.not_auth_mode.delete_files_by_date("2021-12-01");
 
     // std::cout << db.reg_auth.is_email_free("email") << "\n";
-    db.reg_auth.try_register("email", "pass");
+    // db.reg_auth.try_register("email", "pass");
     // std::cout << db.reg_auth.is_email_free("email") << "\n";
 
     // std::cout << db.reg_auth.try_auth("email", "past") << "\n";
@@ -65,10 +65,10 @@ std::time_t t = std::time(0);   // get time now
     curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
             + "-" + std::to_string(now->tm_mday);
 
-
     auto id = db.reg_auth.try_register("user_1", "new_pass");
 
     auto def_path = std::to_string(id);
+    std::cout << def_path + "/first_dir\n\n";
     
     db.single_auth_mode.create_directory(id, def_path, "first_dir");
     db.single_auth_mode.create_directory(id, def_path, "first_dir/second_dir");
@@ -82,7 +82,7 @@ std::time_t t = std::time(0);   // get time now
 
     std::string files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL, curr_date, "1.txt", "3.txt", "4.txt");
 
-    std::string dirs_in_dir = fmt::format("d{0}  {2}  {1}\n", BASE_ACCESS_LVL, curr_date, "first_dir");
+    std::string dirs_in_dir = fmt::format("d{0}  {2}  {1}\n", BASE_ACCESS_LVL, curr_date, "second_dir");
 
     std::cout << "need result:\n\n" << files_in_dir + dirs_in_dir << "\n\nmy result:\n\n";
 

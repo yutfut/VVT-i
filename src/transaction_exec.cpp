@@ -90,12 +90,9 @@ std::string TransactionExec::trans_ls_exec(std::string sql_request_file,
     try {
         pqxx::result res = transaction.exec(sql_request_file);
 
-        std::cout << res.size() << std::endl;
-
         for (int i = 0; i < res.size(); ++i) {
             ls_result += fmt::format("-{0}  {1}  {2}\n", BASE_ACCESS_LVL, 
                     res[i][0].as<std::string>(), res[i][1].as<std::string>());
-            // ls_result += "-" + base_access_lvl + "  " + res[i][0].as<std::string>() + "  " + res[i][1].as<std::string>() + "\n";
         }
 
         res = transaction.exec(sql_request_dir);
@@ -103,8 +100,7 @@ std::string TransactionExec::trans_ls_exec(std::string sql_request_file,
 
         for (int i = 0; i < res.size(); ++i) {
             ls_result += fmt::format("d{0}  {1}  {2}\n", BASE_ACCESS_LVL, 
-                    res[i][0].as<std::string>(), res[i][1].as<std::string>());
-            // ls_result += "d" + base_access_lvl + "  " + get_name_dir(res[i][0].as<std::string>()) + "  " + res[i][1].as<std::string>() + "\n";
+                    get_name_dir(res[i][0].as<std::string>()), res[i][1].as<std::string>());
         }
 
         return ls_result;

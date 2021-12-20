@@ -96,7 +96,7 @@ TEST(DATA_BASE_TEST, SAME_EMAILS) {
     DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
 
     auto id = db.reg_auth.try_register("fart@gmail.com", "1234");
-    EXPECT_EQ(db.reg_auth.try_register("fart@gmail.com", "1234"), id);
+    EXPECT_EQ(db.reg_auth.try_register("fart@gmail.com", "pass"), -1);
 }
 
 TEST(DATA_BASE_TEST, NOT_VALID_DATA_TO_AUTH) {
@@ -107,12 +107,12 @@ TEST(DATA_BASE_TEST, NOT_VALID_DATA_TO_AUTH) {
     EXPECT_EQ(db.reg_auth.try_auth("fart@gmail.co", "1234"), -1);
 }
 
-// TEST(DATA_BASE_TEST, VALID_DATA_TO_AUTH) {
-//     DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
+TEST(DATA_BASE_TEST, VALID_DATA_TO_AUTH) {
+    DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
 
-//     auto id = db.reg_auth.try_register("fartuna@gmail.com", "1111");
-//     EXPECT_EQ(db.reg_auth.try_auth("fartuna@gmail.com", "1111"), id);
-// }
+    auto id = db.reg_auth.try_register("fartuna@gmail.com", "1111");
+    EXPECT_EQ(db.reg_auth.try_auth("fartuna@gmail.com", "1111"), id);
+}
 
 TEST(DATA_BASE_TEST, GET_EMAIL) {
     DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
@@ -130,6 +130,7 @@ TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
     check_and_create_db();
     
     DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
+    db.init();
 
 
     std::time_t t = std::time(0);   // get time now
@@ -139,7 +140,7 @@ TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
             + "-" + std::to_string(now->tm_mday);
 
 
-    auto id = db.reg_auth.try_register("user_1", "new_pass");
+    auto id = db.reg_auth.try_register("torrent@gmail.com", "new_pass");
 
     auto def_path = std::to_string(id);
     
@@ -155,7 +156,7 @@ TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
 
     std::string files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL, curr_date, "1.txt", "3.txt", "4.txt");
 
-    std::string dirs_in_dir = fmt::format("d{0}  {2}  {1}\n", BASE_ACCESS_LVL, curr_date, "first_dir");
+    std::string dirs_in_dir = fmt::format("d{0}  {2}  {1}\n", BASE_ACCESS_LVL, curr_date, "second_dir");
 
     EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(1, def_path + "/first_dir"), files_in_dir + dirs_in_dir);
 
@@ -165,44 +166,44 @@ TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
 ///---Access in group mode---///
 
 
-// TEST(DATA_BASE_TEST, Group_auth_mode) {
-//     DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
-//     db.reg_auth.try_register("Andrey", "fart@gmail.com", "1234");
-//     db.reg_auth.try_register("Ivan", "ivan@mail.ru", "IVAN");
-//     db.reg_auth.try_register("Sergey", "sergey@mail.ru", "SERGEY");
-//     db.reg_auth.try_register("Peter", "peter@mail.ru", "PETER");
+TEST(DATA_BASE_TEST, Group_auth_mode) {
+    DataBase db(USER, PASSWORD, PORT, HOST, DBNAME);
+    db.reg_auth.try_register("fart@gmail.com", "1234");
+    db.reg_auth.try_register("ivan@mail.ru", "IVAN");
+    db.reg_auth.try_register("sergey@mail.ru", "SERGEY");
+    db.reg_auth.try_register("peter@mail.ru", "PETER");
 
-//     db.group_auth_mode.create_group(1, "test_group_1");
-//     std::vector<std::pair<std::string, std::string>> list_users;
+    db.group_auth_mode.create_group(1, "test_group_1");
+    std::vector<std::pair<std::string, std::string>> list_users;
 
-//     list_users.emplace_back("Andrey", "fart@gmail.com");
-//     db.group_auth_mode.add_group_member(1, "test_group_1", 2);
-//     list_users.emplace_back("Ivan", "ivan@mailru");
-//     db.group_auth_mode.add_group_member(1, "test_group_1", 3);
-//     list_users.emplace_back("Sergey", "sergey@mailru");
-//     db.group_auth_mode.add_group_member(1, "test_group_1", 4);
-//     list_users.emplace_back("Peter", "peter@mailru");
+    list_users.emplace_back("Andrey", "fart@gmail.com");
+    db.group_auth_mode.add_group_member(1, "test_group_1", 2);
+    list_users.emplace_back("Ivan", "ivan@mailru");
+    db.group_auth_mode.add_group_member(1, "test_group_1", 3);
+    list_users.emplace_back("Sergey", "sergey@mailru");
+    db.group_auth_mode.add_group_member(1, "test_group_1", 4);
+    list_users.emplace_back("Peter", "peter@mailru");
 
-//     // ASSERT_EQ(db.group_auth_mode.list_users_in_group(1), list_users);
+    // ASSERT_EQ(db.group_auth_mode.list_users_in_group(1), list_users);
 
-//     db.group_auth_mode.delete_group_member(1, 2, 2);
+    db.group_auth_mode.delete_group_member(1, 2, 2);
 
-//     // EXPECT_EQ(db.group_auth_mode.is_user_already_in_group(1, 2), 0);
-//     // EXPECT_EQ(db.group_auth_mode.is_user_already_in_group(1, 3), 1);
+    // EXPECT_EQ(db.group_auth_mode.is_user_already_in_group(1, 2), 0);
+    // EXPECT_EQ(db.group_auth_mode.is_user_already_in_group(1, 3), 1);
 
-//     modifiers_t mode = {.additional_bit = 0, .user = 7, .group = 7, .other = 7};
-//     db.group_auth_mode.set_chmod(mode);
-//     auto set_modes = db.group_auth_mode.get_access_modifiers(1);
-//     // EXPECT_EQ(set_modes.additional_bit, mode.additional_bit);
-//     // EXPECT_EQ(set_modes.user, mode.user);
-//     // EXPECT_EQ(set_modes.group, mode.group);
-//     // EXPECT_EQ(set_modes.other, mode.other);
+    modifiers_t mode = {.additional_bit = 0, .user = 7, .group = 7, .other = 7};
+    db.group_auth_mode.set_chmod(mode);
+    auto set_modes = db.group_auth_mode.get_access_modifiers(1);
+    // EXPECT_EQ(set_modes.additional_bit, mode.additional_bit);
+    // EXPECT_EQ(set_modes.user, mode.user);
+    // EXPECT_EQ(set_modes.group, mode.group);
+    // EXPECT_EQ(set_modes.other, mode.other);
 
-//     db.group_auth_mode.has_access_on_action(1, 1, DELETE_GROUP);
-//     db.group_auth_mode.delete_group(1, 1);
+    db.group_auth_mode.has_access_on_action(1, 1, DELETE_GROUP);
+    db.group_auth_mode.delete_group(1, 1);
 
-//     EXPECT_EQ(1, 1);
-// }
+    EXPECT_EQ(1, 1);
+}
 
 
 int main(int argc, char **argv) {
