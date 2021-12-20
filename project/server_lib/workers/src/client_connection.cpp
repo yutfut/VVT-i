@@ -1,6 +1,7 @@
 #include "client_connection.h"
 #include "http_status_code.h"
 #include <request_handler_not_auth.h>
+#include <request_handler_auth.h>
 #include <http_status_code.h>
 #include <mailio/message.hpp>
 #include <mailio/smtp.hpp>
@@ -97,8 +98,15 @@ bool ClientConnection::handle_request() {
     write_to_logs(request.get_body(), ERROR);
     write_to_logs("----------------END OF REQUEST---------------", ERROR);
 
-    RequestHandlerNotAuth handler(vector_logs);
-    handler.handle_request(request, response, fs_worker, db_worker);
+    auto &request_headers = this->response.get_headers();
+    //TODO: или пробельное??
+    if (request_headers["jwt"].empty()) {
+        RequestHandlerNotAuth handler(vector_logs);
+        handler.handle_request(request, response, fs_worker, db_worker);
+    } else {
+        RequestHandlerAuth handler(vector_logs);
+        handler.handle_request(request, response, fs_worker, db_worker);
+    }
 
     write_to_logs("----------------THE ANSWER---------------", ERROR);
     std::for_each(response.get_headers().begin(), response.get_headers().end(),

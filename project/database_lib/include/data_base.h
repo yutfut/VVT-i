@@ -4,15 +4,16 @@
 #include "database_connection.h"
 #include "db_not_auth_mode.h"
 #include "db_reg_auth.h"
-#include "db_auth_mode.h"
-#include "db_group_mode.h"
+#include "db_single_auth_mode.h"
+#include "db_group_auth_mode.h"
 
 
 class DataBase {
 
 private:
+
     DataBaseConnection connection;
-    pqxx::nontransaction *transaction;
+
 public:
 
     DataBase();
@@ -26,8 +27,6 @@ public:
 
     NotAuthMode not_auth_mode;
     RegAuth reg_auth;
-    AuthMode auth_mode;
-    GroupMode group_mode;
-
-
+    SingleAuthMode single_auth_mode;
+    GroupAuthMode group_auth_mode;
 };

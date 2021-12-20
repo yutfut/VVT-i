@@ -1,21 +1,21 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.16.3)
+project(VVT_i)
 
-project(database_lib)
-
-# Set the 20th standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Find libraries
-find_library(PQXX_LIB pqxx REQUIRED)
-find_library(PQ_LIB pq REQUIRED)
+find_library(PQXX_LIB pqxx)
+find_library(PQ_LIB pq)
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
+find_package(fmt REQUIRED)
 
-# Find all source files
-aux_source_directory(src SRC)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
 
-# Create server library
-add_library(database_lib ${SRC})
-target_include_directories(database_lib PUBLIC include)
-target_link_libraries(database_lib ${PQXX_LIB} ${PQ_LIB})
+add_executable(main.out main.cpp src/data_base.cpp src/database_connection.cpp
+        src/db_single_auth_mode.cpp src/db_group_auth_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp src/transaction_exec.cpp)
+target_link_libraries(main.out ${PQXX_LIB} ${PQ_LIB} fmt::fmt)
+target_include_directories(main.out PUBLIC include)
+
+add_executable(gtest.out gtest.cpp src/data_base.cpp src/database_connection.cpp
+        src/db_single_auth_mode.cpp src/db_group_auth_mode.cpp src/db_not_auth_mode.cpp src/db_reg_auth.cpp src/transaction_exec.cpp)
+target_link_libraries(gtest.out ${GTEST_LIBRARIES} ${PQXX_LIB} ${PQ_LIB} Threads::Threads fmt::fmt)
+target_include_directories(gtest.out PUBLIC ./include)
