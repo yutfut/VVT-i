@@ -19,7 +19,7 @@ protected:
 
 private:
 
-    const std::string base_access_lvl = "rwxrwxrwx";
+    // const std::string base_access_lvl = "rwxrwxrwx";
 
     std::string get_name_dir(std::string dir_path);
 

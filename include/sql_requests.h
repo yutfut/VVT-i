@@ -60,7 +60,6 @@ const std::string GET_EMAIL_AUTH_USER = "SELECT email FROM Users WHERE id = {0};
 
 ///---Auth mode ---///
 
-
 const std::string ADD_AUTH_USER_FILE = "INSERT INTO Auth_user_files(user_id, dir_path, user_filename) VALUES({0}, '{1}', '{2}');";
 
 const std::string DELETE_AUTH_USER_FILE = "DELETE FROM Auth_user_files WHERE user_id = {0} AND dir_path = '{1}' AND user_filename = '{2}';";
@@ -75,6 +74,4 @@ const std::string COMMAND_MKDIR = "INSERT INTO Person_dir(user_id, dir_path) VAL
 
 const std::string COMMAND_LS_FILES = "SELECT user_filename, upload_date FROM Auth_user_files WHERE user_id = {0} AND dir_path = '{1}' ORDER BY user_filename;";
 
-const std::string REGEX_SEARCH_INCLUDE_DIRS = "^{0}\/[A-Za-z0-9-]+$";
-
-const std::string COMMAND_LS_DIRS = "SELECT dir_path, upload_date FROM Person_dir WHERE user_id = {0} AND dir_path ~ '{1}' ORDER BY DIR_APTH_OBREZANNIY;";
+const std::string COMMAND_LS_DIRS = "SELECT dir_path, upload_date FROM Person_dir WHERE user_id = {0} AND dir_path ~ '{1}' ORDER BY dir_path;";

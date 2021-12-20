@@ -6,7 +6,7 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
     
     if (user == "" || password == "" || port == "" || host == "" || dbname == "") {
         std::cout << "Error :  Check database configuration, not all settings filled\n";
-        throw ("Check database configuration, not all settings filled");
+        throw std::bad_alloc();
     }
     
     std::string str_query = fmt::format("postgresql://{0}:{1}@{2}:{3}/{4}", user, password, host, port, dbname);
@@ -14,7 +14,8 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
     try {
         conn = new pqxx::connection(str_query);
     } catch (const pqxx::sql_error &e) {
-        throw(e.what());
+        std::cout << e.what() << "\n";
+        throw &e;
     }
 
 }
