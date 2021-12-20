@@ -5,7 +5,6 @@
 #include <mailio/message.hpp>
 #include <mailio/smtp.hpp>
 #include <fmt/core.h>
-#include <regex>
 
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
@@ -155,7 +154,7 @@ bool ClientConnection::send_message_on_email(size_t step) {
         std::string line;
         while(std::getline(file, line))
         {
-            html += line;
+            html.append(line + "\r\n");
         }
         file.close();
 
@@ -163,7 +162,6 @@ bool ClientConnection::send_message_on_email(size_t step) {
             if (this->request.get_headers().find("content-length") != this->request.get_headers().end() &&
                 !this->request.get_headers()["jwt"].empty()) {
                 html = fmt::format(html, this->request.get_headers()["filename"]);
-                html = std::regex_replace(html, std::regex("  "), "\r\n");
             } else {
                 html = fmt::format(
                     html,
