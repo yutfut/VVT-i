@@ -33,8 +33,8 @@ jobs:
           gcov ../build/CMakeFiles/vvti_client.dir/source/main.cpp.o
           cp -r ../build/CMakeFiles/vvti_client.dir/ .
           cd ..
-          lcov --capture --directory coverage/ --output-file vvti_client.info
-          genhtml vvti_client.info --output-directory coverage-report/
+          lcov --capture --directory coverage/ --output-file client.info
+          genhtml client.info --output-directory coverage-report/
       - name: Archive coverage test results
         uses: actions/upload-artifact@v2
         with:
