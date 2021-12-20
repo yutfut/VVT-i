@@ -5,6 +5,8 @@
 class DataBaseConnection {
 public:
 
+    DataBaseConnection() = default;
+    
     DataBaseConnection(const std::string &user, const std::string &password,
                                 const std::string &port, const std::string &host, const std::string &dbname);
     

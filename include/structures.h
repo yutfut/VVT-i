@@ -4,6 +4,15 @@
 
 
 typedef struct {
+    std::string user;
+    std::string password;
+    std::string host;
+    std::string port;
+    std::string dbname;
+} database_configuration_t;
+
+
+typedef struct {
     int additional_bit;
     int user;
     int group;
