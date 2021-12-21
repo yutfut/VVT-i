@@ -30,7 +30,7 @@ int DataBase::init() {
     } catch(const pqxx::sql_error& e) {
         transaction.abort();
         std::cout << e.what() << "\n";
-        throw(e.what());
+        throw std::string(e.what());
     }
 
     return 0;
