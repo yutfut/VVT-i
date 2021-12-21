@@ -16,6 +16,7 @@ int upload(const std::string& command, User &user) {
     }
 
     std::string file_name = command.substr(pos + 1);
+    file_name = std::filesystem::path(file_name).filename();
 
     if (!user.get_authorize()) {
         if (email == file_name) {
