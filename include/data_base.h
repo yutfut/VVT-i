@@ -18,7 +18,7 @@ public:
 
     DataBase() = default;
 
-    DataBase(database_configuration_t db_conf);
+    DataBase(database_configuration_t &db_conf);
 
     ~DataBase() = default;
 

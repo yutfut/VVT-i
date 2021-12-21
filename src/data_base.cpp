@@ -1,7 +1,7 @@
 #include "data_base.h"
 
 
-DataBase::DataBase(database_configuration_t db_conf) : 
+DataBase::DataBase(database_configuration_t &db_conf) : 
     connection(DataBaseConnection(db_conf.user, db_conf.password, db_conf.port, db_conf.host, db_conf.dbname)),
     not_auth_mode(NotAuthMode(connection.get_connection())), reg_auth(RegAuth(connection.get_connection())),
     single_auth_mode(SingleAuthMode(connection.get_connection())), group_auth_mode(GroupAuthMode(connection.get_connection())) {}

@@ -27,6 +27,6 @@ target_link_libraries(main.out database_lib)
 target_include_directories(main.out PUBLIC include)
 
 # Create gtest target
-add_executable(gtest.out gtest.cpp)
-target_link_libraries(gtest.out ${GTEST_LIBRARIES} database_lib Threads::Threads)
-target_include_directories(gtest.out PUBLIC ./include)
+#add_executable(gtest.out gtest.cpp)
+#target_link_libraries(gtest.out ${GTEST_LIBRARIES} database_lib Threads::Threads)
+#target_include_directories(gtest.out PUBLIC ./include)

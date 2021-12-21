@@ -55,8 +55,14 @@ int SingleAuthMode::change_filename(int user_id, const std::string &dir_path, co
 
 
 void SingleAuthMode::create_directory(int user_id, const std::string &dir_path, const std::string &dir_name) {
-    if (is_dir_name_free(user_id, dir_path + "/" + dir_name) == true) {
-        simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path + "/" + dir_name), connection);
+    auto separator = "";
+    
+    if (dir_path != ROOT_USER_DIR) {
+            separator = "/";
+    }
+    
+    if (is_dir_name_free(user_id, dir_path + separator + dir_name) == true) {
+        simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path + separator + dir_name), connection);
     }
 }
 

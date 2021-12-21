@@ -4,7 +4,10 @@
 #include <ctime>
 
 int main() {
-    DataBase db("postgres", "postgres", "5432", "localhost", "vvti");
+
+    database_configuration_t config = {.user = USER, .password = PASSWORD, .host = HOST, .port = PORT, .dbname = "vvti"};
+
+    DataBase db(config);
     db.init();
     // db.not_auth_mode.add_file("first_file", "pass1");
     // db.not_auth_mode.add_file("first_file", "pass1");
@@ -67,18 +70,17 @@ std::time_t t = std::time(0);   // get time now
 
     auto id = db.reg_auth.try_register("user_1", "new_pass");
 
-    auto def_path = std::to_string(id);
-    std::cout << def_path + "/first_dir\n\n";
+    // std::cout << "/first_dir\n\n";
     
-    db.single_auth_mode.create_directory(id, def_path, "first_dir");
-    db.single_auth_mode.create_directory(id, def_path, "first_dir/second_dir");
+    db.single_auth_mode.create_directory(id, "/", "first_dir");
+    db.single_auth_mode.create_directory(id, "/first_dir", "second_dir");
 
-    db.single_auth_mode.add_file(id, def_path + "/first_dir", "1.txt");
-    db.single_auth_mode.add_file(id, def_path + "/first_dir", "2.txt");
-    db.single_auth_mode.add_file(id, def_path + "/first_dir/second_dir", "2.txt");
-    db.single_auth_mode.add_file(id, def_path + "/first_dir", "3.txt");
+    db.single_auth_mode.add_file(id, "/first_dir", "1.txt");
+    db.single_auth_mode.add_file(id, "/first_dir", "2.txt");
+    db.single_auth_mode.add_file(id, "/first_dir/second_dir", "2.txt");
+    db.single_auth_mode.add_file(id, "/first_dir", "3.txt");
 
-    db.single_auth_mode.change_filename(1, def_path + "/first_dir", "2.txt", "4.txt");
+    db.single_auth_mode.change_filename(1, "/first_dir", "2.txt", "4.txt");
 
     std::string files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL, curr_date, "1.txt", "3.txt", "4.txt");
 
@@ -86,7 +88,7 @@ std::time_t t = std::time(0);   // get time now
 
     std::cout << "need result:\n\n" << files_in_dir + dirs_in_dir << "\n\nmy result:\n\n";
 
-    std::cout << db.single_auth_mode.get_list_files_in_dir(1, def_path + "/first_dir");
+    std::cout << db.single_auth_mode.get_list_files_in_dir(1, "/first_dir");
 
 
     return 0;

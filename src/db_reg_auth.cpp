@@ -17,7 +17,7 @@ int RegAuth::try_register(const std::string &email,
     if (is_email_free(email)) {
 
             int id = trans_one_int_value_exec(fmt::format(REGISTER, email, password), connection);
-            simple_transaction_exec(fmt::format(COMMAND_MKDIR, id, std::to_string(id)), connection);
+            simple_transaction_exec(fmt::format(COMMAND_MKDIR, id, ROOT_USER_DIR), connection);
 
         return id;
     }
