@@ -46,8 +46,6 @@ std::string response(const int &socket) {
     if (-1 == line.size()) {
         return "ошибка соединения\n";
     }
-
-    std::cerr << line << " [" << line.size() << " bytes]" << std::endl;
     return line;
 }
 
