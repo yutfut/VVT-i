@@ -26,6 +26,8 @@ public:
 
     bool move_file(const fs::path &src_path, const fs::path &dst_path, std::string user_id)  noexcept override;
 
+    bool write_to_file(const std::string &file_content, const fs::path &dst_path,std::string user_id) noexcept;
+
     bool add(std::string user_id)  noexcept override;
 
     [[nodiscard]] std::ifstream get_file(const fs::path &file_path, std::string user_id)  noexcept override;

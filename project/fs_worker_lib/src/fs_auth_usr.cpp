@@ -31,6 +31,15 @@ bool FsWorkerAuthUsr::move_file(const fs::path &src_path, const fs::path &dst_pa
     return !bool(err_code);
 }
 
+
+bool FsWorkerAuthUsr::write_to_file(const std::string &file_content, const fs::path &file_path,
+                                std::string user_id) noexcept {
+    err_code.clear();
+    std::ofstream file{root_path / user_id / file_path , std::ios_base::binary};
+    file << file_content;
+    return file.good();
+}
+
 bool FsWorkerAuthUsr::add(std::string user_id) noexcept {
     err_code.clear();
     fs::create_directory(root_path / user_id, err_code);
@@ -38,12 +47,12 @@ bool FsWorkerAuthUsr::add(std::string user_id) noexcept {
 }
 
 std::ifstream FsWorkerAuthUsr::get_file(const fs::path &file_path, std::string user_id) noexcept {
-    return {root_path / file_path, std::ios_base::binary};
+    return {root_path / user_id / file_path, std::ios_base::binary};
 }
 
 bool FsWorkerAuthUsr::remove(const fs::path &path, std::string user_id) noexcept {
     err_code.clear();
-    fs::remove_all(root_path / user_id, err_code);
+    fs::remove_all(root_path / user_id / path, err_code);
     return !bool(err_code);
 }
 

@@ -16,10 +16,9 @@ private:
 
 public:
 
-    DataBase();
+    DataBase() = default;
 
-    DataBase(const std::string &user, const std::string &password,
-             const std::string &port, const std::string &host, const std::string &dbname);
+    DataBase(database_configuration_t db_conf);
 
     ~DataBase() = default;
 

@@ -10,8 +10,7 @@ int has_old_master_stopped = 0;
 
 pid_t new_master_pid = 0;
 
-Server::Server(FsWorker &fs_worker, DataBase &db_worker, const std::string &config_filename) : fs_worker(fs_worker),
-                                                                                               db_worker(db_worker) {
+Server::Server(const std::string &config_filename) {
     this->config_filename = config_filename;
     this->settings = MainServerSettings(this->config_filename);
     this->count_workflows = this->settings.get_count_workflows();

@@ -42,7 +42,7 @@ typedef enum {
 
 class Server {
 public:
-    Server(FsWorker& fs_worker, DataBase& db_worker, const std::string& config_filename = "settings/server.conf");
+    Server(const std::string& config_filename = "settings/server.conf");
 
     bool start();
 
@@ -99,7 +99,7 @@ private:
 
     MainServerSettings settings;
 
-    FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
+    FsWorker fs_worker;
 
-    DataBase &db_worker; // TODO: нужна обработка файла конфигурации
+    DataBase db_worker;
 };
