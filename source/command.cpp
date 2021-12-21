@@ -26,14 +26,27 @@ int upload(const std::string& command, User &user) {
         }
     }
 
-    std::string message = HTTPRequest::create_message(email,
-                                                      password,
-                                                      std::string {},
-                                                      std::string {},
-                                                      std::string {},
-                                                      std::string {},
-                                                      file_name,
-                                                      "upload");
+    std::string message;
+
+    if (!user.get_authorize()) {
+        message = HTTPRequest::create_message(email,
+                                              password,
+                                              std::string {},
+                                              std::string {},
+                                              std::string {},
+                                              std::string {},
+                                              file_name,
+                                              "upload");
+    } else {
+        message = HTTPRequest::create_message(std::string {},
+                                              password,
+                                              user.get_jwt(),
+                                              std::string {},
+                                              std::string {},
+                                              std::string {},
+                                              file_name,
+                                              "upload");
+    }
 
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
