@@ -8,6 +8,7 @@ enum HttpStatusCode {
     BadRequest = 400,
     Forbidden = 403,
     RequestTimeout = 408,
+    Conflict = 409,
     InternalServerError = 500
 };
 

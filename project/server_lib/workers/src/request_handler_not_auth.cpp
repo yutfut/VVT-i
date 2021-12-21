@@ -39,6 +39,7 @@ void RequestHandlerNotAuth::write_to_logs(std::string message, bl::trivial::seve
 void RequestHandlerNotAuth::handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker,
                                            DataBase &db_worker) {
     auto &headers = request.get_headers();
+    write_to_logs("UNAUTH_HANDLER", ERROR);
     if (headers["command"] == "download") {
         download_file_from_server(headers["key"], headers["password"], response, fs_worker, db_worker);
         return;
@@ -118,6 +119,8 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
 //    write_to_logs(file, ERROR);
     tmpfile << file;
     tmpfile.close();
+    write_to_logs(tmpfile_path,ERROR);
+    write_to_logs( static_cast<fs::path>(file_data.uuid) / static_cast<fs::path>(file_data.upload_date) , ERROR);
 
     if (!fs_worker.not_auth_usr.move_file_to_fs(tmpfile_path, file_data.uuid, file_data.upload_date)) {
         db_worker.not_auth_mode.delete_certain_file(file_data.uuid);

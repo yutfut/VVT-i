@@ -12,5 +12,6 @@ aux_source_directory(src SRC)
 # Create server library
 add_library(fs_worker_lib STATIC ${SRC})
 target_include_directories(fs_worker_lib PRIVATE include)
-target_compile_definitions(fs_worker_lib PRIVATE FS_ROOT_PATH="/home/kirill/vvti_filesystem")
+#TODO hardcode!!!
+target_compile_definitions(fs_worker_lib PRIVATE FS_ROOT_PATH="/home/ns/vvti_filesystem")
 target_compile_definitions(fs_worker_lib PRIVATE FS_NOT_AUTH_DIR_NAME="not_auth")

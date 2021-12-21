@@ -24,6 +24,7 @@ Server::Server(FsWorker &fs_worker, DataBase &db_worker, const std::string &conf
 
     this->vector_logs.push_back(&error_log);
     this->vector_logs.push_back(&access_log);
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     // TODO: создавать воркеры ФС и БД тут
     db_worker.init();
@@ -133,6 +134,8 @@ bool Server::add_work_processes() {
     }
 
     this->workers_pid.clear();
+    //TODO: delete write_to_logs
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     for (int i = 0; i < count_work_processes; ++i) {
         pid_t pid = fork();
@@ -143,6 +146,7 @@ bool Server::add_work_processes() {
         if (pid != 0) {
             this->workers_pid.push_back(pid);
         } else {
+            write_to_logs(std::to_string(__LINE__), ERROR);
             WorkerProcess worker(this->listen_sock, &server, vector_logs, fs_worker, db_worker);
             worker.run();
             break;

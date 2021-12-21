@@ -99,7 +99,7 @@ private:
 
     MainServerSettings settings;
 
-    FsWorker fs_worker; // TODO: нужна обработка файла конфигурации
+    FsWorker &fs_worker; // TODO: нужна обработка файла конфигурации
 
-    DataBase db_worker; // TODO: нужна обработка файла конфигурации
+    DataBase &db_worker; // TODO: нужна обработка файла конфигурации
 };

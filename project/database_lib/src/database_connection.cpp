@@ -15,7 +15,7 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
         conn = new pqxx::connection(str_query);
     } catch (const pqxx::sql_error &e) {
         std::cout << e.what() << "\n";
-        throw &e;
+        throw std::string(e.what());
     }
 
 }

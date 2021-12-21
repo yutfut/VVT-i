@@ -98,13 +98,14 @@ bool ClientConnection::handle_request() {
     write_to_logs(request.get_body(), ERROR);
     write_to_logs("----------------END OF REQUEST---------------", ERROR);
 
-    auto &request_headers = this->response.get_headers();
+    auto &request_headers = this->request.get_headers();
     //TODO: или пробельное??
-    if (request_headers["jwt"].empty()) {
-        RequestHandlerNotAuth handler(vector_logs);
+    write_to_logs(request_headers["command"], ERROR);
+    if (!request_headers["jwt"].empty() || (request_headers["command"] == "register") || (request_headers["command"] == "login")) {
+        RequestHandlerAuth handler(vector_logs);
         handler.handle_request(request, response, fs_worker, db_worker);
     } else {
-        RequestHandlerAuth handler(vector_logs);
+        RequestHandlerNotAuth handler(vector_logs);
         handler.handle_request(request, response, fs_worker, db_worker);
     }
 
