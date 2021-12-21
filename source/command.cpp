@@ -67,7 +67,7 @@ int download(const std::string& command, User &user) {
     std::string message;
 
     if (!user.get_authorize()) {
-        std::string password = check_password_upload();
+        std::string password = check_password_download();
         message = HTTPRequest::create_message(std::string{},
                                                           password,
                                                           user.get_jwt(),

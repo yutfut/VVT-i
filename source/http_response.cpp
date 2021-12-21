@@ -40,7 +40,7 @@ int HTTPResponse::parser(std::string &http) {
                 break;
             }
             http.erase(http.begin(), http.begin() + 3);
-            http.substr(0, atoi(commands["content-length"].c_str()));
+//            http.substr(0, atoi(commands["content-length"].c_str()));
             commands["body"] = http;
             break;
         }
