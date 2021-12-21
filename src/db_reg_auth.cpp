@@ -14,15 +14,15 @@ bool RegAuth::is_email_free(const std::string &email) {
 int RegAuth::try_register(const std::string &email,
                  const std::string &password) { 
 
-    if (is_email_free(email)) {
+    if (is_email_free(email) == false) {
 
-            int id = trans_one_int_value_exec(fmt::format(REGISTER, email, password), connection);
-            simple_transaction_exec(fmt::format(COMMAND_MKDIR, id, ROOT_USER_DIR), connection);
-
-        return id;
+        return -1;
     }
 
-    return -1;
+    int id = trans_one_int_value_exec(fmt::format(REGISTER, email, password), connection);
+    simple_transaction_exec(fmt::format(COMMAND_MKDIR, id, ROOT_USER_DIR), connection);
+
+    return id;
 }
 
 

@@ -90,6 +90,11 @@ std::time_t t = std::time(0);   // get time now
 
     std::cout << db.single_auth_mode.get_list_files_in_dir(1, "/first_dir");
 
+    std::cout << "rmdir!!1\n\n";
+
+    db.single_auth_mode.rmdir(1, "/", "first_dir");
+
+    std::cout << db.single_auth_mode.get_list_files_in_dir(1, "/first_dir");
 
     return 0;
 }

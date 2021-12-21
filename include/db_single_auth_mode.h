@@ -14,7 +14,9 @@ public:
     int delete_file(int user_id, const std::string &dir_path,
                             const std::string &filename);
 
-    void create_directory(int user_id, const std::string &dir_path, const std::string &dir_name);
+    int create_directory(int user_id, const std::string &dir_path, const std::string &dir_name);
+
+    int rmdir(int user_id, const std::string &dir_path, const std::string &dir_name);
 
     int change_filename(int user_id, const std::string &dir_path, const std::string
     &old_filename, const std::string &new_filename);
