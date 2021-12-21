@@ -24,8 +24,6 @@ int request(const int &socket, const std::string& msg) {
         }
         left -= sent;
     }
-
-    std::cout << std::endl << msg << std::endl;
     return 0;
 }
 
