@@ -97,6 +97,15 @@ int work_with_directory(const std::string& first_part_command, const std::string
         return -1;
     }
 
+    if (first_part_command == "rmdir") {
+        std::string y;
+        std::cout << "Вы уверены?: ";
+        std::cin >> y;
+        if (y != "y" || !y.empty()) {
+            return 0;
+        }
+    }
+
     if (user.get_authorize()) {
         std::string message = HTTPRequest::create_message(std::string {},
                                                           std::string {},
