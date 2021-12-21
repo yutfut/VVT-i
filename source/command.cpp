@@ -17,8 +17,6 @@ int upload(const std::string& command, User &user) {
 
     std::string file_name = command.substr(pos + 1);
 
-    std::string password = check_password_upload();
-
     if (!user.get_authorize()) {
         if (email == file_name) {
             std::cout << "Ошибка ввода команды" << std::endl;
@@ -29,6 +27,7 @@ int upload(const std::string& command, User &user) {
     std::string message;
 
     if (!user.get_authorize()) {
+        std::string password = check_password_upload();
         message = HTTPRequest::create_message(email,
                                               password,
                                               std::string {},
@@ -39,7 +38,7 @@ int upload(const std::string& command, User &user) {
                                               "upload");
     } else {
         message = HTTPRequest::create_message(std::string {},
-                                              password,
+                                              std::string {},
                                               user.get_jwt(),
                                               user.get_current_directory(),
                                               std::string {},
