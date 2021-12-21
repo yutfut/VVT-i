@@ -56,20 +56,35 @@ int upload(const std::string& command, User &user) {
 
 int download(const std::string& command, User &user) {
     std::string key = command, password;
-    if (Validator::validate_key(key)) {
-        return -1;
+
+    if (!user.get_authorize()) {
+        if (Validator::validate_key(key)) {
+            return -1;
+        }
     }
 
-    password = check_password_download();
+    std::string message;
 
-    std::string message = HTTPRequest::create_message(std::string {},
-                                                      password,
-                                                      user.get_jwt(),
-                                                      std::string {},
-                                                      std::string {},
-                                                      key,
-                                                      std::string {},
-                                                      "download");
+    if (!user.get_authorize()) {
+        std::string password = check_password_upload();
+        message = HTTPRequest::create_message(std::string{},
+                                                          password,
+                                                          user.get_jwt(),
+                                                          std::string{},
+                                                          std::string{},
+                                                          key,
+                                                          std::string{},
+                                                          "download");
+    } else {
+        message = HTTPRequest::create_message(std::string{},
+                                              std::string{},
+                                              user.get_jwt(),
+                                              std::string{},
+                                              std::string{},
+                                              std::string{},
+                                              key,
+                                              "download");
+    }
 
     std::string http_response = HTTPBase::send(message);
 
