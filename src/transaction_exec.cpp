@@ -9,7 +9,6 @@ void TransactionExec::simple_transaction_exec(std::string sql_request, pqxx::con
         transaction.commit();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 }
@@ -29,7 +28,6 @@ bool TransactionExec::trans_check_empty_exec(std::string sql_request, pqxx::conn
         return false;
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 }
@@ -49,7 +47,6 @@ int TransactionExec::trans_one_int_value_exec(std::string sql_request, pqxx::con
         return res[0][0].as<int>();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 }
@@ -69,7 +66,6 @@ std::string TransactionExec::trans_one_string_value_exec(std::string sql_request
         return res[0][0].as<std::string>();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 }
@@ -107,7 +103,6 @@ std::string TransactionExec::trans_ls_exec(std::string sql_request_file,
 
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 }
