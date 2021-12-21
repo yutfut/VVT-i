@@ -4,7 +4,7 @@
 
 #include "http_request.h"
 
-void crate_body(const std::string &file_name, std::string &message) {
+void create_body(const std::string &file_name, std::string &message) {
     char c;
     std::ifstream in(file_name, std::ios::binary);
 
@@ -32,7 +32,7 @@ std::string HTTPRequest::create_message(const std::string &email,
     std::string body, message;
 
     if (command == "upload") {
-        crate_body(file_name, body);
+        create_body(file_name, body);
     }
 
     message = "POST / HTTP/1.0\r\n"
