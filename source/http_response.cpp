@@ -47,9 +47,9 @@ int HTTPResponse::parser(std::string &http) {
         http.erase(http.begin(), http.begin() + 1);
     }
 
-//    if (commands["command"] != "download" || commands["command"] != "upload") {
-//        std::cout << commands["body"] << std::endl;
-//    }
+    if (commands["command"] != "download" || commands["command"] != "upload") {
+        std::cout << commands["body"] << std::endl;
+    }
 
     if (commands["command"] == "download" && commands["message"] == "OK") {
         create_file(commands["filename"], commands["body"]);
