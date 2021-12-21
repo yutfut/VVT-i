@@ -4,7 +4,7 @@
 
  const fs::path FsWorker::not_auth_usrs_dir_default = FS_NOT_AUTH_DIR_NAME;
  const fs::path FsWorker::root_path_default = FS_ROOT_PATH;
- const fs::path FsWorker::auth_usrs_dir_default = FS_NOT_AUTH_DIR_NAME;
+ const fs::path FsWorker::auth_usrs_dir_default = FS_AUTH_DIR_NAME;
 //static const fs::path auth_usrs_dir_default;
 //static const fs::path groups_dir_default;
 

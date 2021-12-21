@@ -63,7 +63,7 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
 
     if (request_headers["command"] == "login")
     {
-        login_user(request_headers["email"], request_headers["password"], response, fs_worker, db_worker);
+        login_user(request_headers["email"], request_headers["password"], response, db_worker);
         return;
     }
 
@@ -74,16 +74,23 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
         return;
     }
 
+    request_headers["current_directory"].erase(request_headers["current_directory"].begin());
+    auto abs_work_dir = (fs::path(request_headers["current_directory"]) / fs::path(request_headers["work_directory"])).lexically_normal();
+
     if (request_headers["command"] == "ls")
     { 
-        get_user_dir_list_files(id, request_headers["current_directory"], request_headers["work_directory"], response, db_worker);
+        get_user_dir_list_files(id, abs_work_dir, response, db_worker);
         return;
     }
 
     if (request_headers["command"] == "cd")
     { 
-        change_user_dir(id, request_headers["current_directory"], request_headers["work_directory"], response, db_worker);
+        change_user_dir(id, abs_work_dir, response, db_worker);
+        return;
+    }
 
+    if (request_headers["command"] == "mkdir") {
+        make_user_subdir(id, abs_work_dir, response, fs_worker, db_worker);
         return;
     }
 
@@ -102,31 +109,35 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
     return;
 }
 
-void get_user_dir_list_files(int id, const std::string &curr_dir, const std::string &work_dir, HttpResponse &response,
+void RequestHandlerAuth::get_user_dir_list_files(int id, const std::string &work_dir, HttpResponse &response,
                              DataBase &db_worker)
 {
     try
     {
-        std::string body = db_worker.single_auth_mode.get_list_files_in_dir(id, curr_dir + '/' + work_dir);
+        write_to_logs(work_dir, ERROR);
+        std::string body = db_worker.single_auth_mode.get_list_files_in_dir(id, work_dir);
         if (!body.empty())
         {
+            write_to_logs(std::to_string(__LINE__), ERROR);
             response = create_response(HttpStatusCode::OK, {}, std::move(body));
             return;
         }
     }
     catch (const std::string &e)
     {
+        write_to_logs(std::to_string(__LINE__), ERROR);
         write_to_logs(e, ERROR);
     }
+    write_to_logs(std::to_string(__LINE__), ERROR);
     response = create_response(HttpStatusCode::InternalServerError);
 }
 
-void change_user_dir(int id, const std::string &curr_dir, const std::string &work_dir, HttpResponse &response,
+void RequestHandlerAuth::change_user_dir(int id, const std::string &work_dir, HttpResponse &response,
                      DataBase &db_worker)
 {
     try
     {
-        if (!db_worker.single_auth_mode.is_dir_name_free(id, curr_dir + '/' + work_dir))
+        if (!db_worker.single_auth_mode.is_dir_name_free(id, work_dir))
         {
             response = create_response(HttpStatusCode::OK);
         }
@@ -140,6 +151,42 @@ void change_user_dir(int id, const std::string &curr_dir, const std::string &wor
         write_to_logs(e, ERROR);
         response = create_response(HttpStatusCode::InternalServerError);
     }
+}
+
+
+void RequestHandlerAuth::make_user_subdir(int id,  const std::string &work_dir,
+                                          HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker) {
+    write_to_logs(std::to_string(__LINE__), ERROR);
+    //TODO: УДАЛИТЬ СЛЕШ??!!
+    try
+    {
+        //TODO: удалить проверку, когда Андрей сделает  BOOL create_directory()
+       if (!db_worker.single_auth_mode.is_dir_name_free(id,  work_dir)) {
+           write_to_logs(std::to_string(__LINE__), ERROR);
+           response = create_response(HttpStatusCode::Conflict);
+       }
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        db_worker.single_auth_mode.create_directory(id,  work_dir, "");
+    }
+    catch (const std::string &e)
+    {
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        write_to_logs(e, ERROR);
+        response = create_response(HttpStatusCode::InternalServerError);
+    }
+
+    write_to_logs(fs_worker.auth_usr.get_root(), ERROR);
+    write_to_logs(std::to_string(id), ERROR);
+    write_to_logs( work_dir, ERROR);
+    //TODO: curr_dir+ '/'  + work_dir ИЛИ  curr_dir+ '/'  + work_dir
+    if (!fs_worker.auth_usr.make_subdir( work_dir,std::to_string(id))) {
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
+        response = create_response(HttpStatusCode::InternalServerError);
+    }
+
+    write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
+    response = create_response(HttpStatusCode::OK);
 }
 
 void RequestHandlerAuth::register_user(const std::string &email, const std::string &password, HttpResponse &response,
@@ -177,19 +224,31 @@ void RequestHandlerAuth::register_user(const std::string &email, const std::stri
         response = create_response(HttpStatusCode::InternalServerError);
     }
 
-    // TODO: add_user_to_fs(id)
+    if(!fs_worker.auth_usr.add(std::to_string(id))) {
+        try
+        {
+            write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
+            write_to_logs(std::to_string(__LINE__), ERROR);
+            //TODO: удалить запись из БД
+        }
+        catch (const std::string &e)
+        {
+            write_to_logs(std::to_string(__LINE__), ERROR);
+            write_to_logs(e, ERROR);
+        }
+        response = create_response(HttpStatusCode::InternalServerError);
+        return;
+    }
 
     write_to_logs(std::to_string(__LINE__), ERROR);
     response = create_response(HttpStatusCode::OK, {{"jwt", jwt}});
 }
 
-void RequestHandlerAuth::login_user(const std::string &email, const std::string &password, HttpResponse &response,
-                                    FsWorker &fs_worker, DataBase &db_worker)
+void RequestHandlerAuth::login_user(const std::string &email, const std::string &password, HttpResponse &response, DataBase &db_worker)
 {
     int id = -1;
     try
     {
-        // TODO: далить поле name
         id = db_worker.reg_auth.try_auth(email, password);
     }
     catch (const std::string &e)
@@ -210,7 +269,6 @@ void RequestHandlerAuth::login_user(const std::string &email, const std::string 
         response = create_response(HttpStatusCode::InternalServerError);
     }
 
-    // TODO: add_user_to_fs(id)
     response = create_response(HttpStatusCode::OK, {{"jwt", jwt}});
 }
 
