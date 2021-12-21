@@ -9,7 +9,7 @@ Client::Client(){}
 Client::~Client(){}
 
 void Client::print(User &user) {
-    std::cout << ">>>\t" << std::string(user.get_current_directory()) << "$:";
+    std::cout << ">>> " << std::string(user.get_current_directory()) << "$:\t";
 }
 
 int Client::role_command(const std::string& command, User &user) {
