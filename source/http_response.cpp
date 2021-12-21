@@ -39,13 +39,15 @@ int HTTPResponse::parser(std::string &http) {
             if (commands["command"] == "upload") {
                 break;
             }
-            http.erase(http.begin(), http.begin() + 3);
+            http.erase(http.begin(), http.begin() + 2);
             http.substr(0, atoi(commands["content-length"].c_str()));
             commands["body"] = http;
             break;
         }
         http.erase(http.begin(), http.begin() + 1);
     }
+
+    if (commands[])
 
     if (commands["command"] == "download" && commands["message"] == "OK") {
         create_file(commands["filename"], commands["body"]);
