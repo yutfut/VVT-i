@@ -79,7 +79,7 @@ int download(const std::string& command, User &user) {
         message = HTTPRequest::create_message(std::string{},
                                               std::string{},
                                               user.get_jwt(),
-                                              std::string{},
+                                              user.get_current_directory(),
                                               std::string{},
                                               std::string{},
                                               key,
