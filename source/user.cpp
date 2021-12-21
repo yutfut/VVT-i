@@ -7,7 +7,7 @@
 User::User(){
     authorize = false;
     jwt = std::string {};
-    current_directory = std::string {};
+    current_directory = std::filesystem::path {};
 }
 
 User::~User(){}

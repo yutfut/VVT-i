@@ -9,6 +9,7 @@
 #include <string>
 #include <cstring>
 #include <utility>
+#include <filesystem>
 
 #include "password.h"
 #include "http_base.h"
@@ -19,7 +20,7 @@ class User {
 private:
     bool authorize;
     std::string jwt;
-    std::string current_directory;
+    std::filesystem::path current_directory;
 public:
     User();
 
@@ -33,11 +34,11 @@ public:
         return jwt;
     }
 
-    std::string get_current_directory() {
+    std::filesystem::path get_current_directory() {
         return current_directory;
     }
 
-    void set_current_directory(std::string dir) {
+    void set_current_directory(std::filesystem::path dir) {
         current_directory = dir;
     }
 
