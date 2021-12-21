@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <vector>
 #include <fs_not_auth_usr.h>
-// #include <fs_auth_usr.h>
+ #include <fs_auth_usr.h>
 // #include <fs_group.h>
 namespace fs = std::filesystem;
 
@@ -37,9 +37,9 @@ public:
     static const fs::path root_path_default;
     FsWorkerNotAuthUsr not_auth_usr;
 
-//    static const fs::path auth_usrs_dir_default;
+    static const fs::path auth_usrs_dir_default;
 //    static const fs::path groups_dir_default;
-    //FsWorkerAuthUsr auth_usr;
+    FsWorkerAuthUsr auth_usr;
     //FsWorkerGroup group;
 };
 

@@ -1,8 +1,8 @@
-// Copyright 2021 nat-s.skv@mail.ru
-
-#include <gtest/gtest.h>
-#include "fs_worker.h"
-#include <fstream>
+//// Copyright 2021 nat-s.skv@mail.ru
+//
+//#include <gtest/gtest.h>
+//#include "fs_worker.h"
+//#include <fstream>
 /*
 FsWorkerAuthUsr create_fs_auth_user(const fs::path &root_path) {
     FsWorkerAuthUsr fs_worker(root_path);

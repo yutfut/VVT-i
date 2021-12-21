@@ -1,8 +1,8 @@
-// Copyright 2021 nat-s.skv@mail.ru
-
-#include <gtest/gtest.h>
-#include "fs_worker.h"
-#include <fstream>
+//// Copyright 2021 nat-s.skv@mail.ru
+//
+//#include <gtest/gtest.h>
+//#include "fs_worker.h"
+//#include <fstream>
 /*
 FsWorkerGroup create_fs_group(const fs::path &root_path) {
     FsWorkerGroup fs_worker(root_path);
