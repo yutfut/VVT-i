@@ -37,7 +37,7 @@ int Validator::validate_key(const std::string& key) {
         if (is_valid == 1) {
             return 0;
         }
-        std::cout << "пароль не удовлетворяет регулярному выражению\n";
+        std::cout << "key не удовлетворяет регулярному выражению\n";
         return -1;
     }
     return -1;
