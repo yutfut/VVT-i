@@ -8,8 +8,8 @@ Client::Client(){}
 
 Client::~Client(){}
 
-void Client::print() {
-    std::cout << ">>>\t";
+void Client::print(User &user) {
+    std::cout << ">>>\t" << std::string(user.get_current_directory()) << "$:";
 }
 
 int Client::role_command(const std::string& command, User &user) {
@@ -84,7 +84,7 @@ void Client::run() {
     std::string command;
 
     while (true) {
-        print();
+        print(user);
         std::getline (std::cin, command);
         if (command.empty()) {
             continue;

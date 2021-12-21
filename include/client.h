@@ -43,7 +43,7 @@ public:
 
     ~Client();
 
-    void print();
+    void print(User &user);
 
     int role_command(const std::string& command, User &user);
 
