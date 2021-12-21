@@ -5,6 +5,8 @@
 #ifndef VVT_I_COMMAND_H
 #define VVT_I_COMMAND_H
 
+#include <filesystem>
+
 #include "password.h"
 #include "http_base.h"
 #include "http_request.h"

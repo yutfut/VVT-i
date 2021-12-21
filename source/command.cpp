@@ -68,6 +68,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
     if (rest_part_command.empty()) {
         return -1;
     }
+
     if (user.get_authorize()) {
         std::string message = HTTPRequest::create_message(std::string {},
                                                           std::string {},
@@ -80,8 +81,17 @@ int work_with_directory(const std::string& first_part_command, const std::string
 
         std::string http_response = HTTPBase::send(message);
 
-        return HTTPResponse::parser(http_response);
+        if (first_part_command == "cd") {
+            if (HTTPResponse::parser(http_response) == 0) {
+                user.set_current_directory(std::filesystem::path(user.get_current_directory() + rest_part_command).lexically_normal());
+                return 0;
+            }
+        } else {
+            return HTTPResponse::parser(http_response);
+        }
+        return -1;
     }
+
     std::cout << "Вы не авторизованы!\n";
     return -1;
 }

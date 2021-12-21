@@ -37,6 +37,10 @@ public:
         return current_directory;
     }
 
+    void set_current_directory(std::string dir) {
+        current_directory = dir;
+    }
+
     static int register_user(const std::string& command);
 
     int login(const std::string& command);
