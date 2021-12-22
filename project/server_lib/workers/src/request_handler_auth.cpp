@@ -78,8 +78,8 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
         work_dir.pop_back();
     }
 
-    std::string abs_work_dir = (fs::path(request_headers["current_directory"]) /
-                                fs::path(request_headers["work_directory"]) ).lexically_normal();
+    std::string abs_work_dir = (std::filesystem::path(request_headers["current_directory"]) /
+                                std::filesystem::path(request_headers["work_directory"]) ).lexically_normal();
 
     if (abs_work_dir.ends_with('/')) {
         abs_work_dir.pop_back();
@@ -159,32 +159,32 @@ void RequestHandlerAuth::change_user_dir(int id, const std::string &work_dir, Ht
 
 void RequestHandlerAuth::make_user_subdir(int id, const std::string &work_dir,
                                           HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker) {
-    write_to_logs(std::to_string(__LINE__), ERROR);
-    try {
-        //TODO: удалить проверку, когда Андрей сделает  BOOL create_directory()
-        if (!db_worker.single_auth_mode.is_dir_name_free(id, work_dir)) {
-            write_to_logs(std::to_string(__LINE__), ERROR);
-            response = create_response(HttpStatusCode::Conflict);
-        }
-        write_to_logs(std::to_string(__LINE__), ERROR);
-        db_worker.single_auth_mode.create_directory(id, work_dir);
-    }
-    catch (const std::string &e) {
-        write_to_logs(std::to_string(__LINE__), ERROR);
-        write_to_logs(e, ERROR);
-        response = create_response(HttpStatusCode::InternalServerError);
-    }
-
-    write_to_logs(fs_worker.auth_usr.get_root(), ERROR);
-    write_to_logs(std::to_string(id), ERROR);
-    write_to_logs(work_dir, ERROR);
-    //TODO: curr_dir+ '/'  + work_dir ИЛИ  curr_dir+ '/'  + work_dir
-    if (!fs_worker.auth_usr.make_subdir(work_dir, std::to_string(id))) {
-        write_to_logs(std::to_string(__LINE__), ERROR);
-        write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-        response = create_response(HttpStatusCode::InternalServerError);
-        return;
-    }
+//    write_to_logs(std::to_string(__LINE__), ERROR);
+//    try {
+//        //TODO: удалить проверку, когда Андрей сделает  BOOL create_directory()
+//        if (!db_worker.single_auth_mode.is_dir_name_free(id, work_dir)) {
+//            write_to_logs(std::to_string(__LINE__), ERROR);
+//            response = create_response(HttpStatusCode::Conflict);
+//        }
+//        write_to_logs(std::to_string(__LINE__), ERROR);
+//        db_worker.single_auth_mode.create_directory(id, work_dir);
+//    }
+//    catch (const std::string &e) {
+//        write_to_logs(std::to_string(__LINE__), ERROR);
+//        write_to_logs(e, ERROR);
+//        response = create_response(HttpStatusCode::InternalServerError);
+//    }
+//
+//    write_to_logs(fs_worker.auth_usr.get_root(), ERROR);
+//    write_to_logs(std::to_string(id), ERROR);
+//    write_to_logs(work_dir, ERROR);
+//    //TODO: curr_dir+ '/'  + work_dir ИЛИ  curr_dir+ '/'  + work_dir
+//    if (!fs_worker.auth_usr.make_subdir(work_dir, std::to_string(id))) {
+//        write_to_logs(std::to_string(__LINE__), ERROR);
+//        write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
+//        response = create_response(HttpStatusCode::InternalServerError);
+//        return;
+//    }
 
     write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
     response = create_response(HttpStatusCode::OK, {{"command", "mkdir"}});
@@ -310,10 +310,10 @@ int RequestHandlerAuth::get_id_from_jwt(const std::string &jwt) {
 bool RequestHandlerAuth::download_file_from_server(int id, const std::string &work_dir, const std::string &filename,
                                                    HttpResponse &response, FsWorker &fs_worker) {
     write_to_logs(std::to_string(__LINE__), ERROR);
-    write_to_logs(static_cast<fs::path>(work_dir) / filename, ERROR);
+    write_to_logs(static_cast<std::filesystem::path>(work_dir) / filename, ERROR);
 
     std::string file_content{file_to_string(
-            fs_worker.auth_usr.get_file(static_cast<fs::path>(work_dir) / filename, std::to_string(id)))};
+            fs_worker.auth_usr.get_file(static_cast<std::filesystem::path>(work_dir) / filename, std::to_string(id)))};
 
     if (file_content.empty()) {
         write_to_logs(std::to_string(__LINE__), ERROR);
@@ -361,7 +361,7 @@ void RequestHandlerAuth::upload_file_to_server(int id, const std::string &work_d
         return;
     }
 
-    if (!fs_worker.auth_usr.write_to_file(file, static_cast<fs::path>(work_dir) / filename, std::to_string(id))) {
+    if (!fs_worker.auth_usr.write_to_file(file, static_cast<std::filesystem::path>(work_dir) / filename, std::to_string(id))) {
         db_worker.single_auth_mode.delete_file(id, work_dir, filename);
         write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
         response = create_response(HttpStatusCode::InternalServerError, {{"command", "upload"}});

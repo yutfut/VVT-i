@@ -2,7 +2,6 @@
 
 
 HttpBase::HttpBase(const std::map<std::string, std::string>& headers,const std::string &body,
-
                     int major, int minor)
     : headers(headers), body(body), version_major(major), version_minor(minor) {}
 

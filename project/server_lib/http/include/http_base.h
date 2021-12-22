@@ -10,10 +10,11 @@ class HttpBase {
 public:
     HttpBase() = default;
 
-     HttpBase(const std::map<std::string, std::string>& headers, std::string body = "",
-            int major = -1, int minor = -1);
+    explicit HttpBase(const std::map<std::string, std::string> &headers, const std::string &body = "", int major = -1, int minor = -1);
 
-    HttpBase& operator=(HttpBase&& src) noexcept;
+    HttpBase(std::map<std::string, std::string> &&headers, std::string &&body, int major, int minor);
+
+    HttpBase &operator=(HttpBase &&src) noexcept;
 
     ~HttpBase() = default;
 
@@ -21,7 +22,7 @@ public:
 
     int get_major() const;
 
-    std::map<std::string, std::string>& get_headers();
+    std::map<std::string, std::string> &get_headers();
 
     std::string get_body() const;
 

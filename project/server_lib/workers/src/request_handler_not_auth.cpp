@@ -78,7 +78,7 @@ RequestHandlerNotAuth::download_file_from_server(const std::string &file_id, con
     }
 
     std::string file{
-            file_to_string(fs_worker.not_auth_usr.get_file(fs::path(file_id), fs::path(upload_data.upload_date)))};
+            file_to_string(fs_worker.not_auth_usr.get_file(std::filesystem::path(file_id), std::filesystem::path(upload_data.upload_date)))};
 
     if (fs_worker.not_auth_usr.err_code) {
         write_to_logs(fs_worker.not_auth_usr.err_code.message(), ERROR);
@@ -110,7 +110,7 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
         return false;
     }
 
-    fs::path tmpfile_path = fs_worker.not_auth_usr.get_root() / "tmp" / file_data.uuid;
+    std::filesystem::path tmpfile_path = fs_worker.not_auth_usr.get_root() / "tmp" / file_data.uuid;
     std::ofstream tmpfile{tmpfile_path, std::ios_base::binary};
 //    write_to_logs(std::to_string(__LINE__), ERROR);
 //    write_to_logs(tmpfile_path, ERROR);
@@ -120,7 +120,7 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
     tmpfile << file;
     tmpfile.close();
     write_to_logs(tmpfile_path,ERROR);
-    write_to_logs( static_cast<fs::path>(file_data.uuid) / static_cast<fs::path>(file_data.upload_date) , ERROR);
+    write_to_logs( static_cast<std::filesystem::path>(file_data.uuid) / static_cast<std::filesystem::path>(file_data.upload_date) , ERROR);
 
     if (!fs_worker.not_auth_usr.move_file_to_fs(tmpfile_path, file_data.uuid, file_data.upload_date)) {
         db_worker.not_auth_mode.delete_certain_file(file_data.uuid);

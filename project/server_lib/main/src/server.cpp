@@ -10,8 +10,7 @@ int has_old_master_stopped = 0;
 
 pid_t new_master_pid = 0;
 
-Server::Server(FsWorker &fs_worker, DataBase &db_worker, const std::string &config_filename) : fs_worker(fs_worker),
-                                                                                               db_worker(db_worker) {
+Server::Server(const std::string &config_filename) {
     this->config_filename = config_filename;
     this->settings = MainServerSettings(this->config_filename);
     this->count_workflows = this->settings.get_count_workflows();
@@ -26,8 +25,8 @@ Server::Server(FsWorker &fs_worker, DataBase &db_worker, const std::string &conf
     this->vector_logs.push_back(&access_log);
     write_to_logs(std::to_string(__LINE__), ERROR);
 
-    // TODO: создавать воркеры ФС и БД тут
-    db_worker.init();
+    db_configuration = server.get_database();
+    fs_root_path = server.get_fs_root();
 
     this->write_to_logs("SERVER STARTING...", INFO);
 }
@@ -147,7 +146,7 @@ bool Server::add_work_processes() {
             this->workers_pid.push_back(pid);
         } else {
             write_to_logs(std::to_string(__LINE__), ERROR);
-            WorkerProcess worker(this->listen_sock, &server, vector_logs, fs_worker, db_worker);
+            WorkerProcess worker(this->listen_sock, &server, vector_logs, fs_root_path, db_configuration);
             worker.run();
             break;
         }

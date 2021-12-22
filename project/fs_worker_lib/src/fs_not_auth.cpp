@@ -4,6 +4,8 @@
 #include <fstream>
 #include <fs_not_auth_usr.h>
 
+namespace fs = std::filesystem;
+
 FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(const fs::path &_root_path, size_t file_expiration_date)
         : root_path(_root_path), file_expiration_date(file_expiration_date) {
     fs::create_directory(root_path, err_code);
@@ -11,7 +13,6 @@ FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(const fs::path &_root_path, size_t file_e
         root_path = "";
     }
 }
-
 
 FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(fs::path &&_root_path, size_t file_expiration_date)
         : root_path(std::move(_root_path)), file_expiration_date(file_expiration_date) {

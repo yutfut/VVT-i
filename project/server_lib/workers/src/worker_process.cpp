@@ -7,9 +7,9 @@ bool is_hard_stop = false;
 bool is_soft_stop = false;
 
 WorkerProcess::WorkerProcess(int listen_sock, class ServerSettings *server_settings,
-                             std::vector<Log *> &vector_logs,  FsWorker &fs_worker,  DataBase &db_worker)
-        : listen_sock(listen_sock), server_settings(server_settings), vector_logs(vector_logs), fs_worker(fs_worker),
-          db_worker(db_worker) {
+                             std::vector<Log *> &vector_logs, const std::filesystem::path& fs_root_path, const database_t& db_configuration)
+        : listen_sock(listen_sock), server_settings(server_settings), vector_logs(vector_logs), fs_worker(fs_root_path),
+          db_worker({db_configuration.user, db_configuration.password, db_configuration.host, std::to_string(db_configuration.port), db_configuration.dbname}) {
     signal(SIGPIPE, SIG_IGN);
     this->setup_signals();
 }

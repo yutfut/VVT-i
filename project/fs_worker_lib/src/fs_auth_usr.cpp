@@ -3,9 +3,10 @@
 #include <string>
 #include <filesystem>
 #include <vector>
-#include "fs_worker.h"
 #include <fstream>
 #include "fs_auth_usr.h"
+
+namespace fs = std::filesystem;
 
 FsWorkerAuthUsr::FsWorkerAuthUsr(const fs::path &root_path) : root_path(root_path) {}
 
@@ -30,7 +31,6 @@ bool FsWorkerAuthUsr::move_file(const fs::path &src_path, const fs::path &dst_pa
     fs::rename(src_path, root_path / user_id / dst_path, err_code);
     return !bool(err_code);
 }
-
 
 bool FsWorkerAuthUsr::write_to_file(const std::string &file_content, const fs::path &file_path,
                                 std::string user_id) noexcept {
@@ -69,5 +69,3 @@ const fs::path &FsWorkerAuthUsr::get_root() const noexcept {
 bool FsWorkerAuthUsr::operator==(const FsWorkerAuthUsr &rhs) const {
     return false;
 }
-
-
