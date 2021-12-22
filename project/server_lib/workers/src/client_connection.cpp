@@ -113,6 +113,7 @@ bool ClientConnection::handle_request() {
     std::for_each(response.get_headers().begin(), response.get_headers().end(),
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
     write_to_logs(response.get_body(), ERROR);
+    write_to_logs(std::to_string(response.get_body().size()), ERROR);
 
     write_to_logs("----------------END OF ANSWER---------------", ERROR);
 

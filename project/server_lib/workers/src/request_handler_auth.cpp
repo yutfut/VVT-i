@@ -138,7 +138,7 @@ void RequestHandlerAuth::get_user_dir_list_files(int id, const std::string &work
         write_to_logs(e, ERROR);
     }
     write_to_logs(std::to_string(__LINE__), ERROR);
-    response = create_response(HttpStatusCode::InternalServerError);
+    response = create_response(HttpStatusCode::InternalServerError, {{"command", "ls"}});
 }
 
 void RequestHandlerAuth::change_user_dir(int id, const std::string &work_dir, HttpResponse &response,
@@ -152,7 +152,7 @@ void RequestHandlerAuth::change_user_dir(int id, const std::string &work_dir, Ht
     }
     catch (const std::string &e) {
         write_to_logs(e, ERROR);
-        response = create_response(HttpStatusCode::InternalServerError);
+        response = create_response(HttpStatusCode::InternalServerError, {{"command", "cd"}});
     }
 }
 
@@ -187,7 +187,7 @@ void RequestHandlerAuth::make_user_subdir(int id, const std::string &work_dir,
     }
 
     write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-    response = create_response(HttpStatusCode::OK);
+    response = create_response(HttpStatusCode::OK, {{"command", "mkdir"}});
 }
 
 void RequestHandlerAuth::remove_user_subdir(int id, const std::string &work_dir,
@@ -217,7 +217,7 @@ void RequestHandlerAuth::remove_user_subdir(int id, const std::string &work_dir,
     }
 
     write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-    response = create_response(HttpStatusCode::OK);
+    response = create_response(HttpStatusCode::OK, {{"command", "rmdir"}});
 }
 
 
@@ -266,7 +266,7 @@ void RequestHandlerAuth::register_user(const std::string &email, const std::stri
     }
 
     write_to_logs(std::to_string(__LINE__), ERROR);
-    response = create_response(HttpStatusCode::OK, {{"jwt", jwt}});
+    response = create_response(HttpStatusCode::OK, {{"jwt", jwt}, {"command", "register"}});
 }
 
 void RequestHandlerAuth::login_user(const std::string &email, const std::string &password, HttpResponse &response,
@@ -290,7 +290,7 @@ void RequestHandlerAuth::login_user(const std::string &email, const std::string 
         response = create_response(HttpStatusCode::InternalServerError);
     }
 
-    response = create_response(HttpStatusCode::OK, {{"jwt", jwt}});
+    response = create_response(HttpStatusCode::OK, {{"jwt", jwt}, {"command", "login"}});
 }
 
 std::string RequestHandlerAuth::create_jwt(int id) {
