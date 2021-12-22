@@ -18,7 +18,9 @@ public:
 
     DataBase() = default;
 
-    DataBase(database_configuration_t &db_conf);
+    explicit DataBase(const database_configuration_t &db_conf);
+
+    DataBase &operator=(const DataBase &db) = default;
 
     ~DataBase() = default;
 
@@ -27,5 +29,4 @@ public:
     NotAuthMode not_auth_mode;
     RegAuth reg_auth;
     SingleAuthMode single_auth_mode;
-    GroupAuthMode group_auth_mode;
 };

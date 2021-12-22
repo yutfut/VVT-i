@@ -7,7 +7,11 @@ int main() {
 
     database_configuration_t config = {.user = USER, .password = PASSWORD, .host = HOST, .port = PORT, .dbname = "vvti"};
 
-    DataBase db(config);
+    DataBase db;
+
+    DataBase db_1(config);
+    db = db_1;
+
     db.init();
     // db.not_auth_mode.add_file("first_file", "pass1");
     // db.not_auth_mode.add_file("first_file", "pass1");
@@ -71,7 +75,7 @@ std::time_t t = std::time(0);   // get time now
     auto id = db.reg_auth.try_register("user_1", "new_pass");
 
     // std::cout << "/first_dir\n\n";
-    
+
     db.single_auth_mode.create_directory(id, "/", "first_dir");
     db.single_auth_mode.create_directory(id, "/first_dir", "second_dir");
 

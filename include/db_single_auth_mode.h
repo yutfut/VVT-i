@@ -6,7 +6,7 @@ class SingleAuthMode : public TransactionExec {
 
 public:
 
-    SingleAuthMode(pqxx::connection *connection);
+    explicit SingleAuthMode(pqxx::connection *connection = nullptr);
 
     int add_file(int user_id, const std::string &dir_path,
                           const std::string &filename);

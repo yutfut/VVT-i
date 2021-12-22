@@ -14,7 +14,7 @@ bool RegAuth::is_email_free(const std::string &email) {
 int RegAuth::try_register(const std::string &email,
                  const std::string &password) { 
 
-    if (is_email_free(email) == false) {
+    if (!is_email_free(email)) {
 
         return -1;
     }

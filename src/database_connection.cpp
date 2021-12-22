@@ -1,10 +1,10 @@
 #include "database_connection.h"
 
-DataBaseConnection::DataBaseConnection(const std::string &user, const std::string &password,
-                                       const std::string &port, const std::string &host, const std::string &dbname) :
-        user(user), password(password), port(port), host(host), dbname(dbname) {
+DataBaseConnection::DataBaseConnection(const database_configuration_t &config) :
+        user(config.user), password(config.password), port(config.port),
+        host(config.host), dbname(config.dbname), conn(nullptr) {
     
-    if (user == "" || password == "" || port == "" || host == "" || dbname == "") {
+    if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty()) {
         throw std::string("Error :  Check database configuration, not all settings filled\n");
     }
     
@@ -19,8 +19,10 @@ DataBaseConnection::DataBaseConnection(const std::string &user, const std::strin
 }
 
 DataBaseConnection::~DataBaseConnection() {
-    conn->disconnect();
-    delete conn;
+    if (conn != nullptr && conn->is_open()) {
+        conn->disconnect();
+        delete conn;
+    }
 }
 
 pqxx::connection *DataBaseConnection::get_connection() {

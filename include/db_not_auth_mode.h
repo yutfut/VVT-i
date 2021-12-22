@@ -7,7 +7,7 @@ class NotAuthMode : public TransactionExec {
     
 public:
 
-    NotAuthMode(pqxx::connection *conn);
+    explicit NotAuthMode(pqxx::connection *conn = nullptr);
 
     unauth_file_data_t add_file(const std::string &user_filename,
                                             const std::string &option_password);

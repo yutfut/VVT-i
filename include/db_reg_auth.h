@@ -6,7 +6,7 @@ class RegAuth : public TransactionExec {
 
 public:
 
-    RegAuth(pqxx::connection *connection);
+    explicit RegAuth(pqxx::connection *connection = nullptr);
 
     bool is_email_free(const std::string &email);
 
