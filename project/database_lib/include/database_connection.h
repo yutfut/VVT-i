@@ -6,9 +6,9 @@ class DataBaseConnection {
 public:
 
     DataBaseConnection() : conn(nullptr) {};
-    
+
     explicit DataBaseConnection(const database_configuration_t &config);
-    
+
     ~DataBaseConnection();
 
     pqxx::connection *get_connection();

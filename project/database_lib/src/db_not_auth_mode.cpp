@@ -5,7 +5,7 @@ NotAuthMode::NotAuthMode(pqxx::connection *conn) : connection(conn) {}
 
 
 unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
-                                                  const std::string &option_password) {
+                                         const std::string &option_password) {
     pqxx::work transaction(*connection);
 
     try {
@@ -15,10 +15,10 @@ unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
             unauth_file_data_t empty_struct{};
             return empty_struct;
         }
-        
+
         unauth_file_data_t add_file_result = {.uuid = res[0][0].as<std::string>(),
-                                              .filename = user_filename,
-                                              .upload_date = res[0][1].as<std::string>()};
+                .filename = user_filename,
+                .upload_date = res[0][1].as<std::string>()};
 
         transaction.commit();
 
@@ -31,20 +31,20 @@ unauth_file_data_t NotAuthMode::add_file(const std::string &user_filename,
 }
 
 
-void NotAuthMode::delete_certain_file(std::string uuid) {
-    
+void NotAuthMode::delete_file(const std::string &uuid) {
+
     simple_transaction_exec(fmt::format(DELETE_UNAUTH_USER_FILE, uuid), connection);
 }
 
 
 void NotAuthMode::delete_files_by_date(const std::string &upload_date) {
-    
+
     simple_transaction_exec(fmt::format(DELETE_FILES_BY_DATE, upload_date), connection);
 }
 
 
 unauth_file_data_t NotAuthMode::get_upload_file_date(const std::string &file_uuid,
-                                              const std::string &option_password) {
+                                                     const std::string &option_password) {
     pqxx::work transaction(*connection);
 
     try {

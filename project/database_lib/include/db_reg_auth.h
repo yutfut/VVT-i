@@ -16,7 +16,7 @@ public:
     int try_auth(const std::string &email, const std::string &password);
 
     int get_id_auth_user(const std::string &email);
-    
+
     std::string get_email(int user_id);
 
 private:

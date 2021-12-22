@@ -2,7 +2,7 @@
 
 
 GroupAuthMode::GroupAuthMode(pqxx::connection *connection) :
-                    connection(connection) {}
+        connection(connection) {}
 
 int GroupAuthMode::create_group(int user_id, const std::string &group_name) {
     return 0;
@@ -17,12 +17,12 @@ int GroupAuthMode::delete_group(int user_id, int group_id) {
 }
 
 int GroupAuthMode::add_group_member(int user_id, const std::string &group_dir_path,
-                     int id_member_to_add) {
+                                    int id_member_to_add) {
     return 0;
 }
 
 int GroupAuthMode::delete_group_member(int group_id, int user_id,
-                        int id_member_to_del) {
+                                       int id_member_to_del) {
     return 0;
 }
 
@@ -31,7 +31,7 @@ bool GroupAuthMode::is_user_already_in_group(int group_id, int user_id) {
 }
 
 std::vector<std::pair<std::string, std::string>>
-                GroupAuthMode::list_users_in_group(int group_id) {
+GroupAuthMode::list_users_in_group(int group_id) {
     return {};
 }
 

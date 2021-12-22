@@ -4,16 +4,16 @@
 
 
 class NotAuthMode : public TransactionExec {
-    
+
 public:
 
     explicit NotAuthMode(pqxx::connection *conn = nullptr);
 
     unauth_file_data_t add_file(const std::string &user_filename,
-                                            const std::string &option_password);
+                                const std::string &option_password);
 
-    void delete_certain_file(std::string uuid);
-    
+    void delete_file(const std::string &uuid);
+
     void delete_files_by_date(const std::string &upload_date);
 
     unauth_file_data_t get_upload_file_date(const std::string &file_uuid, const std::string &option_password);
@@ -21,5 +21,5 @@ public:
 private:
 
     pqxx::connection *connection;
-    
+
 };

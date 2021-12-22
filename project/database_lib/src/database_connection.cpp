@@ -3,11 +3,11 @@
 DataBaseConnection::DataBaseConnection(const database_configuration_t &config) :
         user(config.user), password(config.password), port(config.port),
         host(config.host), dbname(config.dbname), conn(nullptr) {
-    
+
     if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty()) {
         throw std::string("Error :  Check database configuration, not all settings filled\n");
     }
-    
+
     std::string str_query = fmt::format("postgresql://{0}:{1}@{2}:{3}/{4}", user, password, host, port, dbname);
 
     try {

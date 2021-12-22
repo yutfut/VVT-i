@@ -23,10 +23,10 @@ public:
     bool is_user_already_in_group(int group_id, int user_id);
 
     std::vector<std::pair<std::string, std::string>>
-            list_users_in_group(int group_id);
+    list_users_in_group(int group_id);
 
     int set_chmod(modifiers_t modes);
-    
+
     modifiers_t get_access_modifiers(
             int group_id);
 

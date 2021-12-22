@@ -8,7 +8,6 @@ int main() {
     database_configuration_t config = {.user = USER, .password = PASSWORD, .host = HOST, .port = PORT, .dbname = "vvti"};
 
     DataBase db;
-
     DataBase db_1(config);
     db = db_1;
 
@@ -32,7 +31,7 @@ int main() {
     // std::cout << db.reg_auth.get_id_auth_user("emai") << "\n";
     // int id =  db.reg_auth.get_id_auth_user("email");
     // std::cout << id << "\n";
-    
+
     // std::cout << db.reg_auth.get_email(id);
 
     // std::cout << db.single_auth_mode.add_file(1, "1", "1.txt");
@@ -66,11 +65,11 @@ int main() {
     // std::cout << db.single_auth_mode.get_list_files_in_dir(1, "1");
 
 
-std::time_t t = std::time(0);   // get time now
-    std::tm* now = std::localtime(&t);
+    std::time_t t = std::time(0);   // get time now
+    std::tm *now = std::localtime(&t);
     std::string curr_date;
     curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
-            + "-" + std::to_string(now->tm_mday);
+                 + "-" + std::to_string(now->tm_mday);
 
     auto id = db.reg_auth.try_register("user_1", "new_pass");
 
@@ -84,21 +83,22 @@ std::time_t t = std::time(0);   // get time now
     db.single_auth_mode.add_file(id, "/first_dir/second_dir", "2.txt");
     db.single_auth_mode.add_file(id, "/first_dir", "3.txt");
 
-    db.single_auth_mode.change_filename(1, "/first_dir", "2.txt", "4.txt");
+    db.single_auth_mode.change_filename(id, "/first_dir", "2.txt", "4.txt");
 
-    std::string files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL, curr_date, "1.txt", "3.txt", "4.txt");
+    std::string files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL,
+                                           curr_date, "1.txt", "3.txt", "4.txt");
 
     std::string dirs_in_dir = fmt::format("d{0}  {2}  {1}\n", BASE_ACCESS_LVL, curr_date, "second_dir");
 
     std::cout << "need result:\n\n" << files_in_dir + dirs_in_dir << "\n\nmy result:\n\n";
 
-    std::cout << db.single_auth_mode.get_list_files_in_dir(1, "/first_dir");
+    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/first_dir");
 
     std::cout << "rmdir!!1\n\n";
 
-    db.single_auth_mode.rmdir(1, "/", "first_dir");
+    db.single_auth_mode.rmdir(id, "/", "first_dir");
 
-    std::cout << db.single_auth_mode.get_list_files_in_dir(1, "/first_dir");
+    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/first_dir");
 
     return 0;
 }
