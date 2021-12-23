@@ -42,6 +42,7 @@ jobs:
       - name: Unit-tests DataBase
         run: |
           cd build
+          sudo service postgresql start
           sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
           ./test/database_lib/gtest.out
           cd ..
