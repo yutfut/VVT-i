@@ -1,8 +1,8 @@
 #include "database_connection.h"
 
 DataBaseConnection::DataBaseConnection(const database_configuration_t &config) :
-        user(config.user), password(config.password), port(config.port),
-        host(config.host), dbname(config.dbname), conn(nullptr) {
+        conn(nullptr), user(config.user), password(config.password),
+        host(config.host), port(config.port), dbname(config.dbname) {
 
     if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty()) {
         throw std::string("Error :  Check database configuration, not all settings filled\n");

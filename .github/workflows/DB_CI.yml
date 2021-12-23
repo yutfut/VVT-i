@@ -50,7 +50,7 @@ jobs:
       - name: Coverage DataBase part test
         run: |
           mkdir coverage_db && cd coverage_db
-          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/database.c.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/database.cpp.gcno
           cp -r ../build/CMakeFiles/database_lib.dir/ .
           cd ..
           lcov --capture --directory coverage_db/ --output-file database.info
@@ -65,7 +65,7 @@ jobs:
         run: |
           sudo apt-get install -y valgrind
           mkdir valgrid-output
-          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/test/database+lib/gtest.out
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/test/database_lib/gtest.out
       - name: Archive valgrind test results
         uses: actions/upload-artifact@v2
         with:
