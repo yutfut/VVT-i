@@ -16,81 +16,54 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name : Install libraries and packages
+        run : |
+          sudo apt-get install -y libgtest-dev
+          sudo apt install postgresql postgresql-contrib
+          sudo add-apt-repository universe
+          sudo apt update
+          sudo apt install libfmt-dev
+          sudo apt install libpqxx-dev
+          sudo apt-get install lcov
+
       - name : Check style code
         run : |
           sudo apt-get install -y cppcheck
           cppcheck --enable=all --enable=warning,style,performance,portability --suppress=missingIncludeSystem . # --check-config
+
       - name : Building
         run : |
           mkdir build
           cd build
-          sudo apt-get install -y libgtest-dev
           cmake ..
           make
           cd ..
-      - name: Unit-tests one-thread mode
+
+      - name: Unit-tests DataBase
         run: |
           cd build
-          ./project/tests/test_matrix_one_thread.out
+          ./project/tests/database_lib/gtest.out
           cd ..
-      - name: Unit-tests multi-thread mode
+
+      - name: Coverage DataBase part test
         run: |
-          cd build
-          ./project/tests/test_matrix_multi_thread.out
+          mkdir coverage_db && cd coverage_db
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/database.c.gcno
+          cp -r ../build/CMakeFiles/database_lib.dir/ .
           cd ..
-      - name: Stress-tests of modes
-        run: |
-          cd build/project/tests/productivity/sync
-          ./sync_stress_test.out
-          cd ..
-          cd async
-          ./async_stress_test.out
-          cd ..
-          ./stress_test.out
-          cd ../../../..
-      - name: Time-tests of modes
-        run: |
-          cd build
-          ./project/tests/productivity/sync/sync_time_test.out
-          ./project/tests/productivity/async/async_time_test.out
-          cd ..
-      - name: Coverage one-thread-mode test
-        run: |
-          sudo apt-get install lcov
-          mkdir coverage_one_th && cd coverage_one_th
-          gcov ../build/CMakeFiles/lib_matrix_one_thread.dir/project/src/matrix_one_thread.c.gcno
-          cp -r ../build/CMakeFiles/lib_matrix_one_thread.dir/ .
-          cd ..
-          lcov --capture --directory coverage_one_th/ --output-file matrix_one_thread.info
-          genhtml matrix_one_thread.info --output-directory coverage_one_th-report/
-      - name: Archive coverage one-thread-mode test results
+          lcov --capture --directory coverage_db/ --output-file database.info
+          genhtml database.info --output-directory coverage_db-report/
+      - name: Archive coverage DataBase part test results
         uses: actions/upload-artifact@v2
         with:
-          name: Coverage one-thread-mode test
-          path: coverage_one_th-report/
-
-
-      - name: Coverage multi-thread-mode test
-        run: |
-          mkdir coverage_multi_th && cd coverage_multi_th
-          gcov ../build/CMakeFiles/lib_matrix_multi_thread.dir/project/src/matrix_multi_thread.c.gcno
-          cp -r ../build/CMakeFiles/lib_matrix_multi_thread.dir/ .
-          cd ..
-          lcov --capture --directory coverage_multi_th/ --output-file matrix_multi_thread.info
-          genhtml matrix_multi_thread.info --output-directory coverage_multi_th-report/
-      - name: Archive coverage multi-thread-mode test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: Coverage multi-thread-mode test
-          path: coverage_multi_th-report/
-
+          name: Coverage DataBase test
+          path: coverage_db-report/
 
       - name: Valgrind tests
         run: |
           sudo apt-get install -y valgrind
           mkdir valgrid-output
-          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/project/tests/test_matrix_one_thread.out
-          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/project/tests/test_matrix_multi_thread.out
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/test/database+lib/gtest.out
       - name: Archive valgrind test results
         uses: actions/upload-artifact@v2
         with:
