@@ -42,7 +42,7 @@ jobs:
       - name: Unit-tests DataBase
         run: |
           cd build
-          ./project/tests/database_lib/gtest.out
+          ./test/database_lib/gtest.out
           cd ..
 
       - name: Coverage DataBase part test
