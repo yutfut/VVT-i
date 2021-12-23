@@ -87,8 +87,9 @@ std::string TransactionExec::trans_ls_exec(const std::string &sql_request_file,
         pqxx::result res = transaction.exec(sql_request_file);
 
         for (const auto &re: res) {
-            ls_result += fmt::format("-{0}  {1}  {2}\n", BASE_ACCESS_LVL,
-                                     re[0].as<std::string>(), re[1].as<std::string>());
+            auto fmt_string = fmt::format("-{0}  {1}  {2}\n", BASE_ACCESS_LVL,
+                                          re[0].as<std::string>(), re[1].as<std::string>());
+            ls_result += fmt_string;
         }
 
         res = transaction.exec(sql_request_dir);
