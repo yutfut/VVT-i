@@ -12,8 +12,8 @@ int main() {
     db = db_1;
 
     db.init();
-    // db.not_auth_mode.add_file("first_file", "pass1");
-    // db.not_auth_mode.add_file("first_file", "pass1");
+//     db.not_auth_mode.add_file("first_file", "pass1");
+//     db.not_auth_mode.add_file("first_file", "pass1");
     // db.not_auth_mode.add_file("first_file", "pass1");
     // std::cout << db.not_auth_mode.get_upload_file_date("d659ca4b-904c-4e68-b05a-d4624cbddeee", "pass1").filename << "\n";
     // std::cout << db.not_auth_mode.get_upload_file_date("5ff6f1d0-58a7-493a-9a6b-f3eee249f4c9", "pass1").upload_date << "\n";
@@ -21,7 +21,10 @@ int main() {
     // db.not_auth_mode.delete_files_by_date("2021-12-01");
 
     // std::cout << db.reg_auth.is_email_free("email") << "\n";
-    // db.reg_auth.try_register("email", "pass");
+     db.reg_auth.try_register("email", "pass");
+    db.reg_auth.try_register("email1", "pass");
+    db.reg_auth.try_register("email2", "pass");
+    db.reg_auth.try_register("email3", "pass");
     // std::cout << db.reg_auth.is_email_free("email") << "\n";
 
     // std::cout << db.reg_auth.try_auth("email", "past") << "\n";

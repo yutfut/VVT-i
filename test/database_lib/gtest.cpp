@@ -12,20 +12,20 @@
 
 const database_configuration_t VVTI_CONF = {.user= "postgres",
         .password = "postgres",
-        .host = "host",
-        .port = "port",
+        .host = "localhost",
+        .port = "5432",
         .dbname = "vvti"};
 
 const database_configuration_t EMPTY_HOST_CONF = {.user= "postgres",
         .password = "postgres",
         .host = "",
-        .port = "port",
+        .port = "5432",
         .dbname = "vvti"};
 
 const database_configuration_t NOT_EXIST_DBNAME_CONF = {.user= "postgres",
         .password = "postgres",
-        .host = "host",
-        .port = "port",
+        .host = "localhost",
+        .port = "5432",
         .dbname = "vvti1"};
 
 ///---DataBase/Tables---///
@@ -123,8 +123,7 @@ TEST(DATA_BASE_TEST, NOT_VALID_DATA_TO_AUTH) {
 TEST(DATA_BASE_TEST, VALID_DATA_TO_AUTH) {
     DataBase db(VVTI_CONF);
 
-    auto id = db.reg_auth.try_register("fartuna@gmail.com", "1111");
-    EXPECT_EQ(db.reg_auth.try_auth("fartuna@gmail.com", "1111"), id);
+    EXPECT_EQ(db.reg_auth.try_auth("fart@gmail.com", "1234"), 1);
 }
 
 TEST(DATA_BASE_TEST, GET_EMAIL) {
