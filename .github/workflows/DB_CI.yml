@@ -50,7 +50,12 @@ jobs:
       - name: Coverage DataBase part test
         run: |
           mkdir coverage_db && cd coverage_db
-          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/database.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/database_connection.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/data_base.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/db_not_auth_mode.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/db_reg_auth.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/db_single_auth_mode.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/transaction_exec.cpp.gcno
           cp -r ../build/CMakeFiles/database_lib.dir/ .
           cd ..
           lcov --capture --directory coverage_db/ --output-file database.info
