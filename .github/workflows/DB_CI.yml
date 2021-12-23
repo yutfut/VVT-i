@@ -15,24 +15,23 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name : Install libraries and packages
-        run : |
+      - name: Install libraries and packages
+        run: |
           sudo apt-get install -y libgtest-dev
           sudo apt install postgresql postgresql-contrib
           sudo add-apt-repository universe
-#          sudo apt update
+          sudo apt update
           sudo apt install libfmt-dev
           sudo apt install libpqxx-dev
-#          sudo apt-get install lcov
+      #          sudo apt-get install lcov
 
-#      - name : Check style code
-#        run : |
-#          sudo apt-get install -y cppcheck
-#          cppcheck --enable=all --enable=warning,style,performance,portability --suppress=missingIncludeSystem . # --check-config
+      #      - name : Check style code
+      #        run : |
+      #          sudo apt-get install -y cppcheck
+      #          cppcheck --enable=all --enable=warning,style,performance,portability --suppress=missingIncludeSystem . # --check-config
 
-      - name : Building
-        run : |
+      - name: Building
+        run: |
           mkdir build
           cd build
           cmake ..
