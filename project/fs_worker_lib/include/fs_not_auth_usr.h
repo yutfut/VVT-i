@@ -25,7 +25,10 @@ public:
     [[nodiscard]] bool move_file_to_fs(const std::filesystem::path &src_path, const std::filesystem::path &dst_name,
                                        const std::filesystem::path &date_added) noexcept;
 
-    [[nodiscard]] std::ifstream get_file(const std::filesystem::path &file_name, const std::filesystem::path &date_added) const noexcept;
+    bool write_to_file(const std::string &file_content, const std::filesystem::path &filename,
+                                           const std::filesystem::path &date_added);
+
+    [[nodiscard]] std::ifstream get_file(const std::filesystem::path &filename, const std::filesystem::path &date_added) const noexcept;
 
     bool create_day_dir(const std::filesystem::path &date_added) noexcept;
 

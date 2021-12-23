@@ -1,10 +1,10 @@
 #include "client_connection.h"
-#include "http_status_code.h"
 #include <request_handler_not_auth.h>
 #include <http_status_code.h>
 #include <mailio/message.hpp>
 #include <mailio/smtp.hpp>
 #include <fmt/core.h>
+#include <request_handler_auth.h>
 
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
@@ -69,6 +69,8 @@ bool ClientConnection::get_request() {
     char last_char;
     std::string line;
 
+    write_to_logs(std::to_string(__LINE__), ERROR);
+
     line.reserve(LENGTH_LINE_FOR_RESERVE);
     while (read(this->sock, &last_char, sizeof(char)) == sizeof(char)) {
         line.push_back(last_char);
@@ -79,10 +81,12 @@ bool ClientConnection::get_request() {
         }
         has_read_data = true;
     }
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     if (this->request.requst_ended()) {
         return true;
     }
+    write_to_logs(std::to_string(__LINE__), ERROR);
 
     if (has_read_data) {
         this->timeout = clock();
@@ -91,19 +95,30 @@ bool ClientConnection::get_request() {
 }
 
 bool ClientConnection::handle_request() {
+    write_to_logs(std::to_string(__LINE__), ERROR);
     write_to_logs("-----------------THE REQUEST---------------", ERROR);
     std::for_each(request.get_headers().begin(), request.get_headers().end(),
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
     write_to_logs(request.get_body(), ERROR);
     write_to_logs("----------------END OF REQUEST---------------", ERROR);
 
-    RequestHandlerNotAuth handler(vector_logs);
-    handler.handle_request(request, response, fs_worker, db_worker);
+    auto &request_headers = this->request.get_headers();
+    //TODO: или пробельное??
+    write_to_logs(request_headers["command"], ERROR);
+    if (!request_headers["jwt"].empty() || (request_headers["command"] == "register") || (request_headers["command"] == "login")) {
+        RequestHandlerAuth handler(vector_logs);
+        handler.handle_request(request, response, fs_worker, db_worker);
+    } else {
+        RequestHandlerNotAuth handler(vector_logs);
+        handler.handle_request(request, response, fs_worker, db_worker);
+    }
 
+    write_to_logs(std::to_string(__LINE__), ERROR);
     write_to_logs("----------------THE ANSWER---------------", ERROR);
     std::for_each(response.get_headers().begin(), response.get_headers().end(),
                   [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
     write_to_logs(response.get_body(), ERROR);
+    write_to_logs(std::to_string(response.get_body().size()), ERROR);
 
     write_to_logs("----------------END OF ANSWER---------------", ERROR);
 

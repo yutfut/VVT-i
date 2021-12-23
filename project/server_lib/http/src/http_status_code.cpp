@@ -10,7 +10,8 @@ std::string get_message(HttpStatusCode status){
             return {"Forbidden"};
         case HttpStatusCode::RequestTimeout:
             return {"RequestTimeout"};
-
+        case HttpStatusCode::Conflict:
+            return {"Conflict"};
         case HttpStatusCode::InternalServerError:
             return {"InternalServerError"};
         default:

@@ -90,7 +90,7 @@ RequestHandlerNotAuth::download_file_from_server(const std::string &file_id, con
 }
 
 bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, const std::string &opt_pswd,
-                                                  const std::string &file, HttpResponse &response,
+                                                  const std::string &file_content, HttpResponse &response,
                                                   FsWorker &fs_worker, DataBase &db_worker) {
     unauth_file_data_t file_data;
     try {
@@ -109,17 +109,7 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
         return false;
     }
 
-    std::filesystem::path tmpfile_path = fs_worker.not_auth_usr.get_root() / "tmp" / file_data.uuid;
-    std::ofstream tmpfile{tmpfile_path, std::ios_base::binary};
-//    write_to_logs(std::to_string(__LINE__), ERROR);
-//    write_to_logs(tmpfile_path, ERROR);
-//    write_to_logs(std::to_string(file.size()), ERROR);
-//    write_to_logs(std::to_string(__LINE__), ERROR);
-//    write_to_logs(file, ERROR);
-    tmpfile << file;
-    tmpfile.close();
-
-    if (!fs_worker.not_auth_usr.move_file_to_fs(tmpfile_path, file_data.uuid, file_data.upload_date)) {
+    if (!fs_worker.not_auth_usr.write_to_file(file_content, file_data.uuid, file_data.upload_date)) {
         db_worker.not_auth_mode.delete_file(file_data.uuid);
         write_to_logs(fs_worker.not_auth_usr.err_code.message(), ERROR);
         response = create_response(HttpStatusCode::InternalServerError, {{"command", "upload"}});

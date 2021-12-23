@@ -32,5 +32,5 @@ target_include_directories(server_lib
 )
 target_link_libraries(
   server_lib mailio Boost::log Boost::log_setup Boost::system Boost::date_time Boost::regex
-  OpenSSL::SSL Threads::Threads fmt::fmt
+  OpenSSL::SSL Threads::Threads fmt::fmt fs_worker_lib database_lib
 )

@@ -27,7 +27,8 @@ FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(const FsWorkerNotAuthUsr &src) : root_pat
                                                                         sort_dirs(src.sort_dirs) {}
 
 FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(FsWorkerNotAuthUsr &&src) noexcept: root_path(std::move(src.root_path)),
-                                                                           file_expiration_date(src.file_expiration_date),
+                                                                           file_expiration_date(
+                                                                                   src.file_expiration_date),
                                                                            sort_dirs(std::move(src.sort_dirs)) {}
 
 bool FsWorkerNotAuthUsr::move_root(const fs::path &new_root_path) noexcept {
@@ -46,8 +47,16 @@ bool FsWorkerNotAuthUsr::move_file_to_fs(const fs::path &src_path, const fs::pat
     return !bool(err_code);
 }
 
-std::ifstream FsWorkerNotAuthUsr::get_file(const fs::path &file_name, const fs::path &date_added) const noexcept {
-    return {root_path / date_added / file_name, std::ios_base::binary};
+bool FsWorkerNotAuthUsr::write_to_file(const std::string &file_content, const fs::path &filename,
+                                       const fs::path &date_added) {
+    err_code.clear();
+    std::ofstream file{root_path / date_added / filename, std::ios_base::binary};
+    file << file_content;
+    return file.good();
+}
+
+std::ifstream FsWorkerNotAuthUsr::get_file(const fs::path &filename, const fs::path &date_added) const noexcept {
+    return {root_path / date_added / filename, std::ios_base::binary};
 }
 
 bool FsWorkerNotAuthUsr::create_day_dir(const fs::path &date_added) noexcept {

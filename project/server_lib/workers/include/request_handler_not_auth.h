@@ -19,7 +19,7 @@ private:
                                    FsWorker &fs_worker, DataBase &db_worker);
 
     bool
-    upload_file_to_server(const std::string &filename, const std::string &opt_pswd, const std::string &file,
+    upload_file_to_server(const std::string &filename, const std::string &opt_pswd, const std::string &file_content,
                           HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker);
 
     HttpResponse create_response(HttpStatusCode status, std::map <std::string, std::string> &&additional_headers = {},
