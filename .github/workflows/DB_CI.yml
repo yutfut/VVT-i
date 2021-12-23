@@ -20,6 +20,7 @@ jobs:
         run : |
           sudo apt-get install -y libgtest-dev
           sudo apt install postgresql postgresql-contrib
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
           sudo add-apt-repository universe
           sudo apt update
           sudo apt install libfmt-dev
@@ -42,6 +43,7 @@ jobs:
       - name: Unit-tests DataBase
         run: |
           cd build
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
           ./test/database_lib/gtest.out
           cd ..
 
