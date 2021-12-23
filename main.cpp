@@ -3,7 +3,7 @@
 
 int main() {
     FsWorker fs_worker;
-    DataBase db_worker("postgres", "postgres", "5432", "localhost", "");
+    DataBase db_worker({"postgres", "postgres", "5432", "localhost", "vvti"});
     db_worker.init();
 
     Server server( fs_worker, db_worker,"./settings/server.conf");

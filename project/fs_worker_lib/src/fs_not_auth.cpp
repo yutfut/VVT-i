@@ -4,19 +4,20 @@
 #include <fstream>
 #include <fs_not_auth_usr.h>
 
+namespace fs = std::filesystem;
+
 FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(const fs::path &_root_path, size_t file_expiration_date)
         : root_path(_root_path), file_expiration_date(file_expiration_date) {
     fs::create_directory(root_path, err_code);
-    if (static_cast<bool>(err_code)) {
+    if (bool(err_code)) {
         root_path = "";
     }
 }
 
-
 FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(fs::path &&_root_path, size_t file_expiration_date)
         : root_path(std::move(_root_path)), file_expiration_date(file_expiration_date) {
     fs::create_directory(root_path, err_code);
-    if (static_cast<bool>(err_code)) {
+    if (bool(err_code)) {
         root_path = "";
     }
 }
@@ -32,17 +33,17 @@ FsWorkerNotAuthUsr::FsWorkerNotAuthUsr(FsWorkerNotAuthUsr &&src) noexcept: root_
 bool FsWorkerNotAuthUsr::move_root(const fs::path &new_root_path) noexcept {
     err_code.clear();
     fs::rename(root_path, new_root_path, err_code);
-    if (!static_cast<bool>(err_code)) {
+    if (!bool(err_code)) {
         root_path = new_root_path;
     }
-    return !static_cast<bool>(err_code);
+    return !bool(err_code);
 }
 
 bool FsWorkerNotAuthUsr::move_file_to_fs(const fs::path &src_path, const fs::path &dst_name,
                                          const fs::path &date_added) noexcept {
     err_code.clear();
     fs::rename(src_path, root_path / date_added / dst_name, err_code);
-    return !static_cast<bool>(err_code);
+    return !bool(err_code);
 }
 
 std::ifstream FsWorkerNotAuthUsr::get_file(const fs::path &file_name, const fs::path &date_added) const noexcept {
@@ -55,7 +56,7 @@ bool FsWorkerNotAuthUsr::create_day_dir(const fs::path &date_added) noexcept {
     if (!static_cast<bool>(err_code)) {
         sort_dirs.emplace_back(date_added);
     }
-    return !static_cast<bool>(err_code);
+    return !bool(err_code);
 }
 
 bool FsWorkerNotAuthUsr::remove_expired_dirs() noexcept {
@@ -63,7 +64,7 @@ bool FsWorkerNotAuthUsr::remove_expired_dirs() noexcept {
     std::for_each(sort_dirs.begin() + static_cast<int>(file_expiration_date), sort_dirs.end(),
                   [this](const auto &expired_dir) { fs::remove_all(root_path / expired_dir, err_code); });
     sort_dirs.erase(sort_dirs.begin() + static_cast<int>(file_expiration_date), sort_dirs.end());
-    return !static_cast<bool>(err_code);
+    return !bool(err_code);
 }
 
 const fs::path &FsWorkerNotAuthUsr::get_root() const noexcept {
