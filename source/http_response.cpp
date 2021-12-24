@@ -4,8 +4,26 @@
 
 #include "http_response.h"
 
+std::string check_exist_file(const std::string& file_name) {
+    bool exist = std::__fs::filesystem::exists(file_name);
+    if (exist) {
+        std::cout << "такой файл уже существует";
+        std::string yes_or_no, new_file_name;
+        std::cout << "хотите его переименовать? y/n:\t";
+        std::getline (std::cin, yes_or_no);
+        if (yes_or_no == "y") {
+            std::cout << "введите новое название: ";
+            std::getline (std::cin, new_file_name);
+            return new_file_name;
+        }
+    }
+    return file_name;
+}
+
 void create_file(const std::string &file_name, const std::string &message) {
-    std::ofstream out(file_name);
+    std::string actual_file_name = check_exist_file(file_name);
+
+    std::ofstream out(actual_file_name);
 
     if (out.is_open()) {
         out << message;
@@ -47,7 +65,7 @@ int HTTPResponse::parser(std::string &http) {
         http.erase(http.begin(), http.begin() + 1);
     }
 
-    if (commands["command"] != "download" || commands["command"] != "upload") {
+    if (commands["command"] != "download") {
         std::cout << commands["body"] << std::endl;
     }
 
