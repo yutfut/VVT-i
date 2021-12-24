@@ -5,6 +5,7 @@ DataBaseConnection::DataBaseConnection(const database_configuration_t &config) :
         host(config.host), port(config.port), dbname(config.dbname) {
 
     if (user.empty() || password.empty() || port.empty() || host.empty() || dbname.empty()) {
+        std::cout << "error"<< "\n";
         throw std::string("Error :  Check database configuration, not all settings filled\n");
     }
 
@@ -13,6 +14,7 @@ DataBaseConnection::DataBaseConnection(const database_configuration_t &config) :
     try {
         conn = new pqxx::connection(str_query);
     } catch (const pqxx::sql_error &e) {
+        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 

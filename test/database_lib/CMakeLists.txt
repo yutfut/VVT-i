@@ -11,6 +11,11 @@ find_package(fmt REQUIRED)
 
 aux_source_directory(src DB_TEST_SRC)
 
+# Create server library
+#add_library(database_lib ${DB_TEST_SRC})
+#target_include_directories(database_lib PUBLIC project/database_lib/include)
+#target_link_libraries(database_lib ${PQXX_LIB} ${PQ_LIB} fmt::fmt)
+
 # Create gtest target
 add_executable(gtest.out gtest.cpp ${DB_TEST_SRC})
 target_link_libraries(gtest.out ${GTEST_LIBRARIES} database_lib Threads::Threads)

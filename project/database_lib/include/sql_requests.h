@@ -19,7 +19,7 @@ const std::string CREATE_TABLE_USERS = "CREATE TABLE IF NOT EXISTS Users(id SERI
                                        "email TEXT NOT NULL, password TEXT NOT NULL);";
 
 const std::string CREATE_TABLE_PERSON_DIR = "CREATE TABLE IF NOT EXISTS Person_dir(user_id SERIAL REFERENCES Users(id), "
-                                            "dir_path TEXT UNIQUE, upload_date DATE DEFAULT CURRENT_DATE);";
+                                            "dir_path TEXT, upload_date DATE DEFAULT CURRENT_DATE);";
 
 const std::string CREATE_TABLE_GROUPS = "CREATE TABLE IF NOT EXISTS Groups(id SERIAL PRIMARY KEY, dir_path TEXT UNIQUE);";
 
@@ -28,8 +28,7 @@ const std::string CREATE_TABLE_GROUP_DIR = "CREATE TABLE IF NOT EXISTS Group_dir
 
 const std::string CREATE_TABLE_AUTH_USER_FILES = "CREATE TABLE IF NOT EXISTS Auth_user_files("
                                                  "user_id SERIAL REFERENCES Users(id), upload_date DATE DEFAULT CURRENT_DATE, "
-                                                 "dir_path TEXT REFERENCES Person_dir(dir_path), "
-                                                 "user_filename TEXT);";
+                                                 "dir_path TEXT, user_filename TEXT);";
 
 ///---Unauth_mode---///
 

@@ -7,9 +7,8 @@ int main() {
 
     database_configuration_t config = {.user = USER, .password = PASSWORD, .host = HOST, .port = PORT, .dbname = "vvti"};
 
-    DataBase db;
-    DataBase db_1(config);
-    db = db_1;
+    DataBase db(config);
+//    DataBase db_1(config);
 
     db.init();
 //     db.not_auth_mode.add_file("first_file", "pass1");
@@ -21,7 +20,7 @@ int main() {
     // db.not_auth_mode.delete_files_by_date("2021-12-01");
 
     // std::cout << db.reg_auth.is_email_free("email") << "\n";
-     db.reg_auth.try_register("email", "pass");
+    db.reg_auth.try_register("email", "pass");
     db.reg_auth.try_register("email1", "pass");
     db.reg_auth.try_register("email2", "pass");
     db.reg_auth.try_register("email3", "pass");
