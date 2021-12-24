@@ -15,17 +15,18 @@ public:
     handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker);
 
 private:
-    bool download_file_from_server(const std::string &file_id, const std::string &opt_pswd, HttpResponse &response,
+    bool download_file_from_server(const std::string &file_id, const std::string &opt_password, HttpResponse &response,
                                    FsWorker &fs_worker, DataBase &db_worker);
 
     bool
     upload_file_to_server(const std::string &filename, const std::string &opt_pswd, const std::string &file_content,
                           HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker);
 
-    HttpResponse create_response(HttpStatusCode status, std::map <std::string, std::string> &&additional_headers = {},
-                                 std::string &&body = {});
+    static HttpResponse
+    create_response(HttpStatusCode status, std::map<std::string, std::string> &&additional_headers = {},
+                    std::string &&body = {});
 
-    void write_to_logs(std::string message, bl::trivial::severity_level lvl);
+    void write_to_logs(const std::string &message, bl::trivial::severity_level lvl);
 
     std::vector<Log *> &vector_logs;
 };

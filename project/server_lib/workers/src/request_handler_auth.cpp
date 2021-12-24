@@ -9,47 +9,61 @@
 #include <utility>
 #include <string>
 #include <jwt/jwt.hpp>
+#include <http_headers.h>
 
 const std::string RequestHandlerAuth::jwt_key = "asWt5e^%6*7E";
 const std::string RequestHandlerAuth::jwt_algorithm = "HS256";
+
+static std::string file_to_string(std::ifstream &&file) {
+    if (!file.is_open()) {
+        return {};
+    }
+    file.seekg(0, std::ios::end);
+    size_t file_size = file.tellg();
+    std::string str;
+    str.resize(file_size);
+    file.seekg(0);
+    file.read(&str[0], static_cast<std::streamsize>( file_size));
+    return str;
+}
 
 RequestHandlerAuth::RequestHandlerAuth(std::vector<Log *> &vector_logs) : vector_logs(vector_logs) {}
 
 HttpResponse
 RequestHandlerAuth::create_response(HttpStatusCode status, std::map<std::string, std::string> &&additional_headers,
                                     std::string &&body) {
-    additional_headers.merge(std::map<std::string, std::string>{{"content-length", std::to_string(body.size())},
-                                                                {"status",         std::to_string(status)},
-                                                                {"message",        get_message(status)}});
+    additional_headers.merge(std::map<std::string, std::string>{{http_headers::content_length, std::to_string(body.size())},
+                                                                {http_headers::status,         std::to_string(status)},
+                                                                {http_headers::message,        get_message(status)}});
     return {std::move(additional_headers), std::move(body), 1, 1, status, get_message(status)};
 }
 
-void RequestHandlerAuth::write_to_logs(std::string message, bl::trivial::severity_level lvl) {
+void RequestHandlerAuth::write_to_logs(const std::string& message, bl::trivial::severity_level lvl) {
     for (auto &vector_log: this->vector_logs) {
-        vector_log->log(message, lvl);
+        vector_log->log( message, lvl);
     }
 }
 
 void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker,
                                         DataBase &db_worker) {
     auto &request_headers = request.get_headers();
-    auto &work_dir = request_headers["work_directory"];
-    auto &curr_dir = request_headers["current_directory"];
-    auto &command = request_headers["command"];
+    auto &work_dir = request_headers[http_headers::work_directory];
+    auto &curr_dir = request_headers[http_headers::current_directory];
+    auto &command = request_headers[http_headers::command];
 
     write_to_logs("AUTH_HANDLER", ERROR);
 
-    if (command == "register") {
-        register_user(request_headers["email"], request_headers["password"], response, fs_worker, db_worker);
+    if (command == http_commands::signup ) {
+        register_user(request_headers[http_headers::email], request_headers[http_headers::password], response, fs_worker, db_worker);
         return;
     }
 
-    if (command == "login") {
-        login_user(request_headers["email"], request_headers["password"], response, db_worker);
+    if (command == http_commands::login) {
+        login_user(request_headers[http_headers::email], request_headers[http_headers::password], response, db_worker);
         return;
     }
 
-    int id = get_id_from_jwt(request_headers["jwt"]);
+    int id = get_id_from_jwt(request_headers[http_headers::jwt]);
     if (id == -1) {
         response = create_response(HttpStatusCode::Forbidden);
         return;
@@ -65,8 +79,8 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
         work_dir.pop_back();
     }
 
-    std::string abs_work_dir = (std::filesystem::path(request_headers["current_directory"]) /
-                                std::filesystem::path(request_headers["work_directory"]) ).lexically_normal();
+    std::string abs_work_dir = (std::filesystem::path(request_headers[http_headers::current_directory]) /
+                                std::filesystem::path(request_headers[http_headers::work_directory]) ).lexically_normal();
 
     if (abs_work_dir.ends_with('/')) {
         abs_work_dir.pop_back();
@@ -74,42 +88,41 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
 
     write_to_logs(abs_work_dir, ERROR);
 
-    if (command == "ls") {
+    if (command == http_commands::get_dirs_content ) {
         get_user_dir_list_files(id, abs_work_dir, response, db_worker);
         return;
     }
 
-    if (command == "cd") {
+    if (command == http_commands::change_directory ) {
         change_user_dir(id, abs_work_dir, response, db_worker);
         return;
     }
 
-    if (command == "mkdir") {
+    if (command == http_commands::mkdir ) {
         make_user_subdir(id, abs_work_dir, response, fs_worker, db_worker);
         return;
     }
 
-    if (command == "rmdir") {
+    if (command == http_commands::rmdir) {
         remove_user_subdir(id, abs_work_dir, response, fs_worker, db_worker);
         return;
     }
 
-        if (request_headers["command"] == "download") {
-            download_file_from_server(id, abs_work_dir ,request_headers["filename"], response, fs_worker );
+        if (command == http_commands::download ) {
+            download_file_from_server(id, abs_work_dir ,request_headers[http_headers::filename], response, fs_worker );
             return;
         }
 
-    if (request_headers["command"] == "upload") {
-        upload_file_to_server(id, abs_work_dir, request_headers["filename"], request.get_body(), response, fs_worker,
+    if (command == http_commands::upload) {
+        upload_file_to_server(id, abs_work_dir, request_headers[http_headers::filename], request.get_body(), response, fs_worker,
                               db_worker);
         return;
     }
 
     response = create_response(HttpStatusCode::BadRequest, {});
-    return;
 }
 
-void RequestHandlerAuth::get_user_dir_list_files(int id, const std::string &work_dir, HttpResponse &response,
+void RequestHandlerAuth::get_user_dir_list_files(int id,const std::filesystem::path &work_dir, HttpResponse &response,
                                                  DataBase &db_worker) {
     try {
         write_to_logs(work_dir, ERROR);
@@ -125,10 +138,10 @@ void RequestHandlerAuth::get_user_dir_list_files(int id, const std::string &work
         write_to_logs(e, ERROR);
     }
     write_to_logs(std::to_string(__LINE__), ERROR);
-    response = create_response(HttpStatusCode::InternalServerError, {{"command", "ls"}});
+    response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::get_dirs_content}});
 }
 
-void RequestHandlerAuth::change_user_dir(int id, const std::string &work_dir, HttpResponse &response,
+void RequestHandlerAuth::change_user_dir(int id,const std::filesystem::path &work_dir, HttpResponse &response,
                                          DataBase &db_worker) {
     try {
         if (!db_worker.single_auth_mode.is_dir_name_free(id, work_dir)) {
@@ -139,45 +152,45 @@ void RequestHandlerAuth::change_user_dir(int id, const std::string &work_dir, Ht
     }
     catch (const std::string &e) {
         write_to_logs(e, ERROR);
-        response = create_response(HttpStatusCode::InternalServerError, {{"command", "cd"}});
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::change_directory}});
     }
 }
 
 
-void RequestHandlerAuth::make_user_subdir(int id, const std::string &work_dir,
+void RequestHandlerAuth::make_user_subdir(int id, const std::filesystem::path &work_dir,
                                           HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker) {
-//    write_to_logs(std::to_string(__LINE__), ERROR);
-//    try {
-//        //TODO: удалить проверку, когда Андрей сделает  BOOL create_directory()
-//        if (!db_worker.single_auth_mode.is_dir_name_free(id, work_dir)) {
-//            write_to_logs(std::to_string(__LINE__), ERROR);
-//            response = create_response(HttpStatusCode::Conflict);
-//        }
-//        write_to_logs(std::to_string(__LINE__), ERROR);
-//        db_worker.single_auth_mode.create_directory(id, work_dir);
-//    }
-//    catch (const std::string &e) {
-//        write_to_logs(std::to_string(__LINE__), ERROR);
-//        write_to_logs(e, ERROR);
-//        response = create_response(HttpStatusCode::InternalServerError);
-//    }
-//
-//    write_to_logs(fs_worker.auth_usr.get_root(), ERROR);
-//    write_to_logs(std::to_string(id), ERROR);
-//    write_to_logs(work_dir, ERROR);
-//    //TODO: curr_dir+ '/'  + work_dir ИЛИ  curr_dir+ '/'  + work_dir
-//    if (!fs_worker.auth_usr.make_subdir(work_dir, std::to_string(id))) {
-//        write_to_logs(std::to_string(__LINE__), ERROR);
-//        write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-//        response = create_response(HttpStatusCode::InternalServerError);
-//        return;
-//    }
+    write_to_logs(std::to_string(__LINE__), ERROR);
+    try {
+        //TODO: удалить проверку, когда Андрей сделает  BOOL create_directory()
+        if (!db_worker.single_auth_mode.is_dir_name_free(id, work_dir)) {
+            write_to_logs(std::to_string(__LINE__), ERROR);
+            response = create_response(HttpStatusCode::Conflict);
+        }
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        db_worker.single_auth_mode.create_directory(id, work_dir.parent_path(), work_dir.filename());
+    }
+    catch (const std::string &e) {
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        write_to_logs(e, ERROR);
+        response = create_response(HttpStatusCode::InternalServerError);
+    }
+
+    write_to_logs(fs_worker.auth_usr.get_root(), ERROR);
+    write_to_logs(std::to_string(id), ERROR);
+    write_to_logs(work_dir, ERROR);
+    //TODO: curr_dir+ '/'  + work_dir ИЛИ  curr_dir+ '/'  + work_dir
+    if (!fs_worker.auth_usr.make_subdir(work_dir, std::to_string(id))) {
+        write_to_logs(std::to_string(__LINE__), ERROR);
+        write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
+        response = create_response(HttpStatusCode::InternalServerError);
+        return;
+    }
 
     write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-    response = create_response(HttpStatusCode::OK, {{"command", "mkdir"}});
+    response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::mkdir}});
 }
 
-void RequestHandlerAuth::remove_user_subdir(int id, const std::string &work_dir,
+void RequestHandlerAuth::remove_user_subdir(int id, const std::filesystem::path &work_dir,
                                             HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker) {
     write_to_logs(std::to_string(__LINE__), ERROR);
     if (work_dir.empty() || work_dir == "/") {
@@ -204,7 +217,7 @@ void RequestHandlerAuth::remove_user_subdir(int id, const std::string &work_dir,
     }
 
     write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-    response = create_response(HttpStatusCode::OK, {{"command", "rmdir"}});
+    response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::rmdir}});
 }
 
 
@@ -253,7 +266,7 @@ void RequestHandlerAuth::register_user(const std::string &email, const std::stri
     }
 
     write_to_logs(std::to_string(__LINE__), ERROR);
-    response = create_response(HttpStatusCode::OK, {{"jwt", jwt}, {"command", "register"}});
+    response = create_response(HttpStatusCode::OK, {{http_headers::jwt, jwt}, {http_headers::command, http_commands::signup}});
 }
 
 void RequestHandlerAuth::login_user(const std::string &email, const std::string &password, HttpResponse &response,
@@ -277,7 +290,7 @@ void RequestHandlerAuth::login_user(const std::string &email, const std::string 
         response = create_response(HttpStatusCode::InternalServerError);
     }
 
-    response = create_response(HttpStatusCode::OK, {{"jwt", jwt}, {"command", "login"}});
+    response = create_response(HttpStatusCode::OK, {{http_headers::jwt, jwt}, {http_headers::command, http_commands::login}});
 }
 
 std::string RequestHandlerAuth::create_jwt(int id) {
@@ -291,10 +304,10 @@ int RequestHandlerAuth::get_id_from_jwt(const std::string &jwt) {
     using namespace jwt::params;
     std::error_code ec;
     auto jwt_decoded_obj = jwt::decode(jwt, algorithms({jwt_algorithm}), ec, secret(jwt_key));
-    return ec ? -1 : std::stoi(jwt_decoded_obj.payload().get_claim_value<std::string>("id"));
+    return bool(ec) ? -1 : std::stoi(jwt_decoded_obj.payload().get_claim_value<std::string>("id"));
 }
 
-bool RequestHandlerAuth::download_file_from_server(int id, const std::string &work_dir, const std::string &filename,
+bool RequestHandlerAuth::download_file_from_server(int id, const std::filesystem::path &work_dir,const std::filesystem::path &filename,
                                                    HttpResponse &response, FsWorker &fs_worker) {
     write_to_logs(std::to_string(__LINE__), ERROR);
     write_to_logs(static_cast<std::filesystem::path>(work_dir) / filename, ERROR);
@@ -304,18 +317,18 @@ bool RequestHandlerAuth::download_file_from_server(int id, const std::string &wo
 
     if (file_content.empty()) {
         write_to_logs(std::to_string(__LINE__), ERROR);
-        response = create_response(HttpStatusCode::InternalServerError, {{"command", "download"}});
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::download}});
         return false;
     }
     write_to_logs(std::to_string(__LINE__), ERROR);
-    response = create_response(HttpStatusCode::OK, {{"filename", filename},
-                                                    {"command",  "download"}}, std::move(file_content));
+    response = create_response(HttpStatusCode::OK, {{http_headers::filename, filename},
+                                                    {http_headers::command,  http_commands::download}}, std::move(file_content));
     return true;
 }
 
 
-void RequestHandlerAuth::upload_file_to_server(int id, const std::string &work_dir, const std::string &filename,
-                                               const std::string &file, HttpResponse &response,
+void RequestHandlerAuth::upload_file_to_server(int id, const std::filesystem::path &work_dir, const std::filesystem::path & filename,
+                                               const std::string &file_content, HttpResponse &response,
                                                FsWorker &fs_worker, DataBase &db_worker) {
     try {
         write_to_logs(std::to_string(__LINE__), ERROR);
@@ -330,31 +343,30 @@ void RequestHandlerAuth::upload_file_to_server(int id, const std::string &work_d
     catch (const std::string &error_msg) {
         write_to_logs(error_msg, ERROR);
         write_to_logs(std::to_string(__LINE__), ERROR);
-        response = create_response(HttpStatusCode::InternalServerError, {{"command", "upload"}});
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::upload}});
         return;
     }
 
     catch (const std::string error_msg) {
         write_to_logs(error_msg, ERROR);
         write_to_logs(std::to_string(__LINE__), ERROR);
-        response = create_response(HttpStatusCode::InternalServerError, {{"command", "upload"}});
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::upload}});
         return;
     }
 
     catch (const char *error_msg) {
         write_to_logs(std::string(error_msg), ERROR);
         write_to_logs(std::to_string(__LINE__), ERROR);
-        response = create_response(HttpStatusCode::InternalServerError, {{"command", "upload"}});
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::upload}});
         return;
     }
 
-    if (!fs_worker.auth_usr.write_to_file(file, static_cast<std::filesystem::path>(work_dir) / filename, std::to_string(id))) {
+    if (!fs_worker.auth_usr.write_to_file(file_content, static_cast<std::filesystem::path>(work_dir) / filename, std::to_string(id))) {
         db_worker.single_auth_mode.delete_file(id, work_dir, filename);
         write_to_logs(fs_worker.auth_usr.err_code.message(), ERROR);
-        response = create_response(HttpStatusCode::InternalServerError, {{"command", "upload"}});
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::upload}});
         return;
     }
 
-    response = create_response(HttpStatusCode::OK, {{"command", "upload"}}, {});
-    return;
+    response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::upload}}, {});
 }

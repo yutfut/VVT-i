@@ -36,9 +36,9 @@ public:
 
     connection_status_t connection_processing();
 
-    int get_socket();
+    int get_socket() const;
 
-    void write_to_logs(std::string message, bl::trivial::severity_level lvl);
+    void write_to_logs(const std::string& message, bl::trivial::severity_level lvl);
 
     void set_socket(int socket);
 

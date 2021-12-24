@@ -5,6 +5,7 @@
 #include <mailio/smtp.hpp>
 #include <fmt/core.h>
 #include <request_handler_auth.h>
+#include <http_headers.h>
 
 #define CLIENT_SEC_TIMEOUT 180
 #define LENGTH_LINE_FOR_RESERVE 256
@@ -46,9 +47,7 @@ connection_status_t ClientConnection::connection_processing() {
     }
 
     if (this->stage == HANDLE_REQUEST) {
-        if (this->handle_request()) {
-            this->stage = SEND_RESPONSE;
-        }
+        this->stage = SEND_RESPONSE;
     }
 
     if (this->stage == SEND_RESPONSE) {
@@ -104,8 +103,8 @@ bool ClientConnection::handle_request() {
 
     auto &request_headers = this->request.get_headers();
     //TODO: или пробельное??
-    write_to_logs(request_headers["command"], ERROR);
-    if (!request_headers["jwt"].empty() || (request_headers["command"] == "register") || (request_headers["command"] == "login")) {
+    write_to_logs(request_headers[http_headers::command], ERROR);
+    if (!request_headers[http_headers::jwt].empty() || (request_headers[http_headers::command] == "register") || (request_headers[http_headers::command] == "login")) {
         RequestHandlerAuth handler(vector_logs);
         handler.handle_request(request, response, fs_worker, db_worker);
     } else {
@@ -122,9 +121,9 @@ bool ClientConnection::handle_request() {
 
     write_to_logs("----------------END OF ANSWER---------------", ERROR);
 
-    write_to_logs(this->response.get_headers()["status"], ERROR);
+    write_to_logs(this->response.get_headers()[http_headers::status], ERROR);
 
-    if (this->response.get_headers()["status"] != "200") {
+    if (this->response.get_headers()[http_headers::status] != "200") {
         return true;
     }
 
@@ -150,16 +149,16 @@ bool ClientConnection::send_message_on_email(size_t step) {
 
         std::ifstream file;
 
-        if (this->request.get_headers()["command"] == "upload") {
+        if (this->request.get_headers()[http_headers::command] == "upload") {
             message.subject("Successfull upload");
 
-            if (this->request.get_headers().find("content-length") != this->request.get_headers().end() &&
-                !this->request.get_headers()["jwt"].empty()) {
+            if (this->request.get_headers().find(http_headers::content_length) != this->request.get_headers().end() &&
+                !this->request.get_headers()[http_headers::jwt].empty()) {
                 file.open("./static/auth_code.html");
             } else {
                 file.open("./static/not_auth_code.html");
             }
-        } else if (this->request.get_headers()["command"] == "register") {
+        } else if (this->request.get_headers()[http_headers::command] == "register") {
             message.subject("Successfull registration");
             file.open("./static/registration.html");
         }
@@ -173,15 +172,15 @@ bool ClientConnection::send_message_on_email(size_t step) {
         }
         file.close();
 
-        if (this->request.get_headers()["command"] == "upload") {
-            if (this->request.get_headers().find("content-length") != this->request.get_headers().end() &&
-                !this->request.get_headers()["jwt"].empty()) {
-                html = fmt::format(html, this->request.get_headers()["filename"]);
+        if (this->request.get_headers()[http_headers::command] == "upload") {
+            if (this->request.get_headers().find(http_headers::content_length) != this->request.get_headers().end() &&
+                !this->request.get_headers()[http_headers::jwt].empty()) {
+                html = fmt::format(html, this->request.get_headers()[http_headers::filename]);
             } else {
                 html = fmt::format(
                     html,
-                    this->request.get_headers()["filename"],
-                    this->response.get_headers()["key"]
+                    this->request.get_headers()[http_headers::filename],
+                    this->response.get_headers()[http_headers::key]
                 );
             }
         }
@@ -267,13 +266,13 @@ void ClientConnection::message_to_log(log_messages_t log_type) {
     }
 }
 
-void ClientConnection::write_to_logs(std::string message, bl::trivial::severity_level lvl) {
+void ClientConnection::write_to_logs(const std::string& message, bl::trivial::severity_level lvl) {
     for (auto &vector_log: this->vector_logs) {
         vector_log->log(message, lvl);
     }
 }
 
-int ClientConnection::get_socket() {
+int ClientConnection::get_socket() const {
     return this->sock;
 }
 
