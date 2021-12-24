@@ -9,7 +9,6 @@ void TransactionExec::simple_transaction_exec(const std::string &sql_request, pq
         transaction.commit();
     } catch (const pqxx::sql_error &e) {
         transaction.abort();
-        std::cout << e.what() << "\n";
         throw std::string(e.what());
     }
 }
