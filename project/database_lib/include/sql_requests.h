@@ -62,7 +62,7 @@ const std::string ADD_AUTH_USER_FILE = "INSERT INTO Auth_user_files(user_id, dir
 
 const std::string DELETE_AUTH_USER_FILE = "DELETE FROM Auth_user_files WHERE user_id = {0} AND dir_path = '{1}' AND user_filename = '{2}';";
 
-const std::string DELETE_ALL_FILES_IN_DIR = "DELETE FROM Auth_user_files WHERE user_id = {0} AND dir_path = '{1}%';";
+const std::string DELETE_ALL_FILES_IN_DIR = "DELETE FROM Auth_user_files WHERE user_id = {0} AND dir_path LIKE '{1}%';";
 
 const std::string DELETE_ALL_DIRS_IN_DIR = "DELETE FROM Person_dir WHERE user_id = {0} AND dir_path LIKE '{1}%';";
 

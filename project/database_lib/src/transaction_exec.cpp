@@ -100,6 +100,10 @@ std::string TransactionExec::trans_ls_exec(const std::string &sql_request_file,
                                      get_name_dir(res[i][0].as<std::string>()), res[i][1].as<std::string>());
         }
 
+        if (ls_result.empty()) {
+            ls_result = ".\n..\n";
+        }
+
         return ls_result;
 
     } catch (const pqxx::sql_error &e) {
