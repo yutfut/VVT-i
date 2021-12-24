@@ -25,6 +25,8 @@ public:
 
     int init();
 
+    DataBaseConnection get_connection();
+
     NotAuthMode not_auth_mode;
     RegAuth reg_auth;
     SingleAuthMode single_auth_mode;

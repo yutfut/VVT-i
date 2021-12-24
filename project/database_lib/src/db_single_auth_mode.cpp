@@ -85,7 +85,7 @@ bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path, const std::
     }
 
     simple_transaction_exec(fmt::format(DELETE_ALL_FILES_IN_DIR, user_id, dir_path + separator + dir_name), connection);
-    simple_transaction_exec(fmt::format(COMMAND_RMDIR, user_id, dir_path + separator + dir_name), connection);
+    simple_transaction_exec(fmt::format(DELETE_ALL_DIRS_IN_DIR, user_id, dir_path + separator + dir_name), connection);
 
     return true;
 }

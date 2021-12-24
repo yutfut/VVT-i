@@ -35,3 +35,7 @@ int DataBase::init() {
 
     return 0;
 }
+
+DataBaseConnection DataBase::get_connection() {
+    return connection;
+}

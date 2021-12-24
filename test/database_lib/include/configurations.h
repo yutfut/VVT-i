@@ -2,7 +2,6 @@
 #define PROJECTNAME_CONFIGURATIONS_H
 
 #include <gtest/gtest.h>
-#include <ctime>
 #include "data_base.h"
 #include "library_list.h"
 #include "database_connection.h"
@@ -11,7 +10,7 @@
 #include "db_single_auth_mode.h"
 
 
-const database_configuration_t VVTI_CONF = {.user= "postgres",
+const database_configuration_t VALID_CONF = {.user= "postgres",
         .password = "postgres",
         .host = "localhost",
         .port = "5432",

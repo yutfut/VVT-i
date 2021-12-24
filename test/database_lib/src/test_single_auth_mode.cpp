@@ -1,19 +1,14 @@
 #include "../include/configurations.h"
+#include "../include/service_module.h"
 
 TEST(DATA_BASE_TEST, WORK_WITH_REGULAR_FILES) {
 
     check_and_create_db();
 
-    DataBase db(VVTI_CONF);
+    DataBase db(VALID_CONF);
     db.init();
 
-
-    std::time_t t = std::time(0);   // get time now
-    std::tm *now = std::localtime(&t);
-    std::string curr_date;
-    curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
-                 + "-" + std::to_string(now->tm_mday);
-
+    std::string curr_date = get_current_date();
 
     auto id = db.reg_auth.try_register("torrent@gmail.com", "new_pass");
 
