@@ -17,8 +17,7 @@ extern bool is_soft_reload;
 class WorkerProcess {
 public:
 
-    explicit WorkerProcess(int listen_sock, class ServerSettings *server_settings, std::vector<Log *> &vector_logs,
-                           const std::filesystem::path &fs_worker, const database_t &db_worker);
+    explicit WorkerProcess(int listen_sock, class ServerSettings *server_settings, std::vector<Log *> &vector_logs);
 
     ~WorkerProcess() = default;
 
@@ -50,5 +49,4 @@ private:
     FsWorker fs_worker;
 
     DataBase db_worker;
-
 };

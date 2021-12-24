@@ -24,11 +24,6 @@ Server::Server(const std::string &config_filename) {
     this->vector_logs.push_back(&error_log);
     this->vector_logs.push_back(&access_log);
 
-    fs_root_path = server.get_fs_root();
-    db_configuration = server.get_database();
-    write_to_logs(fs_root_path, ERROR);
-    write_to_logs(db_configuration.user, ERROR);
-
     this->write_to_logs("SERVER STARTING...", INFO);
 }
 
@@ -145,7 +140,7 @@ bool Server::add_work_processes() {
         if (pid != 0) {
             this->workers_pid.push_back(pid);
         } else {
-            WorkerProcess worker(this->listen_sock, &server, vector_logs, fs_root_path, db_configuration);
+            WorkerProcess worker(this->listen_sock, &server, vector_logs);
             worker.run();
             break;
         }

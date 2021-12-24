@@ -99,7 +99,4 @@ private:
 
     MainServerSettings settings;
 
-    std::filesystem::path fs_root_path;
-
-    database_t db_configuration;
 };
