@@ -5,7 +5,7 @@
 class DataBaseConnection {
 public:
 
-    DataBaseConnection() : conn(nullptr) {};
+    DataBaseConnection() : conn(nullptr), user(""), password(""), host(""), port(""), dbname("") {};
 
     explicit DataBaseConnection(const database_configuration_t &config);
 
@@ -27,5 +27,9 @@ private:
 
     pqxx::connection *conn;
 
-    std::string user, password, port, dbname, host;
+    std::string user;
+    std::string password;
+    std::string host;
+    std::string port;
+    std::string dbname;
 };

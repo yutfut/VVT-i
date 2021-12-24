@@ -1,0 +1,78 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on: push
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  CI:
+    name: Run CI
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name : Install libraries and packages
+        run : |
+          sudo apt-get install -y libgtest-dev
+          sudo apt install postgresql postgresql-contrib
+          sudo add-apt-repository universe
+          sudo apt update
+          sudo apt install libfmt-dev
+          sudo apt install libpqxx-dev
+          sudo apt-get install lcov
+
+      - name : Check style code
+        run : |
+          sudo apt-get install -y cppcheck
+          cppcheck --enable=all --enable=warning,style,performance,portability --suppress=missingIncludeSystem . # --check-config
+
+      - name : Building
+        run : |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          cd ..
+
+      - name: Unit-tests DataBase
+        run: |
+          cd build
+          sudo service postgresql start
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+          ./test/database_lib/gtest.out
+          cd ..
+
+      - name: Coverage DataBase part test
+        run: |
+          mkdir coverage_db && cd coverage_db
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/database_connection.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/data_base.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/db_not_auth_mode.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/db_reg_auth.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/db_single_auth_mode.cpp.gcno
+          gcov ../build/CMakeFiles/database_lib.dir/project/database_lib/src/transaction_exec.cpp.gcno
+          cp -r ../build/CMakeFiles/database_lib.dir/ .
+          cd ..
+          lcov --capture --directory coverage_db/ --output-file database.info
+          genhtml database.info --output-directory coverage_db-report/
+      - name: Archive coverage DataBase part test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Coverage DataBase test
+          path: coverage_db-report/
+
+      - name: Valgrind tests
+        run: |
+          sudo apt-get install -y valgrind
+          mkdir valgrid-output
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/test/database_lib/gtest.out
+      - name: Archive valgrind test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Valgrind test
+          path: valgrid-output/
