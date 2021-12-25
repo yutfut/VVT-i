@@ -1,7 +1,8 @@
 #include "../include/configurations.h"
 #include "../include/service_module.h"
 
-TEST(WORK_WITH_TMP_FILES, WORK_WITH_TMP_FILES) {
+
+TEST(UNAUTH_MODE, WORK_WITH_TMP_FILES) {
 
     check_and_create_db();
 
@@ -27,7 +28,7 @@ TEST(WORK_WITH_TMP_FILES, WORK_WITH_TMP_FILES) {
 }
 
 
-TEST(WORK_WITH_TMP_FILES, ADD_FILES) {
+TEST(UNAUTH_MODE, ADD_FILES) {
     check_and_create_db();
 
     DataBase db(VALID_CONF);
@@ -44,7 +45,7 @@ TEST(WORK_WITH_TMP_FILES, ADD_FILES) {
 }
 
 
-TEST(WORK_WITH_TMP_FILES, VALID_AND_NOT_VALID_ACCESS_DATA) {
+TEST(UNAUTH_MODE, VALID_AND_NOT_VALID_ACCESS_DATA) {
     check_and_create_db();
 
     DataBase db(VALID_CONF);
@@ -60,7 +61,7 @@ TEST(WORK_WITH_TMP_FILES, VALID_AND_NOT_VALID_ACCESS_DATA) {
 }
 
 
-TEST(WORK_WITH_TMP_FILES, DELETE_CERTAIN_FILE) {
+TEST(UNAUTH_MODE, DELETE_CERTAIN_FILE) {
     check_and_create_db();
 
     DataBase db(VALID_CONF);
@@ -74,7 +75,7 @@ TEST(WORK_WITH_TMP_FILES, DELETE_CERTAIN_FILE) {
 }
 
 
-TEST(WORK_WITH_TMP_FILES, DELETE_FILES_BY_DATE) {
+TEST(UNAUTH_MODE, DELETE_FILES_BY_DATE) {
     check_and_create_db();
 
     DataBase db(VALID_CONF);

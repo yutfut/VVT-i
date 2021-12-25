@@ -19,10 +19,6 @@ int DataBase::init() {
 
         transaction.exec(CREATE_TABLE_PERSON_DIR);
 
-        transaction.exec(CREATE_TABLE_GROUPS);
-
-        transaction.exec(CREATE_TABLE_GROUP_DIR);
-
         transaction.exec(CREATE_TABLE_AUTH_USER_FILES);
 
         transaction.exec(CREATE_TABLE_UNAUTH_USER_FILES);
