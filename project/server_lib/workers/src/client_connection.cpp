@@ -119,8 +119,6 @@ bool ClientConnection::send_message_on_email(size_t step) {
         return false;
     }
 
-    write_to_logs("12345", ERROR);
-
     try {
         mailio::message message;
 
