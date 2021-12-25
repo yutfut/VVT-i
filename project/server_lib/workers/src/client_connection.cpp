@@ -47,7 +47,9 @@ connection_status_t ClientConnection::connection_processing() {
     }
 
     if (this->stage == HANDLE_REQUEST) {
+        this->handle_request();
         this->stage = SEND_RESPONSE;
+
     }
 
     if (this->stage == SEND_RESPONSE) {
@@ -68,7 +70,7 @@ bool ClientConnection::get_request() {
     char last_char;
     std::string line;
 
-    write_to_logs(std::to_string(__LINE__), ERROR);
+
 
     line.reserve(LENGTH_LINE_FOR_RESERVE);
     while (read(this->sock, &last_char, sizeof(char)) == sizeof(char)) {
@@ -80,12 +82,12 @@ bool ClientConnection::get_request() {
         }
         has_read_data = true;
     }
-    write_to_logs(std::to_string(__LINE__), ERROR);
+
 
     if (this->request.requst_ended()) {
         return true;
     }
-    write_to_logs(std::to_string(__LINE__), ERROR);
+
 
     if (has_read_data) {
         this->timeout = clock();
@@ -93,18 +95,11 @@ bool ClientConnection::get_request() {
     return false;
 }
 
-bool ClientConnection::handle_request() {
-    write_to_logs(std::to_string(__LINE__), ERROR);
-    write_to_logs("-----------------THE REQUEST---------------", ERROR);
-    std::for_each(request.get_headers().begin(), request.get_headers().end(),
-                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
-    write_to_logs(request.get_body(), ERROR);
-    write_to_logs("----------------END OF REQUEST---------------", ERROR);
+void ClientConnection::handle_request() {
 
     auto &request_headers = this->request.get_headers();
-    //TODO: или пробельное??
-    write_to_logs(request_headers[http_headers::command], ERROR);
-    if (!request_headers[http_headers::jwt].empty() || (request_headers[http_headers::command] == "register") || (request_headers[http_headers::command] == "login")) {
+    if (!request_headers[http_headers::jwt].empty() || (request_headers[http_headers::command] == "register") ||
+        (request_headers[http_headers::command] == "login")) {
         RequestHandlerAuth handler(vector_logs);
         handler.handle_request(request, response, fs_worker, db_worker);
     } else {
@@ -112,23 +107,11 @@ bool ClientConnection::handle_request() {
         handler.handle_request(request, response, fs_worker, db_worker);
     }
 
-    write_to_logs(std::to_string(__LINE__), ERROR);
-    write_to_logs("----------------THE ANSWER---------------", ERROR);
-    std::for_each(response.get_headers().begin(), response.get_headers().end(),
-                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
-    write_to_logs(response.get_body(), ERROR);
-    write_to_logs(std::to_string(response.get_body().size()), ERROR);
-
-    write_to_logs("----------------END OF ANSWER---------------", ERROR);
-
-    write_to_logs(this->response.get_headers()[http_headers::status], ERROR);
-
     if (this->response.get_headers()[http_headers::status] != "200") {
-        return true;
+        return;
     }
 
     this->send_message_on_email(0);
-    return true;
 }
 
 bool ClientConnection::send_message_on_email(size_t step) {
@@ -138,8 +121,7 @@ bool ClientConnection::send_message_on_email(size_t step) {
 
     write_to_logs("12345", ERROR);
 
-    try
-    {
+    try {
         mailio::message message;
 
         message.from(mailio::mail_address("VVTI", "vvticlient@gmail.com"));
@@ -166,8 +148,7 @@ bool ClientConnection::send_message_on_email(size_t step) {
         std::string html;
 
         std::string line;
-        while(std::getline(file, line))
-        {
+        while (std::getline(file, line)) {
             html.append(line + "\r\n");
         }
         file.close();
@@ -178,9 +159,9 @@ bool ClientConnection::send_message_on_email(size_t step) {
                 html = fmt::format(html, this->request.get_headers()[http_headers::filename]);
             } else {
                 html = fmt::format(
-                    html,
-                    this->request.get_headers()[http_headers::filename],
-                    this->response.get_headers()[http_headers::key]
+                        html,
+                        this->request.get_headers()[http_headers::filename],
+                        this->response.get_headers()[http_headers::key]
                 );
             }
         }
@@ -192,12 +173,10 @@ bool ClientConnection::send_message_on_email(size_t step) {
         conn.authenticate("vvticlient@gmail.com", "ycfjgpxboqpegxrx", mailio::smtps::auth_method_t::START_TLS);
         conn.submit(message);
     }
-    catch (mailio::smtp_error& exc)
-    {
+    catch (mailio::smtp_error &exc) {
         return send_message_on_email(step + 1);
     }
-    catch (mailio::dialog_error& exc)
-    {
+    catch (mailio::dialog_error &exc) {
         return send_message_on_email(step + 1);
     }
 
@@ -266,7 +245,7 @@ void ClientConnection::message_to_log(log_messages_t log_type) {
     }
 }
 
-void ClientConnection::write_to_logs(const std::string& message, bl::trivial::severity_level lvl) {
+void ClientConnection::write_to_logs(const std::string &message, bl::trivial::severity_level lvl) {
     for (auto &vector_log: this->vector_logs) {
         vector_log->log(message, lvl);
     }

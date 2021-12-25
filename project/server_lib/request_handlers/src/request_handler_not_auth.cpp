@@ -20,23 +20,8 @@ static std::string file_to_string(std::ifstream &&file) {
     return str;
 }
 
-RequestHandlerNotAuth::RequestHandlerNotAuth(std::vector<Log *> &vector_logs) : vector_logs(vector_logs) {}
+RequestHandlerNotAuth::RequestHandlerNotAuth(std::vector<Log *> &vector_logs) : IRequestHandler(vector_logs) {}
 
-HttpResponse
-RequestHandlerNotAuth::create_response(HttpStatusCode status, std::map<std::string, std::string> &&additional_headers,
-                                       std::string &&body) {
-    additional_headers.merge(
-            std::map<std::string, std::string>{{http_headers::content_length, std::to_string(body.size())},
-                                               {http_headers::status,         std::to_string(status)},
-                                               {http_headers::message,        get_message(status)}});
-    return {std::move(additional_headers), std::move(body), 1, 1, status, get_message(status)};
-}
-
-void RequestHandlerNotAuth::write_to_logs(const std::string &message, bl::trivial::severity_level lvl) {
-    for (auto &vector_log: this->vector_logs) {
-        vector_log->log(message, lvl);
-    }
-}
 
 void RequestHandlerNotAuth::handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker,
                                            DataBase &db_worker) {
@@ -62,11 +47,7 @@ RequestHandlerNotAuth::download_file_from_server(const std::string &file_id, con
 
     unauth_file_data_t upload_data;
     try {
-        write_to_logs("__LINE__", ERROR);
-        write_to_logs(std::to_string(__LINE__), ERROR);
         upload_data = db_worker.not_auth_mode.get_upload_file_date(file_id, opt_password);
-        write_to_logs("__LINE__", ERROR);
-        write_to_logs(std::to_string(__LINE__), ERROR);
 
         if (upload_data.filename.empty()) {
             response = create_response(HttpStatusCode::Forbidden, {{http_headers::command, http_commands::download}});
@@ -100,11 +81,8 @@ bool RequestHandlerNotAuth::upload_file_to_server(const std::string &filename, c
                                                   FsWorker &fs_worker, DataBase &db_worker) {
     unauth_file_data_t file_data;
     try {
-        write_to_logs(std::to_string(__LINE__), ERROR);
-        write_to_logs("I GO TO add_unauth_user_file()", ERROR);
         file_data = db_worker.not_auth_mode.add_file(filename, opt_pswd);
-        write_to_logs("I LEAVE add_unauth_user_file()", ERROR);
-        write_to_logs(std::to_string(__LINE__), ERROR);
+
         if (file_data.uuid.empty()) {
             response = create_response(HttpStatusCode::Forbidden, {{http_headers::command, http_commands::upload}});
             return false;

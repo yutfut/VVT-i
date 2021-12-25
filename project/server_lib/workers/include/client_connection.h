@@ -77,7 +77,7 @@ private:
     // Return true if their connection processing stage is finished correctly
     bool get_request();
 
-    bool handle_request();
+    void handle_request();
 
     bool send_message_on_email(size_t step);
 

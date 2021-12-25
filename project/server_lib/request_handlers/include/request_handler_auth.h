@@ -6,13 +6,14 @@
 #include <fs_worker.h>
 #include <data_base.h>
 #include <log.h>
+#include <irequest_handler.h>
 
-class RequestHandlerAuth {
+class RequestHandlerAuth: IRequestHandler {
 public:
-    RequestHandlerAuth(std::vector<Log *> &vector_logs);
+    explicit RequestHandlerAuth(std::vector<Log *> &vector_logs);
 
     void
-    handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker);
+    handle_request(HttpRequest &request, HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker) override;
 
 private:
     void
@@ -34,7 +35,7 @@ private:
     void remove_user_subdir(int id, const std::filesystem::path &work_dir, HttpResponse &response, FsWorker &fs_worker,
                             DataBase &db_worker);
 
-    bool
+    static bool
     download_file_from_server(int id, const std::filesystem::path &work_dir, const std::filesystem::path &filename, HttpResponse &response,
                               FsWorker &fs_worker);
 
@@ -42,17 +43,9 @@ private:
     upload_file_to_server(int id, const std::filesystem::path &work_dir, const std::filesystem::path &filename, const std::string &file,
                           HttpResponse &response, FsWorker &fs_worker, DataBase &db_worker);
 
-    static HttpResponse
-    create_response(HttpStatusCode status, std::map<std::string, std::string> &&additional_headers = {},
-                    std::string &&body = {});
-
-    void write_to_logs(const std::string &message, bl::trivial::severity_level lvl);
-
     static std::string create_jwt(int id);
 
-    int get_id_from_jwt(const std::string &jwt);
-
-    std::vector<Log *> &vector_logs;
+    static int get_id_from_jwt(const std::string &jwt);
 
     static const std::string jwt_key;
     static const std::string jwt_algorithm;

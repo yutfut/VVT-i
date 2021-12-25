@@ -40,7 +40,7 @@ bl::trivial::severity_level Server::cast_types_logs_level(const std::string &lvl
     return ERROR;
 }
 
-void Server::write_to_logs(std::string message, bl::trivial::severity_level lvl) {
+void Server::write_to_logs(const std::string& message, bl::trivial::severity_level lvl) {
     for (auto &vector_log: this->vector_logs) {
         vector_log->log(message, lvl);
     }
@@ -129,7 +129,6 @@ bool Server::add_work_processes() {
     }
 
     this->workers_pid.clear();
-    write_to_logs(std::to_string(count_work_processes), ERROR);
 
     for (int i = 0; i < count_work_processes; ++i) {
         pid_t pid = fork();

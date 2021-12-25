@@ -6,7 +6,7 @@ namespace http_headers {
     const std::string password{"password"};
     const std::string email{"email"};
     const std::string status{"status"};
-    const std::string message{"massage"};
+    const std::string message{"message"};
     const std::string content_length{"content-length"};
     const std::string key{"key"};
     const std::string jwt{"jwt"};
