@@ -93,5 +93,10 @@ int HTTPResponse::parser(std::string &http) {
     if (commands["message"] == "OK") {
         return 0;
     }
+
+    if (commands["message"] == "RENAME" && commands["command"] == "upload") {
+        return 2;
+    }
+
     return -1;
 }

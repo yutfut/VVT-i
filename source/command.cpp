@@ -27,6 +27,26 @@ int upload(const std::string& command, User &user) {
 
     std::string message;
 
+    if (user.get_authorize()) {
+        HTTPRequest::create_message(std::string{},
+                                    std::string{},
+                                    user.get_jwt(),
+                                    user.get_current_directory(),
+                                    std::string{},
+                                    std::string{},
+                                    file_name,
+                                    "upload");
+        std::string http_response = HTTPBase::send(message);
+        if (http_response == "ошибка соединения\n") {
+            return -1;
+        }
+        if (HTTPResponse::parser(http_response) == 2) {
+            std::cout << "Файл с таким названием уже существует\n";
+            std::cout << "Хотите его переименовать? y/n:\t";
+            std::getline (std::cin, file_name);
+        }
+    }
+
     if (!user.get_authorize()) {
         std::string password = check_password_upload();
         message = HTTPRequest::create_message(email,
