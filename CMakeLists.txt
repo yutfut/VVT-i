@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_C_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
 #set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
 
+find_package(Boost REQUIRED COMPONENTS iostreams)
+
 set(SOURCE_DIRECTORY source)
 set(INCLUDE_DIRECTORY include)
 
@@ -19,6 +21,7 @@ add_library(client SHARED ${SOURCE_DIRECTORY}/client.cpp
                           ${SOURCE_DIRECTORY}/http_response.cpp
                           ${SOURCE_DIRECTORY}/password.cpp)
 target_include_directories(client PUBLIC ${INCLUDE_DIRECTORY})
+target_link_libraries(client Boost::iostreams)
 
 add_executable(vvti_client source/main.cpp)
 target_link_libraries(vvti_client client)
