@@ -83,19 +83,23 @@ void Client::run() {
     std::cout << "Welcome to VVTi!" << std::endl;
     std::string command;
 
+    std::vector<std::string> history;
+
     while (true) {
         print(user);
+
         std::getline (std::cin, command);
+
         if (command.empty()) {
             continue;
         }
 
-        Role role = (Role) role_command(command, user);
-        switch (role){
-            case Role::SUCCESS:
+        auto status = (Status) role_command(command, user);
+        switch (status){
+            case Status::SUCCESS:
                 std::cout << "SUCСESS" << std::endl;
                 break;
-            case Role::GOODBYE:
+            case Status::GOODBYE:
                 std::cout << "GOODBYE" << std::endl;
                 return;
             default:

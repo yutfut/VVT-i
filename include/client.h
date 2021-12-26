@@ -34,7 +34,7 @@ private:
 
     std::map <std::string, Commands> commands;
 
-    enum class Role {
+    enum class Status {
         SUCCESS,
         GOODBYE,
     };
