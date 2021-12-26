@@ -1,6 +1,7 @@
 #include "../include/configurations.h"
 
-TEST(INIT_DATA_BASE, NOT_VALID_CONFIG) {
+
+TEST(DATABASE_CONNECTION, NOT_VALID_CONFIG) {
 
     check_and_create_db();
 
@@ -13,7 +14,8 @@ TEST(INIT_DATA_BASE, NOT_VALID_CONFIG) {
                      });
 }
 
-TEST(INIT_DATA_BASE, VALID_CONFIG) {
+
+TEST(DATABASE_CONNECTION, VALID_CONFIG) {
 
     check_and_create_db();
 
@@ -21,7 +23,8 @@ TEST(INIT_DATA_BASE, VALID_CONFIG) {
     EXPECT_EQ(db_2.init(), 0);
 }
 
-TEST(DATA_BASE_TEST, SET_CONNECTION) {
+
+TEST(DATABASE_CONNECTION, SET_CONNECTION) {
 
     check_and_create_db();
 
@@ -32,4 +35,13 @@ TEST(DATA_BASE_TEST, SET_CONNECTION) {
     EXPECT_EQ(db_2.get_connection().get_host(), VALID_CONF.host);
     EXPECT_EQ(db_2.get_connection().get_port(), VALID_CONF.port);
     EXPECT_EQ(db_2.get_connection().get_dbname(), VALID_CONF.dbname);
+}
+
+
+TEST(INIT_DATA_BASE, VALID_CONFIG) {
+
+    check_and_create_db();
+
+    DataBase db_2(VALID_CONF);
+    EXPECT_EQ(db_2.init(), 0);
 }

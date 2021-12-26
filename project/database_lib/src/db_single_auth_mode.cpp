@@ -56,36 +56,26 @@ bool SingleAuthMode::change_filename(int user_id, const std::string &dir_path, c
 }
 
 
-bool SingleAuthMode::create_directory(int user_id, const std::string &dir_path, const std::string &dir_name) {
-    std::string separator;
+bool SingleAuthMode::create_directory(int user_id, const std::string &dir_path) {
 
-    if (dir_path != ROOT_USER_DIR) {
-        separator = "/";
-    }
-
-    if (!is_dir_name_free(user_id, dir_path + separator + dir_name)) {
+    if (!is_dir_name_free(user_id, dir_path)) {
         return false;
     }
 
-    simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path + separator + dir_name), connection);
+    simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path), connection);
 
     return true;
 }
 
 
-bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path, const std::string &dir_name) {
-    std::string separator;
+bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path) {
 
-    if (dir_path != ROOT_USER_DIR) {
-        separator = "/";
-    }
-
-    if (is_dir_name_free(user_id, dir_path + separator + dir_name)) {
+    if (is_dir_name_free(user_id, dir_path)) {
         return false;
     }
 
-    simple_transaction_exec(fmt::format(DELETE_ALL_FILES_IN_DIR, user_id, dir_path + separator + dir_name), connection);
-    simple_transaction_exec(fmt::format(DELETE_ALL_DIRS_IN_DIR, user_id, dir_path + separator + dir_name), connection);
+    simple_transaction_exec(fmt::format(DELETE_ALL_FILES_IN_DIR, user_id, dir_path), connection);
+    simple_transaction_exec(fmt::format(DELETE_ALL_DIRS_IN_DIR, user_id, dir_path), connection);
 
     return true;
 }
@@ -93,7 +83,28 @@ bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path, const std::
 
 std::string SingleAuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
 
-    std::string regex_search_dirs = fmt::format(REGEX_SEARCH_INCLUDE_DIRS, curr_dir_path);
+    if (is_dir_name_free(user_id, curr_dir_path)) {
+        return SUCH_DIR_NOT_EXISTS;
+    }
+
+    std::string regex = ONE_LVL_PATH_REGEX;
+
+    if (curr_dir_path == ROOT_USER_DIR) {
+        regex = ONE_LVL_PATH_REGEX_IN_ROOT;
+    }
+
+    std::string regex_search_dirs = "^" + curr_dir_path + regex;
+
+    if (curr_dir_path == ROOT_USER_DIR) {
+        auto ls_result = trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
+                                       fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);
+
+        if (ls_result == EMPTY_DIR_COUT) {
+            return EMPTY_ROOT_DIR_COUT;
+        }
+
+        return ls_result;
+    }
 
     return trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
                          fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);

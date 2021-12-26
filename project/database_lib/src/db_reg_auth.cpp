@@ -42,3 +42,15 @@ std::string RegAuth::get_email(int user_id) {
 
     return trans_one_string_value_exec(fmt::format(GET_EMAIL_AUTH_USER, user_id), connection);
 }
+
+
+bool RegAuth::delete_user(int user_id) {
+
+    if (is_email_free(get_email(user_id))) {
+        return false;
+    }
+
+    simple_transaction_exec(fmt::format(DELETE_USER, user_id), connection);
+
+    return true;
+}
