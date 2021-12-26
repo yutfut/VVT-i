@@ -7,6 +7,8 @@ set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
 set(CMAKE_C_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
 set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
 
+find_package(Boost REQUIRED COMPONENTS iostreams)
+
 set(SOURCE_DIRECTORY source)
 set(INCLUDE_DIRECTORY include)
 
