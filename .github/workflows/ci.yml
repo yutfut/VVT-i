@@ -19,7 +19,9 @@ jobs:
           cppcheck --enable=warning,style,performance,portability source/ include/
       - name : Building
         run : |
+          ls
           mkdir build
+          ls
           cd build
           sudo apt-get install -y libgtest-dev
           cmake ..

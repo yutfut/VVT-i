@@ -81,7 +81,7 @@ int HTTPResponse::parser(std::string &http) {
         return 0;
     }
 
-    if (commands["message"] == "RENAME" && commands["command"] == "upload") {
+    if (commands["message"] == "RENAME" && commands["command"] == "has") {
         return 2;
     }
 

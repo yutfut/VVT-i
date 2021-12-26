@@ -25,7 +25,7 @@ int upload(const std::string& command, User &user) {
         }
     }
 
-    std::string message;
+    std::string message, actual_file_name;
 
     if (user.get_authorize()) {
         HTTPRequest::create_message(std::string{},
@@ -35,15 +35,21 @@ int upload(const std::string& command, User &user) {
                                     std::string{},
                                     std::string{},
                                     file_name,
-                                    "upload");
+                                    "has");
         std::string http_response = HTTPBase::send(message);
+
         if (http_response == "ошибка соединения\n") {
             return -1;
         }
+
         if (HTTPResponse::parser(http_response) == 2) {
             std::cout << "Файл с таким названием уже существует\n";
             std::cout << "Хотите его переименовать? y/n:\t";
-            std::getline (std::cin, file_name);
+            std::getline (std::cin, actual_file_name);
+
+            if (!actual_file_name.empty()) {
+                file_name = actual_file_name;
+            }
         }
     }
 
