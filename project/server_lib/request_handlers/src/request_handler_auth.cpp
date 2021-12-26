@@ -139,7 +139,7 @@ void RequestHandlerAuth::make_user_subdir(int id, const std::filesystem::path &w
                                           FsWorker &fs_worker, DataBase &db_worker) {
 
     try {
-        if (!db_worker.single_auth_mode.create_directory(id, work_dir.parent_path(), work_dir.filename())) {
+       if (!db_worker.single_auth_mode.create_directory(id, work_dir)) {
             response = create_response(HttpStatusCode::Conflict);
         }
     } catch (const std::string &e) {
@@ -165,7 +165,7 @@ void RequestHandlerAuth::remove_user_subdir(int id, const std::filesystem::path 
     }
 
     try {
-        db_worker.single_auth_mode.rmdir(id, work_dir.parent_path(), work_dir.filename());
+        db_worker.single_auth_mode.rmdir(id, work_dir);
     } catch (const std::string &e) {
         write_to_logs("usr_id " + std::to_string(id) + ": " + e, ERROR);
         response = create_response(HttpStatusCode::InternalServerError);
