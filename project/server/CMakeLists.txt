@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.6)
 
 project(server)
 
-# Set flags for coverage test
-set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
-set(CMAKE_C_FLAGS "-fprofile-arcs -ftest-coverage")
-set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
-
 # Set the 20th standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,7 +23,7 @@ if(Boost_FOUND)
     server_lib
     PUBLIC config/include http/include logs/include main/include workers/include
   )
-  target_link_libraries(server_lib Boost::log Boost::log_setup gcov)
+  target_link_libraries(server_lib Boost::log Boost::log_setup)
 else()
   message(FATAL_ERROR "Boost has not been installed!")
 endif()
