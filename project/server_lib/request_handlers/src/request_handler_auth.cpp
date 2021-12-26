@@ -37,8 +37,6 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
     auto &curr_dir = request_headers[http_headers::current_directory];
     auto &command = request_headers[http_headers::command];
 
-    write_to_logs("AUTH", ERROR);
-
     if (command == http_commands::signup) {
         register_user(request_headers[http_headers::email], request_headers[http_headers::password], response,
                       fs_worker, db_worker);
