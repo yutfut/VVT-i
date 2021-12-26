@@ -93,7 +93,28 @@ bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path, const std::
 
 std::string SingleAuthMode::get_list_files_in_dir(int user_id, const std::string &curr_dir_path) {
 
-    std::string regex_search_dirs = fmt::format(REGEX_SEARCH_INCLUDE_DIRS, curr_dir_path);
+    if (is_dir_name_free(user_id, curr_dir_path)) {
+        return SUCH_DIR_NOT_EXISTS;
+    }
+
+    std::string regex = ONE_LVL_PATH_REGEX;
+
+    if (curr_dir_path == ROOT_USER_DIR) {
+        regex = ONE_LVL_PATH_REGEX_IN_ROOT;
+    }
+
+    std::string regex_search_dirs = "^" + curr_dir_path + regex;
+
+    if (curr_dir_path == ROOT_USER_DIR) {
+        auto ls_result = trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
+                                       fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);
+
+        if (ls_result == EMPTY_DIR_COUT) {
+            return EMPTY_ROOT_DIR_COUT;
+        }
+
+        return ls_result;
+    }
 
     return trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
                          fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);
