@@ -14,9 +14,9 @@ public:
     bool delete_file(int user_id, const std::string &dir_path,
                      const std::string &filename);
 
-    bool create_directory(int user_id, const std::string &dir_path, const std::string &dir_name);
+    bool create_directory(int user_id, const std::string &dir_path);
 
-    bool rmdir(int user_id, const std::string &dir_path, const std::string &dir_name);
+    bool rmdir(int user_id, const std::string &dir_path);
 
     bool change_filename(int user_id, const std::string &dir_path, const std::string
     &old_filename, const std::string &new_filename);

@@ -77,9 +77,9 @@ int main() {
 
     auto def_path = ROOT_USER_DIR;
 
-    db.single_auth_mode.create_directory(id, def_path, "first_dir");
-    db.single_auth_mode.create_directory(id, "/first_dir", "second_dir");
-    db.single_auth_mode.create_directory(id, "/first_dir/second_dir", "third_dir");
+    db.single_auth_mode.create_directory(id, "/first_dir");
+    db.single_auth_mode.create_directory(id, "/first_dir/second_dir");
+    db.single_auth_mode.create_directory(id, "/first_dir/second_dir/third_dir");
 //
 //    db.single_auth_mode.add_file(id, "/", "1.txt");
 //
@@ -100,7 +100,7 @@ int main() {
 
 //    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "..") << "\n";
 
-    std::cout << db.single_auth_mode.rmdir(id, ROOT_USER_DIR, "first_dir") << "\n";
+    std::cout << db.single_auth_mode.rmdir(id, "/first_dir") << "\n";
 
 //    std::string empty_dir = ".\n..\n";
 //

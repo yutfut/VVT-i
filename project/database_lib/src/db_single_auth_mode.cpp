@@ -56,36 +56,26 @@ bool SingleAuthMode::change_filename(int user_id, const std::string &dir_path, c
 }
 
 
-bool SingleAuthMode::create_directory(int user_id, const std::string &dir_path, const std::string &dir_name) {
-    std::string separator;
+bool SingleAuthMode::create_directory(int user_id, const std::string &dir_path) {
 
-    if (dir_path != ROOT_USER_DIR) {
-        separator = "/";
-    }
-
-    if (!is_dir_name_free(user_id, dir_path + separator + dir_name)) {
+    if (!is_dir_name_free(user_id, dir_path)) {
         return false;
     }
 
-    simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path + separator + dir_name), connection);
+    simple_transaction_exec(fmt::format(COMMAND_MKDIR, user_id, dir_path), connection);
 
     return true;
 }
 
 
-bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path, const std::string &dir_name) {
-    std::string separator;
+bool SingleAuthMode::rmdir(int user_id, const std::string &dir_path) {
 
-    if (dir_path != ROOT_USER_DIR) {
-        separator = "/";
-    }
-
-    if (is_dir_name_free(user_id, dir_path + separator + dir_name)) {
+    if (is_dir_name_free(user_id, dir_path)) {
         return false;
     }
 
-    simple_transaction_exec(fmt::format(DELETE_ALL_FILES_IN_DIR, user_id, dir_path + separator + dir_name), connection);
-    simple_transaction_exec(fmt::format(DELETE_ALL_DIRS_IN_DIR, user_id, dir_path + separator + dir_name), connection);
+    simple_transaction_exec(fmt::format(DELETE_ALL_FILES_IN_DIR, user_id, dir_path), connection);
+    simple_transaction_exec(fmt::format(DELETE_ALL_DIRS_IN_DIR, user_id, dir_path), connection);
 
     return true;
 }
