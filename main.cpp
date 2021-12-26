@@ -75,38 +75,36 @@ int main() {
 
     auto id = db.reg_auth.try_register("new_car_sorento_kia@gmail.com", "new_pass");
 
-    auto def_path = ROOT_USER_DIR;
-
     db.single_auth_mode.create_directory(id, "/first_dir");
     db.single_auth_mode.create_directory(id, "/first_dir/second_dir");
     db.single_auth_mode.create_directory(id, "/first_dir/second_dir/third_dir");
-//
-//    db.single_auth_mode.add_file(id, "/", "1.txt");
-//
-//    db.single_auth_mode.add_file(id, "/first_dir", "1.txt");
-//    db.single_auth_mode.add_file(id, "/first_dir", "2.txt");
-//    db.single_auth_mode.add_file(id, "/first_dir/second_dir", "2.txt");
-////    db.single_auth_mode.add_file(id, "/first_dir/second_dir/third_dir", "ERROR.txt");
-//    db.single_auth_mode.add_file(id, "/first_dir", "3.txt");
-//
+
+    db.single_auth_mode.add_file(id, "/", "1.txt");
+
+    db.single_auth_mode.add_file(id, "/first_dir", "1.txt");
+    db.single_auth_mode.add_file(id, "/first_dir", "2.txt");
+    db.single_auth_mode.add_file(id, "/first_dir/second_dir", "2.txt");
+    db.single_auth_mode.add_file(id, "/first_dir/second_dir/third_dir", "ERROR.txt");
+    db.single_auth_mode.add_file(id, "/first_dir", "3.txt");
+
 //    db.single_auth_mode.change_filename(id, "/first_dir", "2.txt", "4.txt");
-//
+
 //    std::string files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL,
-//                                           curr_date, "1.txt", "3.txt", "4.txt");
+//                                           curr_date, "1.txt", "2.txt", "3.txt");
 //
 //    std::string dirs_in_dir = fmt::format("d{0}  {2}  {1}\n", BASE_ACCESS_LVL, curr_date, "second_dir");
 
     std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/") << "\n";
 
-//    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "..") << "\n";
+    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "..") << "\n";
 
-    std::cout << db.single_auth_mode.rmdir(id, "/first_dir") << "\n";
+//    std::cout << db.single_auth_mode.rmdir(id, "/first_dir") << "\n";
 
 //    std::string empty_dir = ".\n..\n";
 //
-//    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/") << "\n";
+    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/first_dir") << "\n";
 
-    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/") << "\n";
+    std::cout << db.single_auth_mode.get_list_files_in_dir(id, "/first_dir/second_dir") << "\n";
 
     return 0;
 }

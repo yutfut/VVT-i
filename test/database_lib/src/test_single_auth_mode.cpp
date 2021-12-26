@@ -134,15 +134,15 @@ TEST(SINGLE_AUTH_MODE, LS_AND_RMDIR_COMMANDS) {
 
     std::string files_in_dir = fmt::format(LS_FILES_PATTERN, BASE_ACCESS_LVL, "2.txt", curr_date);
     std::string dirs_in_dir;
-    EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/first_dir/second_dir"), files_in_dir + dirs_in_dir);
+    EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/first_dir/second_dir"), ".\n..\n" + files_in_dir);
 
 
     files_in_dir = fmt::format("-{0}  {2}  {1}\n-{0}  {3}  {1}\n-{0}  {4}  {1}\n", BASE_ACCESS_LVL,
                                            curr_date, "1.txt", "2.txt", "3.txt");
     dirs_in_dir = fmt::format(LS_DIRS_PATTERN, BASE_ACCESS_LVL, "second_dir", curr_date);
-    EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/first_dir"), files_in_dir + dirs_in_dir);
+    EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/first_dir"), ".\n..\n" + files_in_dir + dirs_in_dir);
 
 
     EXPECT_EQ(db.single_auth_mode.rmdir(id, "/first_dir"), true);
-    EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/"), EMPTY_ROOT_DIR_COUT);
+    EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/"), DEFAULT_ROOT_COUT);
 }
