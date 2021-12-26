@@ -4,8 +4,13 @@
 
 #include "http_response.h"
 
+#include <sstream>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
 std::string check_exist_file(const std::string& file_name) {
-    bool exist = std::__fs::filesystem::exists(file_name);
+    bool exist = std::filesystem::exists(file_name);
     if (exist) {
         std::cout << "такой файл уже существует";
         std::string yes_or_no, new_file_name;
@@ -26,7 +31,15 @@ void create_file(const std::string &file_name, const std::string &message) {
     std::ofstream out(actual_file_name);
 
     if (out.is_open()) {
-        out << message;
+        std::stringstream ss, comp, decomp;
+        ss << message;
+
+        boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf;
+        inbuf.push(boost::iostreams::gzip_decompressor());
+        inbuf.push(ss);
+        boost::iostreams::copy(inbuf, decomp);
+
+        out << decomp.str();
     } else {
         std::cout << "ошибка открытия файла\n";
     }
