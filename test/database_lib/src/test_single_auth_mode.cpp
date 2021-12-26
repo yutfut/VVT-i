@@ -138,7 +138,7 @@ TEST(SINGLE_AUTH_MODE, LS_AND_RMDIR_COMMANDS) {
 
     EXPECT_EQ(db.single_auth_mode.get_list_files_in_dir(id, "/first_dir"), files_in_dir + dirs_in_dir);
 
-    EXPECT_EQ(db.single_auth_mode.rmdir(id, "/first", "first_dir"), true);
+    EXPECT_EQ(db.single_auth_mode.rmdir(id, "/", "first_dir"), true);
 
     std::string empty_dir = ".\n";
 
