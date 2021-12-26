@@ -15,7 +15,7 @@ protected:
     static std::string trans_one_string_value_exec(const std::string &sql_request, pqxx::connection *connection);
 
     std::string trans_ls_exec(const std::string &sql_request_file,
-                              const std::string &sql_request_dir, pqxx::connection *connection);
+                              const std::string &sql_request_dir, DirType dir_type, pqxx::connection *connection);
 
 private:
 

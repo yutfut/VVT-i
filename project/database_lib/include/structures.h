@@ -27,15 +27,7 @@ typedef struct {
 } unauth_file_data_t;
 
 
-typedef enum {
-    DELETE_GROUP,
-    ADD_MEMBER,
-    DELETE_MEMBER,
-    SET_CHMOD_ON_GROUP,
-    SET_CHMOD,
-    SET_UMASK,
-    UPLOAD,
-    DOWNLOAD,
-    READ,
-    WRITE
-} action_t;
+enum class DirType {
+    ROOT,
+    NOT_ROOT
+};

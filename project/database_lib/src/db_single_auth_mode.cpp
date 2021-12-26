@@ -95,17 +95,22 @@ std::string SingleAuthMode::get_list_files_in_dir(int user_id, const std::string
 
     std::string regex_search_dirs = "^" + curr_dir_path + regex;
 
+    DirType dir_type = DirType::NOT_ROOT;
+
     if (curr_dir_path == ROOT_USER_DIR) {
-        auto ls_result = trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
-                                       fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);
-
-        if (ls_result == EMPTY_DIR_COUT) {
-            return EMPTY_ROOT_DIR_COUT;
-        }
-
-        return ls_result;
+        dir_type = DirType::ROOT;
     }
+//        auto ls_result = trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
+//                                       fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), DirType::ROOT,
+//                                       connection);
+//
+//        if (ls_result == DEFAULT_DIR_COUT) {
+//            return DEFAULT_ROOT_COUT;
+//        }
+//
+//        return ls_result;
+//    }
 
     return trans_ls_exec(fmt::format(COMMAND_LS_FILES, user_id, curr_dir_path),
-                         fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), connection);
+                         fmt::format(COMMAND_LS_DIRS, user_id, regex_search_dirs), dir_type, connection);
 }
