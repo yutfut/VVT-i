@@ -10,7 +10,6 @@
 #include <boost/iostreams/filter/gzip.hpp>
 
 std::string create_body(const std::string &file_name) {
-    char c;
     std::ifstream file(file_name, std::ios::binary);
 
     if (!file.is_open()) {

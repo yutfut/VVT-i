@@ -35,13 +35,13 @@ std::string response(const int &socket) {
         line.push_back(last_char);
     }
 
-    if (-1 == line.size() && errno != EAGAIN) {
+    if (line.size() == -1 && errno != EAGAIN) {
         return "ошибка соединения\n";
     }
     if (line.empty()) {
         return "ошибка соединения\n";
     }
-    if (-1 == line.size()) {
+    if (line.size() == -1) {
         return "ошибка соединения\n";
     }
     return line;
