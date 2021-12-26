@@ -22,8 +22,28 @@ jobs:
       - name: Build
         run: ./server.sh build
 
-      - name: Test
-        run: ./server.sh test
+      - name: Coverage test
+        run: |
+          sudo apt-get install -y lcov
+          ./server.sh test
+          mkdir coverage && cd coverage
+          gcov ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/config/src/main_server_settings.cpp.gcno
+          gcov ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/config/src/server_settings.cpp.gcno
+          gcov ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/http/src/http_base.cpp.gcno
+          gcov ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/http/src/http_date.cpp.gcno
+          gcov ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/http/src/http_request.cpp.gcno
+          gcov ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/http/src/http_response.cpp.gcno
+          cp -r ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/config/src/ .
+          cp -r ../cmake-build-debug/project/server/CMakeFiles/server_lib.dir/http/src/ .
+          cd ..
+          lcov --capture --directory coverage/ --output-file task.info
+          genhtml task.info --output-directory coverage-report/
+
+      - name: Archive coverage test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Coverage test
+          path: coverage-report/
 
       - name: Valgrind test
         run: |
