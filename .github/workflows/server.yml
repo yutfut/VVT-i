@@ -1,0 +1,38 @@
+name: CI
+
+on: pull_request
+
+jobs:
+  CI:
+    name: Run CI
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install libraries
+        run: sudo apt-get install -y libboost-all-dev
+
+      - name: Style test
+        run: |
+          sudo apt-get install -y cppcheck
+          cppcheck --enable=warning,style,performance,portability project/
+
+      - name: Build
+        run: ./server.sh build
+
+      - name: Test
+        run: ./server.sh test
+
+      - name: Valgrind test
+        run: |
+          sudo apt-get install -y valgrind
+          mkdir valgrid-output
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./server.sh test
+
+      - name: Archive valgrind test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Valgrind test
+          path: valgrid-output/
