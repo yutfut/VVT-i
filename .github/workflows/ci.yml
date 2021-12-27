@@ -44,6 +44,9 @@ jobs:
           cp -r ../build/CMakeFiles/client.dir/ .
           cd ..
 
+          lcov -c -d <build_dir> -o boost
+          lcov -r boost "/usr*" -o boost
+
           lcov --capture --directory coverage/ --output-file client.info
           genhtml client.info --output-directory coverage-report/
 

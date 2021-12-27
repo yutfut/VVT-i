@@ -41,28 +41,24 @@ int Client::role_command(const std::string& command, User &user) {
             if(first_part_command != rest_part_command) {
                 return upload(rest_part_command, user);
             }
-            std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
         case Commands::DOWNLOAD: {
             if(first_part_command != rest_part_command) {
                 return download(rest_part_command, user);
             }
-            std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
         case Commands::REGISTER: {
             if(first_part_command != rest_part_command) {
                 return user.register_user(rest_part_command);
             }
-            std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
         case Commands::LOGIN: {
             if(first_part_command != rest_part_command) {
                 return user.login(rest_part_command);
             }
-            std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
         case Commands::LOGOUT: {
@@ -72,7 +68,6 @@ int Client::role_command(const std::string& command, User &user) {
             if(first_part_command != rest_part_command) {
                 return work_with_directory(first_part_command, rest_part_command, user);
             }
-            std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
         case Commands::HELP: {
@@ -127,6 +122,7 @@ void Client::run() {
                 std::cout << "GOODBYE" << std::endl;
                 return;
             default:
+                std::cout << "Ошибка ввода команды" << std::endl;
                 std::cout << "ERROR" << std::endl;
                 break;
         }
