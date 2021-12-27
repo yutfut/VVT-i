@@ -17,6 +17,7 @@ jobs:
         run : |
           sudo apt-get install -y cppcheck
           cppcheck --enable=warning,style,performance,portability source/ include/
+
       - name : Building
         run : |
           sudo apt update
@@ -27,16 +28,24 @@ jobs:
           cmake ..
           make
           cd ..
+
+      - name: Unit-tests multi-thread
+        run: |
+          cd build
+          ./vvti_client_test
+          cd ..
+
       - name: Coverage test
         run: |
           sudo apt-get install lcov
-          ./build/vvti_client_test
           mkdir coverage && cd coverage
-          gcov ../build/CMakeFiles/vvti_client.dir/source/main.cpp.gcda
+
+          gcov ../build/CMakeFiles/vvti_client.dir/source/main.cpp.o
           cp -r ../build/CMakeFiles/vvti_client.dir/ .
           cd ..
           lcov --capture --directory coverage/ --output-file client.info
           genhtml client.info --output-directory coverage-report/
+
       - name: Archive coverage test results
         uses: actions/upload-artifact@v2
         with:
