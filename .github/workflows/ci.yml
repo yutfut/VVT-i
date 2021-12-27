@@ -40,11 +40,9 @@ jobs:
           sudo apt-get install lcov
           mkdir coverage && cd coverage
 
-          gcov ../build/CMakeFiles/vvti_client.dir/source/main.cpp.o
-          cp -r ../build/CMakeFiles/vvti_client.dir/ .
+          gcov ../build/CMakeFiles/client.dir/source/client.cpp.gcno
+          cp -r ../build/CMakeFiles/client.dir/ .
           cd ..
-
-          lcov --base-directory .  --directory . -c -o gcov/client.info
 
           lcov --capture --directory coverage/ --output-file client.info
           genhtml client.info --output-directory coverage-report/
