@@ -9,7 +9,26 @@ Client::Client(){}
 Client::~Client(){}
 
 void Client::print(User &user) {
-    std::cout << ">>> " << std::string(user.get_current_directory()) << "$:\t";
+    if (user.get_authorize()) {
+        std::cout << ">>> " << std::string(user.get_current_directory()) << "$:\t";
+    } else {
+        std::cout << ">>>\t";
+    }
+
+}
+
+void help() {
+    std::cout << "не авторизованный пользователь\n"
+                 "\tupload <email> <file name>\n"
+                 "\tdownload <key>\n\n"
+                 "авторизованный пользователь\n"
+                 "\tregister <email> <password> <password>\n"
+                 "\tlogin <email> <password>\n"
+                 "\tlogout\n"
+                 "\tcd <path>\n"
+                 "\tls [<path>]\n"
+                 "\tmkdir <name>\n"
+                 "\trmdir <name>\n\n";
 }
 
 int Client::role_command(const std::string& command, User &user) {
@@ -56,6 +75,10 @@ int Client::role_command(const std::string& command, User &user) {
             std::cout << "Ошибка ввода команды" << std::endl;
             return -1;
         }
+        case Commands::HELP: {
+            help();
+            return 0;
+        }
         case Commands::EXIT: {
             return 1;
         }
@@ -77,6 +100,7 @@ void Client::run() {
     commands[MKDIR] = Commands::DIR;
     commands[RMDIR] = Commands::DIR;
     commands[EXIT] = Commands::EXIT;
+    commands[HELP] = Commands::HELP;
 
     User user;
 

@@ -19,6 +19,7 @@ const std::string LS = "ls";
 const std::string MKDIR = "mkdir";
 const std::string RMDIR = "rmdir";
 const std::string EXIT = "exit";
+const std::string HELP = "help";
 
 class Client {
 private:
@@ -30,6 +31,7 @@ private:
         LOGOUT,
         DIR,
         EXIT,
+        HELP,
     };
 
     std::map <std::string, Commands> commands;

@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-g -O0 -Wall -Wno-unknown-pragmas -Wno-sign-compare -Wwrite-strings -Wno-unused -Werror -Wpedantic -fprofile-arcs -ftest-coverage")
 set(CMAKE_C_FLAGS "-g -O0 -Wall -Wno-unknown-pragmas -Wno-sign-compare -Wwrite-strings -Wno-unused -Werror -Wpedantic -fprofile-arcs -ftest-coverage")
 set(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
+
 #
 #set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
 #set(CMAKE_C_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
@@ -16,7 +17,7 @@ find_package(Boost REQUIRED COMPONENTS iostreams)
 set(SOURCE_DIRECTORY source)
 set(INCLUDE_DIRECTORY include)
 
-add_library(client SHARED ${SOURCE_DIRECTORY}/client.cpp
+add_library(client STATIC ${SOURCE_DIRECTORY}/client.cpp
                           ${SOURCE_DIRECTORY}/validation.cpp
                           ${SOURCE_DIRECTORY}/user.cpp
                           ${SOURCE_DIRECTORY}/command.cpp
