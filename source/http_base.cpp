@@ -35,13 +35,13 @@ int request(const int &socket, const std::string& msg) {
             buff += sent / part;
         }
         if(buff >= 1) {
-            std::cout << "#";
+            std::cout << "#" << std::flush;
             buff = 0;
         }
         print_count += count;
         if (print_count < 100) {
             for (int i = 0; i < count; ++i) {
-                std::cout << "#";
+                std::cout << "#" << std::flush;
             }
         } else {
             print_count -= count;
@@ -51,7 +51,7 @@ int request(const int &socket, const std::string& msg) {
 
     if (print_count < 100) {
         for (int i = 0; i < 100 - print_count; ++i) {
-            std::cout << "#";
+            std::cout << "#" << std::flush;
             print_count++;
         }
     }
