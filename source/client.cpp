@@ -28,7 +28,8 @@ void help() {
                  "\tcd <path>\n"
                  "\tls [<path>]\n"
                  "\tmkdir <name>\n"
-                 "\trmdir <name>\n\n";
+                 "\trmdir <name>\n"
+                 "\trm <file name>\n\n";
 }
 
 int Client::role_command(const std::string& command, User &user) {

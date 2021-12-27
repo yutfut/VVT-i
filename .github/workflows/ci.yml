@@ -22,8 +22,7 @@ jobs:
         run : |
           sudo apt update
           sudo apt install libboost-iostreams-dev
-          mkdir build
-          cd build
+          mkdir build && cd build
           sudo apt-get install -y libgtest-dev
           cmake ..
           make
@@ -41,7 +40,7 @@ jobs:
           mkdir coverage && cd coverage
 
           gcov ../build/CMakeFiles/client.dir/source/client.cpp.gcno
-          cp -r ../build/CMakeFiles/client.dir/ .
+          cp -r ../build/CMakeFiles/client.dir/source .
           cd ..
 
           lcov --capture --directory coverage/ --output-file client.info
