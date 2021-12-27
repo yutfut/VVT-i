@@ -8,7 +8,7 @@ std::string create_body(const std::string &file_name) {
     std::ifstream file(file_name, std::ios::binary);
 
     if (!file.is_open()) {
-        std::cout << "ошибка открытия файла\n";
+        return "ошибка работы с файлом\n";
     }
 
     std::stringstream comp, decomp;
@@ -20,7 +20,7 @@ std::string create_body(const std::string &file_name) {
 
     file.close();
     if (file.is_open()) {
-        std::cout << "ошибка закрытия файла\n";
+        return "ошибка работы с файлом\n";
     }
 
     return comp.str();
@@ -38,6 +38,10 @@ std::string HTTPRequest::create_message(const std::string &email,
 
     if (command == "upload") {
         body = create_body(file_name);
+        if (body == "ошибка работы с файлом\n") {
+            std::cout << body;
+            return body;
+        }
     }
 
     message = "POST / HTTP/1.0\r\n"
