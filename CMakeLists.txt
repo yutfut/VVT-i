@@ -21,9 +21,10 @@ add_library(client STATIC ${SOURCE_DIRECTORY}/client.cpp
                           ${SOURCE_DIRECTORY}/http_response.cpp
                           ${SOURCE_DIRECTORY}/password.cpp)
 target_include_directories(client PUBLIC ${INCLUDE_DIRECTORY})
-target_link_libraries(client Boost::iostreams)
+target_link_libraries(client PRIVATE Boost::iostreams)
 
 add_executable(vvti_client source/main.cpp)
+target_link_libraries(vvti_client Boost::iostreams)
 target_link_libraries(vvti_client client)
 
 target_include_directories(vvti_client PUBLIC ../include)

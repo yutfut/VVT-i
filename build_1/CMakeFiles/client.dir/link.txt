@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libclient.a CMakeFiles/client.dir/source/client.cpp.o CMakeFiles/client.dir/source/validation.cpp.o CMakeFiles/client.dir/source/user.cpp.o CMakeFiles/client.dir/source/command.cpp.o CMakeFiles/client.dir/source/http_base.cpp.o CMakeFiles/client.dir/source/http_request.cpp.o CMakeFiles/client.dir/source/http_response.cpp.o CMakeFiles/client.dir/source/password.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libclient.a

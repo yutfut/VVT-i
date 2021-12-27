@@ -38,7 +38,7 @@ jobs:
       - name: Coverage test
         run: |
           sudo apt-get install lcov
-          mkdir coverage
+          mkdir coverage && cd coverage
 
           gcov ../build/CMakeFiles/client.dir/source/client.cpp.gcno
           cp -r ../build/CMakeFiles/client.dir/source/ .
