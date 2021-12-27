@@ -100,6 +100,11 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
         return;
     }
 
+    if (command == http_commands::has) {
+        has_such_file(id, abs_work_dir, request_headers[http_headers::filename], response, db_worker);
+        return;
+    }
+
     response = create_response(HttpStatusCode::BadRequest, {});
 }
 
@@ -139,7 +144,7 @@ void RequestHandlerAuth::make_user_subdir(int id, const std::filesystem::path &w
                                           FsWorker &fs_worker, DataBase &db_worker) {
 
     try {
-       if (!db_worker.single_auth_mode.create_directory(id, work_dir)) {
+        if (!db_worker.single_auth_mode.create_directory(id, work_dir)) {
             response = create_response(HttpStatusCode::Conflict);
         }
     } catch (const std::string &e) {
@@ -290,6 +295,22 @@ void RequestHandlerAuth::upload_file_to_server(int id, const std::filesystem::pa
                                           std::to_string(id))) {
         db_worker.single_auth_mode.delete_file(id, work_dir, filename);
         write_to_logs("usr_id " + std::to_string(id) + ": " + fs_worker.auth_usr.err_code.message(), ERROR);
+        response = create_response(HttpStatusCode::InternalServerError,
+                                   {{http_headers::command, http_commands::upload}});
+        return;
+    }
+
+    response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::upload}}, {});
+}
+
+void RequestHandlerAuth::has_such_file(int id, const std::filesystem::path &work_dir,const std::filesystem::path &filename, HttpResponse &response, DataBase &db_worker) {
+    try {
+        if (!db_worker.single_auth_mode.is_filename_free(id, work_dir, filename)) {
+            response = create_response(HttpStatusCode::Conflict);
+            return;
+        }
+    } catch (const std::string &error_msg) {
+        write_to_logs("usr_id " + std::to_string(id) + ": " + error_msg, ERROR);
         response = create_response(HttpStatusCode::InternalServerError,
                                    {{http_headers::command, http_commands::upload}});
         return;

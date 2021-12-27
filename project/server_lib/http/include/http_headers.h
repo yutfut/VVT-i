@@ -23,5 +23,6 @@ namespace http_commands {
     const std::string login{"login"};
     const std::string get_dirs_content{"ls"};
     const std::string change_directory{"cd"};
+    const std::string has{"has"};
 }
 

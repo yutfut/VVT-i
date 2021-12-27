@@ -13,14 +13,6 @@ typedef struct {
 
 
 typedef struct {
-    int additional_bit;
-    int user;
-    int group;
-    int other;
-} modifiers_t;
-
-
-typedef struct {
     std::string uuid;
     std::string filename;
     std::string upload_date;
