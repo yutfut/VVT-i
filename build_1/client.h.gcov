@@ -1,0 +1,60 @@
+        -:    0:Source:/Users/yutfut/Desktop/VVT-i/include/client.h
+        -:    0:Graph:../build_1/CMakeFiles/client.dir/source/client.cpp.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1://
+        -:    2:// Created by Yut Fut on 18.11.2021.
+        -:    3://
+        -:    4:
+        -:    5:#ifndef VVTI_CLIENT_CLIENT_H
+        -:    6:#define VVTI_CLIENT_CLIENT_H
+        -:    7:
+        -:    8:#include <map>
+        -:    9:
+        -:   10:#include "command.h"
+        -:   11:
+    #####:   12:const std::string UPLOAD = "upload";
+    #####:   13:const std::string DOWNLOAD = "download";
+    #####:   14:const std::string REGISTER = "register";
+    #####:   15:const std::string LOGIN = "login";
+    #####:   16:const std::string LOGOUT = "logout";
+    #####:   17:const std::string CD = "cd";
+    #####:   18:const std::string LS = "ls";
+    #####:   19:const std::string MKDIR = "mkdir";
+    #####:   20:const std::string RMDIR = "rmdir";
+    #####:   21:const std::string EXIT = "exit";
+    #####:   22:const std::string HELP = "help";
+        -:   23:
+        -:   24:class Client {
+        -:   25:private:
+        -:   26:    enum class Commands {
+        -:   27:        UPLOAD,
+        -:   28:        DOWNLOAD,
+        -:   29:        REGISTER,
+        -:   30:        LOGIN,
+        -:   31:        LOGOUT,
+        -:   32:        DIR,
+        -:   33:        EXIT,
+        -:   34:        HELP,
+        -:   35:    };
+        -:   36:
+        -:   37:    std::map <std::string, Commands> commands;
+        -:   38:
+        -:   39:    enum class Status {
+        -:   40:        SUCCESS,
+        -:   41:        GOODBYE,
+        -:   42:    };
+        -:   43:public:
+        -:   44:    Client();
+        -:   45:
+        -:   46:    ~Client();
+        -:   47:
+        -:   48:    void print(User &user);
+        -:   49:
+        -:   50:    int role_command(const std::string& command, User &user);
+        -:   51:
+        -:   52:    void run();
+        -:   53:};
+        -:   54:
+        -:   55:#endif //VVTI_CLIENT_CLIENT_H

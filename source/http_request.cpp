@@ -4,11 +4,6 @@
 
 #include "http_request.h"
 
-#include <sstream>
-#include <boost/iostreams/filtering_streambuf.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
-
 std::string create_body(const std::string &file_name) {
     std::ifstream file(file_name, std::ios::binary);
 

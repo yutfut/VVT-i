@@ -8,6 +8,10 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 class HTTPRequest {
 public:

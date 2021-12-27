@@ -4,11 +4,6 @@
 
 #include "http_response.h"
 
-#include <sstream>
-#include <boost/iostreams/filtering_streambuf.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
-
 std::string check_exist_file(const std::string& file_name) {
     bool exist = std::filesystem::exists(file_name);
     if (exist) {

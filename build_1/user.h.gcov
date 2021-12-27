@@ -1,0 +1,57 @@
+        -:    0:Source:/Users/yutfut/Desktop/VVT-i/include/user.h
+        -:    0:Graph:../build_1/CMakeFiles/client.dir/source/client.cpp.gcno
+        -:    0:Data:-
+        -:    0:Runs:0
+        -:    0:Programs:0
+        -:    1://
+        -:    2:// Created by Yut Fut on 18.11.2021.
+        -:    3://
+        -:    4:
+        -:    5:#ifndef VVT_I_USER_H
+        -:    6:#define VVT_I_USER_H
+        -:    7:
+        -:    8:#include <iostream>
+        -:    9:#include <string>
+        -:   10:#include <cstring>
+        -:   11:#include <utility>
+        -:   12:#include <filesystem>
+        -:   13:
+        -:   14:#include "password.h"
+        -:   15:#include "http_base.h"
+        -:   16:#include "http_request.h"
+        -:   17:#include "http_response.h"
+        -:   18:
+        -:   19:class User {
+        -:   20:private:
+        -:   21:    bool authorize;
+        -:   22:    std::string jwt;
+        -:   23:    std::filesystem::path current_directory;
+        -:   24:public:
+        -:   25:    User();
+        -:   26:
+        -:   27:    ~User();
+        -:   28:
+    #####:   29:    bool get_authorize() {
+    #####:   30:        return authorize;
+        -:   31:    }
+        -:   32:
+        -:   33:    std::string get_jwt() {
+        -:   34:        return jwt;
+        -:   35:    }
+        -:   36:
+    #####:   37:    std::filesystem::path get_current_directory() {
+    #####:   38:        return current_directory;
+        -:   39:    }
+        -:   40:
+        -:   41:    void set_current_directory(std::filesystem::path dir) {
+        -:   42:        current_directory = dir;
+        -:   43:    }
+        -:   44:
+        -:   45:    static int register_user(const std::string& command);
+        -:   46:
+        -:   47:    int login(const std::string& command);
+        -:   48:
+        -:   49:    int logout();
+        -:   50:};
+        -:   51:
+        -:   52:#endif //VVT_I_USER_H

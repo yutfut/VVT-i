@@ -5,11 +5,16 @@
 #ifndef VVT_I_HTTP_RESPONSE_H
 #define VVT_I_HTTP_RESPONSE_H
 
+
+#include "user.h"
+
 #include <iostream>
 #include <map>
 #include <fstream>
-
-#include "user.h"
+#include <sstream>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 class HTTPResponse {
 public:
