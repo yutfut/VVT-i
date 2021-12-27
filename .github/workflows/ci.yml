@@ -57,7 +57,7 @@ jobs:
         run: |
           sudo apt-get install -y valgrind
           mkdir valgrid-output
-          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/vvti_client_test.out
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./build/vvti_client_test
       - name: Archive valgrind test results
         uses: actions/upload-artifact@v2
         with:
