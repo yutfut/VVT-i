@@ -41,7 +41,7 @@ jobs:
           mkdir coverage && cd coverage
 
           gcov ../build/CMakeFiles/client.dir/source/client.cpp.gcno
-          cp -r ../build/CMakeFiles/client.dir/source/ .
+          cp -r ../build/CMakeFiles/client.dir/ .
           cd ..
 
           lcov --capture --directory coverage/ --output-file client.info
