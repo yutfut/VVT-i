@@ -17,6 +17,7 @@ int request(const int &socket, const std::string& msg) {
     ssize_t sent = 0;
 
     double part = left / 100;
+    double buff = 0;
     size_t print_count = 0;
 
     while (left > 0) {
@@ -27,6 +28,13 @@ int request(const int &socket, const std::string& msg) {
         }
         left -= sent;
         size_t count = (size_t)(sent / part);
+        if (count == 0) {
+            buff += sent / part;
+        }
+        if(buff >= 1) {
+            std::cout << "#";
+            buff = 0;
+        }
         print_count += count;
         for (int i = 0; i < count; ++i) {
             std::cout << "#";
