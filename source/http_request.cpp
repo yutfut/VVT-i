@@ -11,19 +11,41 @@ std::string create_body(const std::string &file_name) {
         std::cout << "ошибка открытия файла\n";
     }
 
-    std::stringstream comp, decomp;
+    magic_t myt = magic_open(MAGIC_CONTINUE|MAGIC_ERROR|MAGIC_MIME);
+    magic_load(myt,NULL);
+    std::string type = std::string(magic_file(myt, file_name.c_str()));
+    size_t pos = type.find("text/plain");
+    magic_close(myt);
 
-    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-    in.push(boost::iostreams::gzip_compressor());
-    in.push(file);
-    boost::iostreams::copy(in, comp);
+    if (pos != std::string::npos) { // This is text file
+        std::stringstream comp, decomp;
+
+        boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+        in.push(boost::iostreams::gzip_compressor());
+        in.push(file);
+        boost::iostreams::copy(in, comp);
+
+        file.close();
+        if (file.is_open()) {
+            std::cout << "ошибка закрытия файла\n";
+        }
+
+        return comp.str();
+    }
+
+    std::string message;
+    char c;
+
+    while (file.get(c)) {
+        message.push_back(c);
+    }
 
     file.close();
     if (file.is_open()) {
         std::cout << "ошибка закрытия файла\n";
     }
 
-    return comp.str();
+    return message;
 }
 
 std::string HTTPRequest::create_message(const std::string &email,

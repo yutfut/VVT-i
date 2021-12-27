@@ -25,20 +25,43 @@ void create_file(const std::string &file_name, const std::string &message) {
 
     std::ofstream out(actual_file_name);
 
-    if (out.is_open()) {
-        std::stringstream ss, comp, decomp;
-        ss << message;
-
-        boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf;
-        inbuf.push(boost::iostreams::gzip_decompressor());
-        inbuf.push(ss);
-        boost::iostreams::copy(inbuf, decomp);
-
-        out << decomp.str();
-    } else {
+    if (!out.is_open()) {
         std::cout << "ошибка открытия файла\n";
     }
+
+    out << message;
+
     out.close();
+    if (out.is_open()) {
+        std::cout << "ошибка закрытия файла\n";
+    }
+
+    magic_t myt = magic_open(MAGIC_CONTINUE|MAGIC_ERROR|MAGIC_MIME);
+    magic_load(myt,NULL);
+    std::string type = std::string(magic_file(myt, actual_file_name.c_str()));
+    size_t pos = type.find("application/gzip");
+    magic_close(myt);
+
+    if (pos == std::string::npos) { // This is not gzip file
+        return;
+    }
+
+    out.open(actual_file_name);
+
+    std::stringstream ss, comp, decomp;
+    ss << message;
+
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf;
+    inbuf.push(boost::iostreams::gzip_decompressor());
+    inbuf.push(ss);
+    boost::iostreams::copy(inbuf, decomp);
+
+    out << decomp.str();
+
+    out.close();
+    if (out.is_open()) {
+        std::cout << "ошибка закрытия файла\n";
+    }
 }
 
 int HTTPResponse::parser(std::string &http) {
