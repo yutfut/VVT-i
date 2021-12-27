@@ -28,7 +28,7 @@ int upload(const std::string& command, User &user) {
     std::string message, actual_file_name;
 
     if (user.get_authorize()) {
-        HTTPRequest::create_message(std::string{},
+        message = HTTPRequest::create_message(std::string{},
                                     std::string{},
                                     user.get_jwt(),
                                     user.get_current_directory(),
@@ -36,6 +36,10 @@ int upload(const std::string& command, User &user) {
                                     std::string{},
                                     file_name,
                                     "has");
+        if (message == "ошибка работы с файлом\n") {
+            return -1;
+        }
+
         std::string http_response = HTTPBase::send(message);
 
         if (http_response == "ошибка соединения\n") {
@@ -74,6 +78,10 @@ int upload(const std::string& command, User &user) {
                                               "upload");
     }
 
+    if (message == "ошибка работы с файлом\n") {
+        return -1;
+    }
+
     std::string http_response = HTTPBase::send(message);
     if (http_response == "ошибка соединения\n") {
         return -1;
@@ -82,15 +90,14 @@ int upload(const std::string& command, User &user) {
 }
 
 int download(const std::string& command, User &user) {
-    std::string key = command, password;
+    std::string key = command,
+                      message;
 
     if (!user.get_authorize()) {
         if (Validator::validate_key(key)) {
             return -1;
         }
     }
-
-    std::string message;
 
     if (!user.get_authorize()) {
         std::string password = check_password_download();
@@ -111,6 +118,10 @@ int download(const std::string& command, User &user) {
                                               std::string{},
                                               key,
                                               "download");
+    }
+
+    if (message == "ошибка работы с файлом\n") {
+        return -1;
     }
 
     std::string http_response = HTTPBase::send(message);
