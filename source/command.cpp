@@ -148,7 +148,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
                                                           std::string {},
                                                           user.get_jwt(),
                                                           user.get_current_directory(),
-                                                          rest_part_command,
+                                                          std::string {},
                                                           std::string {},
                                                           rest_part_command,
                                                           first_part_command);
@@ -163,7 +163,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
                                                           std::string {},
                                                           user.get_jwt(),
                                                           user.get_current_directory(),
-                                                          std::string {},
+                                                          rest_part_command,
                                                           std::string {},
                                                           std::string {},
                                                           first_part_command);
