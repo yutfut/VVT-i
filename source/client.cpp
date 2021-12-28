@@ -101,6 +101,7 @@ void Client::run() {
     commands[LS] = Commands::DIR;
     commands[MKDIR] = Commands::DIR;
     commands[RMDIR] = Commands::DIR;
+    commands[RM] = Commands::DIR;
     commands[EXIT] = Commands::EXIT;
     commands[HELP] = Commands::HELP;
 

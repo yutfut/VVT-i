@@ -18,6 +18,7 @@ const std::string CD = "cd";
 const std::string LS = "ls";
 const std::string MKDIR = "mkdir";
 const std::string RMDIR = "rmdir";
+const std::string RM = "rm";
 const std::string EXIT = "exit";
 const std::string HELP = "help";
 
