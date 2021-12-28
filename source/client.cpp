@@ -14,7 +14,6 @@ void Client::print(User &user) {
     } else {
         std::cout << "\x1b[35;1m>>>\x1b[0m\t";
     }
-
 }
 
 void help() {

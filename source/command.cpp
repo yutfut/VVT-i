@@ -137,7 +137,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
     if (first_part_command == "rmdir") {
         std::string y;
         std::cout << "Вы уверены?: ";
-        std::cin >> y;
+        std::getline (std::cin, y);
         if (y != "y") {
             return 0;
         }
