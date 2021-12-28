@@ -327,9 +327,6 @@ void RequestHandlerAuth::has_such_file(int id, const std::filesystem::path &work
 }
 
 void RequestHandlerAuth::remove_file(int id, const std::filesystem::path &work_dir,const std::filesystem::path &filename, HttpResponse & response,FsWorker &fs_worker,DataBase &db_worker) {
-    write_to_logs("___________", ERROR);
-    write_to_logs(work_dir, ERROR);
-    write_to_logs(filename, ERROR);
     try {
         db_worker.single_auth_mode.delete_file(id, work_dir, filename);
     } catch (const std::string &e) {
