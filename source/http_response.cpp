@@ -7,9 +7,9 @@
 std::string check_exist_file(const std::string& file_name) {
     bool exist = std::filesystem::exists(file_name);
     if (exist) {
-        std::cout << "такой файл уже существует";
+        std::cout << "Tакой файл уже существует.";
         std::string yes_or_no, new_file_name;
-        std::cout << "хотите его переименовать? y/n:\t";
+        std::cout << "Хотите его переименовать? y/n:\t";
         std::getline (std::cin, yes_or_no);
         if (yes_or_no == "y") {
             std::cout << "введите новое название: ";
@@ -112,7 +112,7 @@ int HTTPResponse::parser(std::string &http) {
         return 0;
     }
 
-    if (commands["message"] == "RENAME" && commands["command"] == "has") {
+    if (commands["message"] == "Conflict" && commands["command"] == "has") {
         return 2;
     }
 
