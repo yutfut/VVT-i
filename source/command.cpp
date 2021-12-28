@@ -143,6 +143,21 @@ int work_with_directory(const std::string& first_part_command, const std::string
         }
     }
 
+    if (user.get_authorize() && first_part_command == "rm") {
+        std::string message = HTTPRequest::create_message(std::string {},
+                                                          std::string {},
+                                                          user.get_jwt(),
+                                                          user.get_current_directory(),
+                                                          rest_part_command,
+                                                          std::string {},
+                                                          rest_part_command,
+                                                          first_part_command);
+
+        std::string http_response = HTTPBase::send(message);
+
+        return HTTPResponse::parser(http_response);
+    }
+
     if (user.get_authorize()) {
         std::string message = HTTPRequest::create_message(std::string {},
                                                           std::string {},
