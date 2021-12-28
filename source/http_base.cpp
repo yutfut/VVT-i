@@ -15,6 +15,12 @@ void init_socket_address(struct sockaddr_in &server) {
 int request(const int &socket, const std::string& msg) {
     int left = msg.size();
 
+    double part = left / 100;
+    double buff = 0;
+
+    std::cout << std::unitbuf;
+    size_t print_count = 0;
+
     ssize_t sent = 0;
 
     while (left > 0) {
@@ -24,7 +30,34 @@ int request(const int &socket, const std::string& msg) {
             return -1;
         }
         left -= sent;
+        size_t count = (size_t)(sent / part);
+        if (count == 0) {
+            buff += sent / part;
+        }
+        if(buff >= 1) {
+            std::cout << "#" << std::flush;
+            buff = 0;
+        }
+        print_count += count;
+        if (print_count < 100) {
+            for (int i = 0; i < count; ++i) {
+                std::cout << "#" << std::flush;
+            }
+        } else {
+            print_count -= count;
+        }
     }
+
+
+    if (print_count < 100) {
+        for (int i = 0; i < 100 - print_count; ++i) {
+
+            std::cout << "#" << std::flush;
+            print_count++;
+        }
+    }
+
+    std::cout << "\x1b[32;1m\tSUCСESS\x1b[0m\n";
 
     return 0;
 }
