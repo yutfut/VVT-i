@@ -37,6 +37,8 @@ private:
 
     void has_such_file(int id, const std::filesystem::path &work_dir,const std::filesystem::path &filename, HttpResponse &response, DataBase &db_worker);
 
+    void remove_file(int id, const std::filesystem::path &work_dir,const std::filesystem::path &filename, HttpResponse & response,FsWorker &fs_worker,DataBase &db_worker);
+
     static bool
     download_file_from_server(int id, const std::filesystem::path &work_dir, const std::filesystem::path &filename, HttpResponse &response,
                               FsWorker &fs_worker);

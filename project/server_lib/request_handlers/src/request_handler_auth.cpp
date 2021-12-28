@@ -58,8 +58,9 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
 
     std::string abs_work_dir = (std::filesystem::path("/") /
                                 std::filesystem::path(request_headers[http_headers::current_directory]) /
-                                std::filesystem::path(
-                                        request_headers[http_headers::work_directory])).lexically_normal();
+                                std::filesystem::path(request_headers[http_headers::work_directory]) /
+                                std::filesystem::path(request_headers[http_headers::filename]).parent_path()
+                                ).lexically_normal();
 
     if (abs_work_dir.ends_with('/') && abs_work_dir.size() != 1) {
         abs_work_dir.pop_back();
@@ -102,6 +103,11 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
 
     if (command == http_commands::has) {
         has_such_file(id, abs_work_dir, request_headers[http_headers::filename], response, db_worker);
+        return;
+    }
+
+    if (command == http_commands::remove) {
+        remove_file(id, abs_work_dir, request_headers[http_headers::filename], response, fs_worker, db_worker);
         return;
     }
 
@@ -210,6 +216,7 @@ void RequestHandlerAuth::register_user(const std::string &email, const std::stri
     }
 
     if (!fs_worker.auth_usr.add(std::to_string(id))) {
+        db_worker.reg_auth.delete_user(id);
         write_to_logs("usr_id " + std::to_string(id) + ": " + fs_worker.auth_usr.err_code.message(), ERROR);
     }
 
@@ -309,12 +316,32 @@ void RequestHandlerAuth::has_such_file(int id, const std::filesystem::path &work
             response = create_response(HttpStatusCode::Conflict);
             return;
         }
+        response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::upload}}, {});
+
     } catch (const std::string &error_msg) {
         write_to_logs("usr_id " + std::to_string(id) + ": " + error_msg, ERROR);
         response = create_response(HttpStatusCode::InternalServerError,
                                    {{http_headers::command, http_commands::upload}});
         return;
     }
+}
 
-    response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::upload}}, {});
+void RequestHandlerAuth::remove_file(int id, const std::filesystem::path &work_dir,const std::filesystem::path &filename, HttpResponse & response,FsWorker &fs_worker,DataBase &db_worker) {
+    write_to_logs("___________", ERROR);
+    write_to_logs(work_dir, ERROR);
+    write_to_logs(filename, ERROR);
+    try {
+        db_worker.single_auth_mode.delete_file(id, work_dir, filename);
+    } catch (const std::string &e) {
+        write_to_logs("usr_id " + std::to_string(id) + ": " + e, ERROR);
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::remove}});
+    }
+
+    if (!fs_worker.auth_usr.remove(work_dir / filename, std::to_string(id))) {
+        write_to_logs("usr_id " + std::to_string(id) + ": " + fs_worker.auth_usr.err_code.message(), ERROR);
+        response = create_response(HttpStatusCode::InternalServerError, {{http_headers::command, http_commands::remove}});
+        return;
+    }
+
+    response = create_response(HttpStatusCode::OK, {{http_headers::command, http_commands::remove}});
 }
