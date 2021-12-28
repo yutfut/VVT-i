@@ -10,10 +10,10 @@ Client::~Client(){}
 
 void Client::print(User &user) {
     if (user.get_authorize()) {
-        std::cout << "\x1b[30;1m>>>\x1b[0m " << std::string(user.get_current_directory()) << "$:\t";
+        std::cout << "\x1b[35;1m>>>\x1b[0m " << std::string(user.get_current_directory()) << "$:\t";
     } else {
         std::cout << ">>>\t";
-        std::cout << "\x1b[30;1m>>>\x1b[0m\t";
+        std::cout << "\x1b[35;1m>>>\x1b[0m\t";
     }
 
 }
