@@ -138,7 +138,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
         std::string y;
         std::cout << "Вы уверены?: ";
         std::cin >> y;
-        if (y != "y" || y.empty()) {
+        if (y != "y") {
             return 0;
         }
     }
