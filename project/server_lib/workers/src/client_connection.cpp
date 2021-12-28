@@ -97,11 +97,11 @@ bool ClientConnection::get_request() {
 
 void ClientConnection::handle_request() {
 
-//    write_to_logs("-----------------THE REQUEST---------------", ERROR);
-//    std::for_each(request.get_headers().begin(), request.get_headers().end(),
-//                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
-//    write_to_logs(request.get_body(), ERROR);
-//    write_to_logs("----------------END OF REQUEST---------------", ERROR);
+    write_to_logs("-----------------THE REQUEST---------------", ERROR);
+    std::for_each(request.get_headers().begin(), request.get_headers().end(),
+                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
+    write_to_logs(request.get_body(), ERROR);
+    write_to_logs("----------------END OF REQUEST---------------", ERROR);
 
 
     auto &request_headers = this->request.get_headers();
@@ -116,13 +116,13 @@ void ClientConnection::handle_request() {
 
 
 
-//    write_to_logs("----------------THE ANSWER---------------", ERROR);
-//    std::for_each(response.get_headers().begin(), response.get_headers().end(),
-//                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
-//    write_to_logs(response.get_body(), ERROR);
-//    write_to_logs(std::to_string(response.get_body().size()), ERROR);
-//
-//    write_to_logs("----------------END OF ANSWER---------------", ERROR);
+    write_to_logs("----------------THE ANSWER---------------", ERROR);
+    std::for_each(response.get_headers().begin(), response.get_headers().end(),
+                  [this](const auto &el) { write_to_logs(el.first + ": " + el.second, ERROR); });
+    write_to_logs(response.get_body(), ERROR);
+    write_to_logs(std::to_string(response.get_body().size()), ERROR);
+
+    write_to_logs("----------------END OF ANSWER---------------", ERROR);
 
     if (this->response.get_headers()[http_headers::status] != "200") {
         return;

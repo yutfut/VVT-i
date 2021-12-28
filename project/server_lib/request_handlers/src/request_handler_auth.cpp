@@ -91,23 +91,23 @@ void RequestHandlerAuth::handle_request(HttpRequest &request, HttpResponse &resp
     }
 
     if (command == http_commands::download) {
-        download_file_from_server(id, abs_work_dir, request_headers[http_headers::filename], response, fs_worker);
+        download_file_from_server(id, abs_work_dir, static_cast<std::filesystem::path>(request_headers[http_headers::filename]).filename(), response, fs_worker);
         return;
     }
 
     if (command == http_commands::upload) {
-        upload_file_to_server(id, abs_work_dir, request_headers[http_headers::filename], request.get_body(), response,
+        upload_file_to_server(id, abs_work_dir, static_cast<std::filesystem::path>(request_headers[http_headers::filename]).filename(), request.get_body(), response,
                               fs_worker, db_worker);
         return;
     }
 
     if (command == http_commands::has) {
-        has_such_file(id, abs_work_dir, request_headers[http_headers::filename], response, db_worker);
+        has_such_file(id, abs_work_dir, static_cast<std::filesystem::path>(request_headers[http_headers::filename]).filename(), response, db_worker);
         return;
     }
 
     if (command == http_commands::remove) {
-        remove_file(id, abs_work_dir, request_headers[http_headers::filename], response, fs_worker, db_worker);
+        remove_file(id, abs_work_dir, static_cast<std::filesystem::path>(request_headers[http_headers::filename]).filename(), response, fs_worker, db_worker);
         return;
     }
 
