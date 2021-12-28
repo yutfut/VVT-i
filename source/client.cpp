@@ -10,9 +10,10 @@ Client::~Client(){}
 
 void Client::print(User &user) {
     if (user.get_authorize()) {
-        std::cout << ">>> " << std::string(user.get_current_directory()) << "$:\t";
+        std::cout << "\x1b[30;1m>>>\x1b[0m " << std::string(user.get_current_directory()) << "$:\t";
     } else {
         std::cout << ">>>\t";
+        std::cout << "\x1b[30;1m>>>\x1b[0m\t";
     }
 
 }
@@ -122,13 +123,15 @@ void Client::run() {
         auto status = (Status) role_command(command, user);
         switch (status){
             case Status::SUCCESS:
-                std::cout << "SUCСESS" << std::endl;
+//                std::cout << "SUCСESS" << std::endl;
+                std::cout << "\x1b[32;1mSUCСESS\x1b[0m\n";
                 break;
             case Status::GOODBYE:
                 std::cout << "GOODBYE" << std::endl;
                 return;
             default:
-                std::cout << "ERROR" << std::endl;
+//                std::cout << "ERROR" << std::endl;
+                std::cout << "\x1b[31;1mERROR\x1b[0m\n";
                 break;
         }
     }
