@@ -82,7 +82,7 @@ int upload(const std::string& command, User &user) {
         return -1;
     }
 
-    std::string http_response = HTTPBase::send(message);
+    std::string http_response = HTTPBase::send(message, "upload");
     if (http_response == "ошибка соединения\n") {
         return -1;
     }
@@ -124,7 +124,7 @@ int download(const std::string& command, User &user) {
         return -1;
     }
 
-    std::string http_response = HTTPBase::send(message);
+    std::string http_response = HTTPBase::send(message, std::string {});
 
     return HTTPResponse::parser(http_response);
 }
@@ -153,7 +153,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
                                                           rest_part_command,
                                                           first_part_command);
 
-        std::string http_response = HTTPBase::send(message);
+        std::string http_response = HTTPBase::send(message, std::string {});
 
         return HTTPResponse::parser(http_response);
     }
@@ -168,7 +168,7 @@ int work_with_directory(const std::string& first_part_command, const std::string
                                                           std::string {},
                                                           first_part_command);
 
-        std::string http_response = HTTPBase::send(message);
+        std::string http_response = HTTPBase::send(message, std::string {});
 
         if (first_part_command == "cd") {
             if (HTTPResponse::parser(http_response) == 0) {

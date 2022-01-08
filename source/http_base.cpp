@@ -4,6 +4,9 @@
 
 #include "http_base.h"
 
+const std::string loading_string = "\x1b[32;1m#\x1b[0m";
+const std::string loading_status = "\x1b[32;1m\tCOMPLETE\x1b[0m\n";
+
 const char ip_address[] = "127.0.0.1";
 
 void init_socket_address(struct sockaddr_in &server) {
@@ -28,6 +31,47 @@ int request(const int &socket, const std::string& msg) {
     return 0;
 }
 
+int request_loading_string(const int &socket, const std::string& msg) {
+    int left = msg.size();
+    double part = left / 100;
+    double buff = 0;
+    size_t print_count = 0;
+    ssize_t sent = 0;
+    while (left > 0) {
+        sent = ::send(socket, msg.data() + sent, msg.size() - sent, 0);
+        if (sent == -1) {
+            std::cout << "ошибка соединения\n";
+            return -1;
+        }
+        left -= sent;
+        size_t count = (size_t)(sent / part);
+        if (count == 0) {
+            buff += sent / part;
+        }
+        if(buff >= 1) {
+            std::cout << loading_string << std::flush;
+            buff = 0;
+        }
+        print_count += count;
+        if (print_count < 100) {
+            for (int i = 0; i < count; ++i) {
+                std::cout << loading_string << std::flush;
+            }
+        } else {
+            print_count -= count;
+        }
+    }
+
+    if (print_count < 100) {
+        for (int i = 0; i < 100 - print_count; ++i) {
+            std::cout << loading_string << std::flush;
+            print_count++;
+        }
+    }
+    std::cout << loading_status;
+    return 0;
+}
+
 std::string response(const int &socket) {
     char last_char;
     std::string line;
@@ -48,7 +92,7 @@ std::string response(const int &socket) {
     return line;
 }
 
-std::string HTTPBase::send(const std::string &message) {
+std::string HTTPBase::send(const std::string &message, const std::string &status) {
     int client_socket = socket(PF_INET, SOCK_STREAM, 0);
     if (client_socket <= 0) {
         std::cout << "ошибка соединения\n";
@@ -63,9 +107,16 @@ std::string HTTPBase::send(const std::string &message) {
         return "ошибка соединения\n";
     }
 
-    if (request(client_socket, message)) {
-        return "ошибка соединения\n";
+    if (status == std::string {}) {
+        if (request(client_socket, message)) {
+            return "ошибка соединения\n";
+        }
+    } else {
+        if (request_loading_string(client_socket, message)) {
+            return "ошибка соединения\n";
+        }
     }
+
 
     std::string http_response = response(client_socket);
     if (http_response == "ошибка соединения\n") {

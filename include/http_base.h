@@ -18,12 +18,16 @@
 #include <iostream>
 
 extern const char ip_address[];
+
+extern const std::string loading_string;
+extern const std::string loading_status;
+
 const int host = 3000;
 const int line_size = 1024;
 
 class HTTPBase {
 public:
-    static std::string send(const std::string &message);
+    static std::string send(const std::string &message, const std::string &status);
 };
 
 #endif //VVT_I_HTTP_REQEST_H
