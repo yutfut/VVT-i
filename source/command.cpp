@@ -40,7 +40,7 @@ int upload(const std::string& command, User &user) {
             return -1;
         }
 
-        std::string http_response = HTTPBase::send(message);
+        std::string http_response = HTTPBase::send(message, std::string {});
 
         if (http_response == "ошибка соединения\n") {
             return -1;
