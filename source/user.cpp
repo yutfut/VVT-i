@@ -29,7 +29,7 @@ int User::register_user(const std::string& command) {
                                                       std::string {},
                                                       "register");
 
-    std::string http_response = HTTPBase::send(message);
+    std::string http_response = HTTPBase::send(message, std::string {});
     if (http_response == "ошибка соединения\n") {
         return -1;
     }
@@ -58,7 +58,7 @@ int User::login(const std::string& command) {
                                                       std::string {},
                                                       "login");
 
-    std::string http_response = HTTPBase::send(message);
+    std::string http_response = HTTPBase::send(message, std::string {});
     if (http_response == "ошибка соединения\n") {
         return -1;
     }
