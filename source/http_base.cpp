@@ -38,7 +38,8 @@ int request_loading_string(const int &socket, const std::string& msg) {
     double one_percent_part = size_message / 100;
     size_t sent_size = 0;
 
-    one_percent_part > max_size ? sent_size = max_size : sent_size = one_percent_part;
+//    one_percent_part > max_size ? sent_size = max_size : sent_size = one_percent_part;
+
 
     double one_percent_send_count = 0;
     size_t print_count = 0;
@@ -46,22 +47,28 @@ int request_loading_string(const int &socket, const std::string& msg) {
 
     while (size_message > 0) {
         sent = ::send(socket, msg.data() + sent_size, sent_size, 0);
+
         if (sent == -1) {
             std::cout << std::unitbuf << "ошибка соединения\n";
             return -1;
         }
+
         size_message -= sent_size;
-        size_t count = (size_t)(sent_size / one_percent_part);
+        size_t count = (size_t)(one_percent_part / sent_size);
+
         if (count == 0) {
-            one_percent_send_count += sent_size / one_percent_part;
+            one_percent_send_count += count;
         }
+
         if(one_percent_send_count > 1) {
             std::cout << std::unitbuf << loading_string;
             print_count++;
             one_percent_send_count = 0;
             continue;
         }
+
         print_count += count;
+
         if (print_count < 100) {
             for (int i = 0; i < count; ++i) {
                 std::cout << std::unitbuf << loading_string;
