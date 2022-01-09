@@ -4,6 +4,8 @@
 
 #include "http_base.h"
 
+auto max_size = 1000;
+
 const std::string loading_string = "\x1b[32;1m#\x1b[0m";
 const std::string loading_status = "\x1b[32;1m\tCOMPLETE\x1b[0m\n";
 
@@ -32,26 +34,31 @@ int request(const int &socket, const std::string& msg) {
 }
 
 int request_loading_string(const int &socket, const std::string& msg) {
-    int left = msg.size();
-    double part = left / 100;
-    double buff = 0;
+    int size_message = msg.size();
+    double one_percent_part = size_message / 100;
+    size_t sent_size = 0;
+
+    one_percent_part > max_size ? sent_size = max_size : sent_size = one_percent_part;
+
+    double one_percent_send_count = 0;
     size_t print_count = 0;
     ssize_t sent = 0;
-    while (left > 0) {
-        sent = ::send(socket, msg.data() + sent, msg.size() - sent, 0);
+
+    while (size_message > 0) {
+        sent = ::send(socket, msg.data() + sent, sent_size, 0);
         if (sent == -1) {
             std::cout << std::unitbuf << "ошибка соединения\n";
             return -1;
         }
-        left -= sent;
-        size_t count = (size_t)(sent / part);
+        size_message -= sent_size;
+        size_t count = (size_t)(sent_size / one_percent_part);
         if (count == 0) {
-            buff += sent / part;
+            one_percent_send_count += sent_size / one_percent_part;
         }
-        if(buff >= 1) {
+        if(one_percent_send_count > 1) {
             std::cout << std::unitbuf << loading_string;
             print_count++;
-            buff = 0;
+            one_percent_send_count = 0;
             continue;
         }
         print_count += count;
