@@ -7,14 +7,12 @@
 #include <filesystem>
 #include <vector>
 
-namespace fs = std::filesystem;
-
 class FsWorkerNotAuthUsr {
 public:
-    explicit FsWorkerNotAuthUsr(const fs::path &root_path,
+    explicit FsWorkerNotAuthUsr(const std::filesystem::path &root_path,
                                 size_t file_expiration_date = file_expiration_date_default);
 
-    explicit FsWorkerNotAuthUsr(fs::path &&root_path, size_t file_expiration_date = file_expiration_date_default);
+    explicit FsWorkerNotAuthUsr(std::filesystem::path &&root_path, size_t file_expiration_date = file_expiration_date_default);
 
     FsWorkerNotAuthUsr(const FsWorkerNotAuthUsr &src);
 
@@ -22,22 +20,25 @@ public:
 
     ~FsWorkerNotAuthUsr() noexcept = default;
 
-    bool move_root(const fs::path &new_root_path) noexcept;
+    bool move_root(const std::filesystem::path &new_root_path) noexcept;
 
-    [[nodiscard]] bool move_file_to_fs(const fs::path &src_path, const fs::path &dst_name,
-                                       const fs::path &date_added) noexcept;
+    [[nodiscard]] bool move_file_to_fs(const std::filesystem::path &src_path, const std::filesystem::path &dst_name,
+                                       const std::filesystem::path &date_added) noexcept;
 
-    [[nodiscard]] std::ifstream get_file(const fs::path &file_name, const fs::path &date_added) const noexcept;
+    bool write_to_file(const std::string &file_content, const std::filesystem::path &filename,
+                                           const std::filesystem::path &date_added);
 
-    bool create_day_dir(const fs::path &date_added) noexcept;
+    [[nodiscard]] std::ifstream get_file(const std::filesystem::path &filename, const std::filesystem::path &date_added) const noexcept;
+
+    bool create_day_dir(const std::filesystem::path &date_added) noexcept;
 
     bool remove_expired_dirs() noexcept;
 
-    [[nodiscard]] const fs::path &get_root() const noexcept;
+    [[nodiscard]] const std::filesystem::path &get_root() const noexcept;
 
-    size_t get_file_expiration_date() const noexcept;
+    [[nodiscard]] size_t get_file_expiration_date() const noexcept;
 
-    const std::vector<fs::path> &get_sort_dirs() const noexcept;
+    [[nodiscard]] const std::vector<std::filesystem::path> &get_sort_dirs() const noexcept;
 
     void set_file_expiration_date(size_t new_expiration_date) noexcept;
 
@@ -47,9 +48,9 @@ public:
 
 private:
     static const size_t file_expiration_date_default = 10u;
-    fs::path root_path;
+    std::filesystem::path root_path;
     size_t file_expiration_date;
-    std::vector<fs::path> sort_dirs;
+    std::vector<std::filesystem::path> sort_dirs;
 };
 
 #endif //VVTI_FS_NOT_AUTH_USR_H

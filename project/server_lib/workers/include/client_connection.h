@@ -36,9 +36,9 @@ public:
 
     connection_status_t connection_processing();
 
-    int get_socket();
+    int get_socket() const;
 
-    void write_to_logs(std::string message, bl::trivial::severity_level lvl);
+    void write_to_logs(const std::string& message, bl::trivial::severity_level lvl);
 
     void set_socket(int socket);
 
@@ -77,7 +77,7 @@ private:
     // Return true if their connection processing stage is finished correctly
     bool get_request();
 
-    bool handle_request();
+    void handle_request();
 
     bool send_message_on_email(size_t step);
 
