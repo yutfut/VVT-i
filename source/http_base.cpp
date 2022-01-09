@@ -40,7 +40,7 @@ int request_loading_string(const int &socket, const std::string& msg) {
     while (left > 0) {
         sent = ::send(socket, msg.data() + sent, msg.size() - sent, 0);
         if (sent == -1) {
-            std::cout << "ошибка соединения\n";
+            std::cout << std::unitbuf << "ошибка соединения\n";
             return -1;
         }
         left -= sent;
@@ -49,13 +49,15 @@ int request_loading_string(const int &socket, const std::string& msg) {
             buff += sent / part;
         }
         if(buff >= 1) {
-            std::cout << loading_string << std::flush;
+            std::cout << std::unitbuf << loading_string;
+            print_count++;
             buff = 0;
+            continue;
         }
         print_count += count;
         if (print_count < 100) {
             for (int i = 0; i < count; ++i) {
-                std::cout << loading_string << std::flush;
+                std::cout << std::unitbuf << loading_string;
             }
         } else {
             print_count -= count;
@@ -63,12 +65,14 @@ int request_loading_string(const int &socket, const std::string& msg) {
     }
 
     if (print_count < 100) {
-        for (int i = 0; i < 100 - print_count; ++i) {
-            std::cout << loading_string << std::flush;
+        int n = 100 - print_count;
+        for (int i = 0; i < n; ++i) {
+            std::cout << std::unitbuf << loading_string;
             print_count++;
         }
     }
-    std::cout << loading_status;
+
+    std::cout << std::unitbuf << loading_status;
     return 0;
 }
 
