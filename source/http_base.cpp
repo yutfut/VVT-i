@@ -38,8 +38,7 @@ int request_loading_string(const int &socket, const std::string& msg) {
     double one_percent_part = size_message / 100;
     size_t sent_size = 0;
 
-//    one_percent_part > max_size ? sent_size = max_size : sent_size = one_percent_part;
-
+    one_percent_part > max_size ? sent_size = max_size : sent_size = one_percent_part;
 
     double one_percent_send_count = 0;
     size_t print_count = 0;
