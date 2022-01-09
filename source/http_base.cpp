@@ -45,7 +45,7 @@ int request_loading_string(const int &socket, const std::string& msg) {
     ssize_t sent = 0;
 
     while (size_message > 0) {
-        sent = ::send(socket, msg.data() + sent, sent_size, 0);
+        sent = ::send(socket, msg.data() + sent_size, sent_size, 0);
         if (sent == -1) {
             std::cout << std::unitbuf << "ошибка соединения\n";
             return -1;
