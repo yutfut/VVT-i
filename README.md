@@ -104,6 +104,8 @@
   cmake ..
   
   cmake --build . -j
+  
+  sudo make install
 ```
 <br>
   
