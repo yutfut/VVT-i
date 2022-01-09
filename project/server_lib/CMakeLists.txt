@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(server)
+project(server_lib)
 
 # Set the 20th standard
 set(CMAKE_CXX_STANDARD 20)
@@ -23,16 +23,16 @@ aux_source_directory(workers/src WORKERS_SRC)
 # Create server library
 add_library(server_lib STATIC ${CONFIG_SRC} ${HTTP_SRC} ${LOG_SRC} ${MAIN_SRC} ${REQUEST_HANDLERS_SRC} ${WORKERS_SRC})
 target_include_directories(server_lib
-        PUBLIC config/include
-        http/include
-        logs/include
-        main/include
-        workers/include
-        request_handlers/include
-        ../database_lib/include
-        ../fs_worker_lib/include
-        )
+  PUBLIC config/include
+  http/include
+  logs/include
+  main/include
+  workers/include
+  request_handlers/include
+  ../database_lib/include
+  ../fs_worker_lib/include
+)
 target_link_libraries(
-        server_lib mailio Boost::log Boost::log_setup Boost::system Boost::date_time Boost::regex
-        OpenSSL::SSL Threads::Threads fmt::fmt fs_worker_lib database_lib
+  server_lib mailio Boost::log Boost::log_setup Boost::system Boost::date_time Boost::regex
+  OpenSSL::SSL Threads::Threads fmt::fmt fs_worker_lib database_lib
 )

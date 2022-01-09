@@ -1,0 +1,75 @@
+name: CI
+
+on: push
+
+jobs:
+  CI:
+    name: Run CI
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name : Install libraries and packages
+        run : |
+          sudo apt-get install -y libgtest-dev
+
+          sudo apt install postgresql postgresql-contrib
+
+          sudo apt-get install -y libboost-all-dev
+
+          git clone git://github.com/karastojko/mailio
+          cd mailio
+          mkdir build
+          cd build
+          cmake ..
+          sudo make install
+          cd ../../
+          sudo rm -rf mailio
+
+          sudo apt install nlohmann-json3-dev
+          sudo apt install libssl-dev
+          git clone git://github.com/arun11299/cpp-jwt
+          cd cpp-jwt
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build . -j
+          sudo make install
+          cd ../../
+          sudo rm -rf cpp-jwt
+
+          sudo add-apt-repository universe
+          sudo apt update
+          sudo apt install libfmt-dev
+
+          sudo apt install libpqxx-dev
+
+          sudo apt-get install lcov
+
+      - name : Check style code
+        run : |
+          sudo apt-get install -y cppcheck
+          cppcheck --enable=all --enable=warning,style,performance,portability --suppress=missingIncludeSystem . # --check-config
+
+      - name: Build
+        run: ./server.sh build
+
+      - name: Test
+        run: |
+          sudo service postgresql start
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+          ./server.sh test
+
+      - name: Valgrind test
+        run: |
+          sudo apt-get install -y valgrind
+          mkdir valgrid-output
+          valgrind --leak-check=full --tool=memcheck --show-leak-kinds=all --log-file=valgrid-output/report -q ./server.sh test
+
+      - name: Archive valgrind test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Valgrind test
+          path: valgrid-output/

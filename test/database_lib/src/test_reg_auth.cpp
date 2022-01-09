@@ -1,8 +1,6 @@
-#include "../include/configurations.h"
-
+#include "configurations.h"
 
 TEST(REG_AUTH_MODE, CHECK_EMAIL_FREE) {
-
     check_and_create_db();
 
     DataBase db(VALID_CONF);

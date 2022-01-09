@@ -1,6 +1,5 @@
-#include "../include/configurations.h"
-#include "../include/service_module.h"
-
+#include "configurations.h"
+#include "service_module.h"
 
 TEST(SINGLE_AUTH_MODE, VALID_DATA_TO_REGISTER) {
     check_and_create_db();

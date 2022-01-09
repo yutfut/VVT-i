@@ -1,19 +1,24 @@
-#include "../include/configurations.h"
-#include "../include/service_module.h"
-
+#include "configurations.h"
+#include "service_module.h"
 
 TEST(UNAUTH_MODE, WORK_WITH_TMP_FILES) {
-
     check_and_create_db();
 
     DataBase db(VALID_CONF);
     db.init();
 
+    auto convert_number_to_string = [](int num) {
+        if (num < 10) {
+            return "0" + std::to_string(num);
+        }
+        return std::to_string(num);
+    };
+
     std::time_t t = std::time(0);
     std::tm *now = std::localtime(&t);
     std::string curr_date;
-    curr_date += std::to_string(now->tm_year + 1900) + "-" + std::to_string(now->tm_mon + 1)
-                 + "-" + std::to_string(now->tm_mday);
+    curr_date += std::to_string(now->tm_year + 1900) + "-" + convert_number_to_string(now->tm_mon + 1)
+                 + "-" + convert_number_to_string(now->tm_mday);
 
     auto unauth_user_file_1 = db.not_auth_mode.add_file("first_file", "password_1");
     auto unauth_user_file_2 = db.not_auth_mode.add_file("second_file", "");

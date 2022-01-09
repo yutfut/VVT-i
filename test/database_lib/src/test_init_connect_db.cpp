@@ -1,22 +1,15 @@
-#include "../include/configurations.h"
-
+#include "configurations.h"
 
 TEST(DATABASE_CONNECTION, NOT_VALID_CONFIG) {
-
     check_and_create_db();
 
-    EXPECT_ANY_THROW({
-                         DataBase db_1(EMPTY_HOST_CONF);
-                     });
+    EXPECT_ANY_THROW({ DataBase db_1(EMPTY_HOST_CONF); });
 
-    EXPECT_ANY_THROW({
-                         DataBase db_2(NOT_EXIST_DBNAME_CONF);
-                     });
+    EXPECT_ANY_THROW({ DataBase db_2(NOT_EXIST_DBNAME_CONF); });
 }
 
 
 TEST(DATABASE_CONNECTION, VALID_CONFIG) {
-
     check_and_create_db();
 
     DataBase db_2(VALID_CONF);
@@ -25,7 +18,6 @@ TEST(DATABASE_CONNECTION, VALID_CONFIG) {
 
 
 TEST(DATABASE_CONNECTION, SET_CONNECTION) {
-
     check_and_create_db();
 
     DataBase db_2(VALID_CONF);
@@ -39,7 +31,6 @@ TEST(DATABASE_CONNECTION, SET_CONNECTION) {
 
 
 TEST(INIT_DATA_BASE, VALID_CONFIG) {
-
     check_and_create_db();
 
     DataBase db_2(VALID_CONF);

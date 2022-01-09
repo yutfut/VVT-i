@@ -1,5 +1,4 @@
-#ifndef PROJECTNAME_CONFIGURATIONS_H
-#define PROJECTNAME_CONFIGURATIONS_H
+#pragma once
 
 #include <gtest/gtest.h>
 #include "data_base.h"
@@ -9,24 +8,26 @@
 #include "db_reg_auth.h"
 #include "db_single_auth_mode.h"
 
-
 const database_configuration_t VALID_CONF = {.user= "postgres",
-        .password = "postgres",
-        .host = "localhost",
-        .port = "5432",
-        .dbname = "vvti"};
+    .password = "postgres",
+    .host = "localhost",
+    .port = "5432",
+    .dbname = "vvti"
+};
 
 const database_configuration_t EMPTY_HOST_CONF = {.user= "postgres",
-        .password = "postgres",
-        .host = "",
-        .port = "5432",
-        .dbname = "vvti"};
+    .password = "postgres",
+    .host = "",
+    .port = "5432",
+    .dbname = "vvti"
+};
 
 const database_configuration_t NOT_EXIST_DBNAME_CONF = {.user= "postgres",
-        .password = "postgres",
-        .host = "localhost",
-        .port = "5432",
-        .dbname = "vvti1"};
+    .password = "postgres",
+    .host = "localhost",
+    .port = "5432",
+    .dbname = "vvti1"
+};
 
 
 static void check_and_create_db() {
@@ -40,6 +41,3 @@ static void check_and_create_db() {
 
     conn.disconnect();
 }
-
-
-#endif //PROJECTNAME_CONFIGURATIONS_H
