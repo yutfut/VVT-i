@@ -215,5 +215,3 @@
 ## 🔆 Sources for project presentation <a name = "presentation_src"></a>
 
 Ссылка на презентацию: [Презентация](https://docs.google.com/presentation/d/1GjSVECv2N7I9ksSQ0BhA4O3BCKgyCcM_lY23q1cRnEg/edit#slide=id.p)
-
-Ссылка на репозиторий бэкенда: https://github.com/yutfut/VVT-i
