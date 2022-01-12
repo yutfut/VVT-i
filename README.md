@@ -186,7 +186,7 @@
   
 ## ✍️ Developers <a name = "developers"></a>
   
-[@And_Dayk](https://github.com/zdesbilaksenia) - Дьяконов Андрей [Team Lead, Database development]
+[@And_Dayk](https://github.com/Andrey123815) - Дьяконов Андрей [Team Lead, Database development]
   
 [@kirill555101](https://github.com/kirill555101) - Каташинский Кирилл [Server development]
   
