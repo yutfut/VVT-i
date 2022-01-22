@@ -2,7 +2,9 @@
 
 #include <gtest/gtest.h>
 #include <fstream>
-#include "fs_not_auth_usr.h"
+#include <fs_not_auth_usr.h>
+
+namespace fs = std::filesystem;
 
 FsWorkerNotAuthUsr create_fs_not_auth_usr(const fs::path &root_path) {
     FsWorkerNotAuthUsr fs_worker(root_path);
@@ -41,7 +43,7 @@ protected:
 };
 
 TEST(FsNotAuthUsr, CreateValid) {
-    fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
+    fs::path root_path = TEST_PATH / fs::path("fs_sub_worker_not_auth_usr/");
     FsWorkerNotAuthUsr fs_worker1(root_path);
     EXPECT_EQ(root_path, fs_worker1.get_root());
     EXPECT_FALSE(static_cast<bool>(fs_worker1.err_code));
@@ -65,17 +67,17 @@ TEST(FsNotAuthUsr, CreateValid) {
 }
 
 TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENOENT) {
-    fs::path root_path = TEST_PATH / fs::path("input_output/not_existing_dir/fs_sub_worker_not_auth_usr/");
+    fs::path root_path = TEST_PATH / fs::path("not_existing_dir/fs_sub_worker_not_auth_usr/");
     FixtureCreateFsNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENOENT));
 }
 
 TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENAMETOOLONG) {
-    fs::path root_path = TEST_PATH "/input_output" / fs::path(std::string(static_cast<int>(fpathconf(0,_PC_NAME_MAX)) + 1, 'x'));
+    fs::path root_path = TEST_PATH  / fs::path(std::string(static_cast<int>(fpathconf(0,_PC_NAME_MAX)) + 1, 'x'));
     FixtureCreateFsNotAuthUsrInvalid::set_up(std::move(root_path), std::errc(ENAMETOOLONG));
 }
 
 TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENOTDIR) {
-    fs::path file_path = TEST_PATH "/input_output/file";
+    fs::path file_path = TEST_PATH "/file";
     std::ofstream file(file_path);
     file.close();
     ASSERT_TRUE(fs::exists(file_path));
@@ -87,9 +89,9 @@ TEST_F(FixtureCreateFsNotAuthUsrInvalid, ENOTDIR) {
 }
 
 TEST(FsNotAuthUsr, MoveRoot) {
-    fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
+    fs::path root_path = TEST_PATH / fs::path("fs_sub_worker_not_auth_usr/");
     FsWorkerNotAuthUsr fs_worker((root_path));
-    fs::path new_root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr_new/");
+    fs::path new_root_path = TEST_PATH / fs::path("fs_sub_worker_not_auth_usr_new/");
     fs_worker.move_root(new_root_path);
 
     EXPECT_FALSE(static_cast<bool>(fs_worker.err_code));
@@ -102,20 +104,20 @@ TEST(FsNotAuthUsr, MoveRoot) {
 }
 
 TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENAMETOOLONG) {
-    fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    fs::path new_root_path = TEST_PATH "/input_output" / fs::path(std::string(static_cast<int>(fpathconf(0,_PC_NAME_MAX)) + 1, 'x'));
+    fs::path root_path = TEST_PATH / fs::path("fs_sub_worker_not_auth_usr/");
+    fs::path new_root_path = TEST_PATH / fs::path(std::string(static_cast<int>(fpathconf(0,_PC_NAME_MAX)) + 1, 'x'));
     FixtureFsNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENAMETOOLONG));
 }
 
 TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENOENT) {
-    fs::path root_path = TEST_PATH/ fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    fs::path new_root_path = TEST_PATH / fs::path("input_output/not_existing_dir/fs_sub_worker_not_auth_usr/");
+    fs::path root_path = TEST_PATH/ fs::path("fs_sub_worker_not_auth_usr/");
+    fs::path new_root_path = TEST_PATH / fs::path("not_existing_dir/fs_sub_worker_not_auth_usr/");
     FixtureFsNotAuthUsrMoveRootInvalid::set_up(root_path, new_root_path, std::errc(ENOENT));
 }
 
 TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENOTDIR) {
-    fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
-    fs::path file_path = TEST_PATH "/input_output/file";
+    fs::path root_path = TEST_PATH / fs::path("fs_sub_worker_not_auth_usr/");
+    fs::path file_path = TEST_PATH "/file";
     std::ofstream file(file_path);
     file.close();
     ASSERT_TRUE(fs::exists(file_path));
@@ -126,7 +128,7 @@ TEST_F(FixtureFsNotAuthUsrMoveRootInvalid, ENOTDIR) {
 }
 
 TEST(FsNotAuthUsr, CreateDayDirAndRemoveExpired) {
-    fs::path root_path = TEST_PATH / fs::path("input_output/fs_sub_worker_not_auth_usr/");
+    fs::path root_path = TEST_PATH / fs::path("fs_sub_worker_not_auth_usr/");
     FsWorkerNotAuthUsr fs_worker((root_path));
     EXPECT_TRUE(fs_worker.get_sort_dirs().empty());
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));
@@ -165,7 +167,7 @@ TEST(FsNotAuthUsr, CreateDayDirAndRemoveExpired) {
 }
 
 TEST(FsNotAuthUsr, MoveAndGetFile) {
-    fs::path root_path = TEST_PATH/ fs::path("input_output/fs_sub_worker_not_auth_usr/");
+    fs::path root_path = TEST_PATH/ fs::path("fs_sub_worker_not_auth_usr/");
     FsWorkerNotAuthUsr fs_worker((root_path));
     EXPECT_TRUE(fs_worker.get_sort_dirs().empty());
     ASSERT_FALSE(static_cast<bool>(fs_worker.err_code));

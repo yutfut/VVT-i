@@ -4,17 +4,33 @@
 #include <filesystem>
 #include <vector>
 #include <fstream>
+#include <iostream>
 #include "fs_auth_usr.h"
 
 namespace fs = std::filesystem;
 
-FsWorkerAuthUsr::FsWorkerAuthUsr(const fs::path &root_path) : root_path(root_path) {}
+FsWorkerAuthUsr::FsWorkerAuthUsr(const fs::path &_root_path) : root_path(_root_path) {
+    fs::create_directory(root_path, err_code);
+    if (bool(err_code)) {
+        root_path = "";
+    }
+}
 
-FsWorkerAuthUsr::FsWorkerAuthUsr(fs::path &&root_path) : root_path(std::move(root_path)) {}
+FsWorkerAuthUsr::FsWorkerAuthUsr(fs::path &&_root_path) : root_path(std::move(_root_path)) {
+    fs::create_directory(root_path, err_code);
+    if (bool(err_code)) {
+        root_path = "";
+    }
+}
 
 FsWorkerAuthUsr::FsWorkerAuthUsr(const FsWorkerAuthUsr &src) : root_path(src.root_path) {}
 
-FsWorkerAuthUsr::FsWorkerAuthUsr(FsWorkerAuthUsr &&src) noexcept: root_path(std::move(src.root_path)) {}
+FsWorkerAuthUsr::FsWorkerAuthUsr(FsWorkerAuthUsr &&src) noexcept: root_path(std::move(src.root_path)) {
+    fs::create_directory(root_path, err_code);
+    if (bool(err_code)) {
+        root_path = "";
+    }
+}
 
 bool FsWorkerAuthUsr::move_root(const fs::path &new_root_path) noexcept {
     err_code.clear();
@@ -67,5 +83,5 @@ const fs::path &FsWorkerAuthUsr::get_root() const noexcept {
 }
 
 bool FsWorkerAuthUsr::operator==(const FsWorkerAuthUsr &rhs) const {
-    return false;
+    return root_path == rhs.root_path;
 }
